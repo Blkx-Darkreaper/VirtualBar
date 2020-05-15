@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -6,15 +7,18 @@ import { Injectable } from '@angular/core';
 export class RecipeCategoriesService {
   constructor() { }
 
-  GetTypes() {
-    return ["Shot", "Cocktail"];
+  GetTypes(): Observable<any> {
+    const allTypes = {"types": ["Shot", "Cocktail"]};
+      return of(allTypes);
   }
 
-  GetStyles() {
-    return ["Blended", "Built in Glass", "Layered", "Shaken", "Stirred"]
+  GetStyles(): Observable<any> {
+    const allStyles = {"styles": ["Blended", "Built in Glass", "Layered", "Shaken", "Stirred"]};
+      return of(allStyles);
   }
 
-  GetFamilies() {
-    return ["Cocktail", "Duo", "Flip", "Highball", "Hot Toddy"];
+  GetFamilies(): Observable<any> {
+    const allFamilies = {"families": ["Cocktail", "Duo", "Flip", "Highball", "Hot Toddy"]};
+      return of(allFamilies);
   }
 }
