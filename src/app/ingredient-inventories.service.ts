@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Inventory } from './inventory.component';
 import { Injectable } from '@angular/core';
 
@@ -5,14 +6,12 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class IngredientInventoriesService {
-  GetInventories() {
+  GetInventories(): Observable<any> {
     let home = new Inventory();
     home.name = "Home";
 
-    let allInventories = new Array();
-    allInventories.push(home);
-
-    return allInventories;
+    const allInventories = {"inventories": [JSON.stringify(home)]};
+      return of(allInventories);
   }
 
   constructor() { }

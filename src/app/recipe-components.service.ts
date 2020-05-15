@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -6,11 +7,13 @@ import { Injectable } from '@angular/core';
 export class RecipeComponentsService {
   constructor() { }
 
-  GetPrimaries() {
-    return ["Vodka", "Gin", "Tequila", "Rum", "Liqueur"];
+  GetPrimaries(): Observable<any> {
+    const allComponents = {"components": ["Vodka", "Gin", "Tequila", "Rum", "Liqueur"]};
+      return of(allComponents);
   }
 
-  GetSecondaries() {
-    return ["Liqueur", "Wine", "Mixer", "Juice"];
+  GetSecondaries(): Observable<any> {
+    const allComponents = {"components": ["Liqueur", "Wine", "Mixer", "Juice"]};
+      return of(allComponents);
   }
 }

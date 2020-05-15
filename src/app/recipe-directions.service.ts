@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
 @Injectable({
@@ -7,8 +8,9 @@ export class RecipeDirectionsService {
 
   constructor() { }
 
-  GetDirections() {
-    return ["Add ice, lemon juice, creme de cacao, lillet blanc, and gin to shaker and mix thoroughly", 
-    "Strain into chilled nick and nora glass", "Garnish with twist of lemon"];
+  GetDirections(): Observable<any> {
+    const allDirections = {"directions": ["Add ice, lemon juice, creme de cacao, lillet blanc, and gin to shaker and mix thoroughly", 
+    "Strain into chilled nick and nora glass", "Garnish with twist of lemon"]};
+      return of(allDirections);
   }
 }
