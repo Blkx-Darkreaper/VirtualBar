@@ -1,0 +1,95 @@
+<div class = "top-bar" name="criteria">
+    <div name = "select-category">
+        <div name ="select-type">
+            <input type="checkbox" id="all" name="type" value="all" checked="checked">
+            <label for="all">(Select All)</label>
+            <br>
+            <span *ngFor="let type of allTypes; let i = index">
+                <input type="checkbox" name="type" id=" {{ type | lowercase }}" value = "{{ type | lowercase }}" checked ="checked">
+                <label for="{{ type | lowercase }}">{{ type }}</label>
+            </span>
+            <pre>{{ allTypes | json }}</pre>
+        </div>
+
+        <div name = "select-style">
+            <label for="style">Preparation Style:</label>
+            <br>
+
+            <input type="checkbox" id="all" name="style" value="all" checked="checked">
+            <label for="all">(Select All)</label>
+            <br>
+            <input type="checkbox" id="blended" name="style" value="blended" checked="checked">
+            <label for="blended">Blended</label>
+            <br>
+            <input type="checkbox" id="shaken" name="style" value="shaken" checked="checked">
+            <label for="shaken">Shaken</label>
+        </div>
+
+        <div name="select-family">
+            <label for="family">Family:</label>
+            <br>
+
+            <input type="checkbox" id="cocktail" name="family" value="cocktail" checked="checked">
+            <label for="cocktail">Cocktail</label>
+            <br>
+            <input type="checkbox" id="highball" name="family" value="highball" checked="checked">
+            <label for="highball">Highball</label><br>
+        </div>
+    </div>
+    
+    <div name = "select-components">
+        <label for="main">Main Component:</label>
+        <br>
+
+        <input type="checkbox" id="vodka" name="main" value="vodka" checked="checked">
+        <label for="vodka">Vodka</label>
+        <br>
+
+        <input type="checkbox" id="gin" name="main" value="gin" checked="checked">
+        <label for="gin">Gin</label>
+        <br>
+
+        <input type="checkbox" id="tequila" name="main" value="tequila" checked="checked">
+        <label for="tequila">Tequila</label>
+        <br>
+
+        <input type="checkbox" id="rum" name="main" value="rum" checked="checked">
+        <label for="rum">Rum</label>
+        <br>
+
+        <input type="checkbox" id="liqueur" name="main" value="liqueur" checked="checked">
+        <label for="liqueur">Liqueur</label>
+        <br>
+
+        <label for="auxiliary">Auxiliary Component:</label>
+        <br>
+
+        <input type="checkbox" id="liqueur" name="aux" value="liqueur" checked="checked">
+        <label for="liqueur">Liqueur</label>
+        <br>
+
+        <input type="checkbox" id="wine" name="aux" value="wine" checked="checked">
+        <label for="wine">Wine</label>
+        <br>
+
+        <input type="checkbox" id="mixer" name="aux" value="mixer" checked="checked">
+        <label for="mixer">Mixer</label>
+        <br>
+
+        <input type="checkbox" id="juice" name="aux" value="juice" checked="checked">
+        <label for="juice">Juice</label>
+    </div>
+</div>
+
+<br>
+		
+<div class = "bottom-bar" name = "inventory">
+    <label for="location">Inventory Location:</label><br>
+
+    <select id="location">
+        <option value="home">Home</option>
+    </select>
+
+    <input type="checkbox" id="available" name="available" value="isAvailable" [checked]="limitToAvailable">
+    <label for="available">Limit to currently available</label>
+</div>
