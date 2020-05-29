@@ -20,7 +20,7 @@ export class RecipeListComponent implements OnInit {
 
   ngOnInit(): void {
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
-    this.recipeListService.GetRecipeNames().subscribe((data: any) => {this.allRecipes = data.recipes;});
+    this.recipeListService.GetRecipes().subscribe((data: any) => {this.allRecipes = data.recipes;});
   }
 
   onSelect(recipe: RecipeModel): void {

@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { of, Observable } from 'rxjs';
-import { RecipeIdentity } from './recipe-identity';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +8,7 @@ export class RecipeListService {
 
     constructor() { }
 
-/*     GetRecipes(): RecipeIdentity[] {
+/*     GetRecipes(): RecipeModel[] {
       const allRecipes = [
         {name: '20th Century Cocktail', variant: ''}, 
         {name: 'Ahumado Seco', variant: ''}, 
@@ -19,7 +18,7 @@ export class RecipeListService {
       return allRecipes;
     } */
 
-    GetRecipeNames(): Observable<any> {
+    GetRecipes(): Observable<any> {
       const allRecipes = {"recipes":[
         {name: '20th Century Cocktail', variant: ''}, 
         {name: 'Ahumado Seco', variant: ''}, 
