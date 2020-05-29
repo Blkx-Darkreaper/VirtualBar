@@ -17,7 +17,7 @@ export class RecipeSelectionComponent implements OnInit
   allPrimaryComponents: string[];
   allSecondaryComponents: string[];
 
-  allInventories: any;
+  allInventories: Inventory[];
 
   limitToAvailable: boolean;
 
@@ -35,7 +35,7 @@ export class RecipeSelectionComponent implements OnInit
     this.recipeComponentService.GetPrimaries().subscribe((data: any) => {this.allPrimaryComponents = data.components;});
     this.recipeComponentService.GetSecondaries().subscribe((data: any) => {this.allSecondaryComponents = data.components;});
 
-    this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = data.inventories;});
+    this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = JSON.parse(data.inventories);});
   }
 
 }

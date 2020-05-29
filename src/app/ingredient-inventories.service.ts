@@ -10,7 +10,10 @@ export class IngredientInventoriesService {
     let home = new Inventory();
     home.name = "Home";
 
-    const allInventories = {"inventories": [JSON.stringify(home)]};
+    let other = new Inventory();
+    other.name = "Other";
+
+    const allInventories = {"inventories": JSON.stringify([home, other])};
       return of(allInventories);
   }
 

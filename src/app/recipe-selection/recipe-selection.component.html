@@ -76,7 +76,7 @@
     <label for="location">Inventory Location:</label><br>
 
     <select id="location">
-        <option value="home">Home</option>
+        <option *ngFor="let inventory of allInventories" value="{{ inventory.name | lowercase }}">{{ inventory.name }}</option>
     </select>
 
     <input type="checkbox" id="available" name="available" value="isAvailable" [checked]="limitToAvailable">
