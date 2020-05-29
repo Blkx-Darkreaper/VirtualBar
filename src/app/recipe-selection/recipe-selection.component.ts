@@ -13,30 +13,29 @@ export class RecipeSelectionComponent implements OnInit
 {
   allTypes: string[];
   allStyles: string[];
-  allFamilies: string[];
+  allFamilies: any;
   allPrimaryComponents: string[];
   allSecondaryComponents: string[];
 
-  allInventories: Inventory[];
+  allInventories: any;
 
   limitToAvailable: boolean;
 
-  constructor(recipeCategoryService: RecipeCategoriesService, 
-    recipeComponentService: RecipeComponentsService, 
-    ingredientInventory: IngredientInventoriesService) 
+  constructor(private recipeCategoryService: RecipeCategoriesService, 
+    private recipeComponentService: RecipeComponentsService, 
+    private ingredientInventory: IngredientInventoriesService) 
     { 
-      this.allTypes = recipeCategoryService.GetTypes();
-      this.allStyles = recipeCategoryService.GetStyles();
-      this.allFamilies = recipeCategoryService.GetFamilies();
-      this.allPrimaryComponents = recipeComponentService.GetPrimaries();
-      this.allSecondaryComponents = recipeComponentService.GetSecondaries();
-
-      this.allInventories = ingredientInventory.GetInventories();
-
       this.limitToAvailable = false;
     }
 
   ngOnInit(): void {
+    this.recipeCategoryService.GetTypes().subscribe((data: any) => {this.allTypes = data.types;});
+    this.recipeCategoryService.GetStyles().subscribe((data: any) => {this.allStyles = data.styles;});
+    this.recipeCategoryService.GetFamilies().subscribe((data: any) => {this.allFamilies = data.families;});
+    this.recipeComponentService.GetPrimaries().subscribe((data: any) => {this.allPrimaryComponents = data.components;});
+    this.recipeComponentService.GetSecondaries().subscribe((data: any) => {this.allSecondaryComponents = data.components;});
+
+    this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = data.inventories;});
   }
 
 }

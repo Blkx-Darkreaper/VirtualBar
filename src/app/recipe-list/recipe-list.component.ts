@@ -1,6 +1,8 @@
 import { RecipeListService } from './../recipe-list.service';
+import { RecipeDirectionsService } from './../recipe-directions.service';
+import { RecipeIngredientsService } from './../recipe-ingredients.service';
 import { Component, OnInit } from '@angular/core';
-import { RecipeComponent } from '../recipe/recipe.component';
+import { RecipeModel } from '../recipe-model';
 
 @Component({
   selector: 'app-recipe-list',
@@ -9,11 +11,22 @@ import { RecipeComponent } from '../recipe/recipe.component';
 })
 export class RecipeListComponent implements OnInit {
   title = "Recipes";
-  allRecipes: RecipeComponent[];
+  allRecipes: RecipeModel[];
+  selectedRecipe: RecipeModel;
 
-  constructor(service: RecipeListService) {
-   }
+  constructor(private recipeListService: RecipeListService, 
+    private ingredientService: RecipeIngredientsService, 
+    private directionService: RecipeDirectionsService) { }
 
   ngOnInit(): void {
+    //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
+    this.recipeListService.GetRecipeNames().subscribe((data: any) => {this.allRecipes = data.recipes;});
+  }
+
+  onSelect(recipe: RecipeModel): void {
+    this.ingredientService.GetIngredients(recipe).subscribe((data: any) => {recipe.allIngredients = data.ingredients;});
+    this.directionService.GetDirections(recipe).subscribe((data: any) => {recipe.allDirections = data.directions; });
+
+    this.selectedRecipe = recipe;
   }
 }

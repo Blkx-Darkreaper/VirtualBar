@@ -1,7 +1,6 @@
-import { RecipeListService } from './../recipe-list.service';
 import { RecipeDirectionsService } from './../recipe-directions.service';
 import { RecipeIngredientsService } from './../recipe-ingredients.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-recipe',
@@ -9,17 +8,19 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./recipe.component.sass']
 })
 export class RecipeComponent implements OnInit {
-  name: string;
-  variant: string;
-  allIngredients: string[];
-  allDirections: string[];
+  @Input() name: string;
+  @Input() variant: string;
+  @Input() allIngredients: string[];
+  @Input() allDirections: string[];
 
-  constructor(recipeListService: RecipeListService){//, ingredientService: RecipeIngredientsService, directionService: RecipeDirectionsService) {
-
+  constructor(/*private ingredientService: RecipeIngredientsService, private directionService: RecipeDirectionsService*/) {
    }
 
   ngOnInit(): void {
-    this.recipeListService.GetRecipeList().subscribe();
+    // this.allIngredients = this.ingredientService.GetIngredients(name);
+    // this.allDirections = this.directionService.GetDirections(name);
+    //this.ingredientService.GetIngredients(name).subscribe((data: any) => {this.allIngredients = data.ingredients;});
+    //this.directionService.GetDirections(name).subscribe((data: any) => {this.allDirections = data.directions;});
   }
 
 }

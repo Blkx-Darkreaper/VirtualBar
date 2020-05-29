@@ -3,12 +3,13 @@
         <div name ="select-type">
             <input type="checkbox" id="all" name="type" value="all" checked="checked">
             <label for="all">(Select All)</label>
-            <br>
+
             <span *ngFor="let type of allTypes; let i = index">
-                <input type="checkbox" name="type" id=" {{ type | lowercase }}" value = "{{ type | lowercase }}" checked ="checked">
+                <input type="checkbox" name="type" id=" {{ type | lowercase }}" 
+                value = "{{ type | lowercase }}" checked ="checked">
                 <label for="{{ type | lowercase }}">{{ type }}</label>
             </span>
-            <pre>{{ allTypes | json }}</pre>
+            <!-- <pre>{{ allTypes | json }}</pre> -->
         </div>
 
         <div name = "select-style">
@@ -17,23 +18,26 @@
 
             <input type="checkbox" id="all" name="style" value="all" checked="checked">
             <label for="all">(Select All)</label>
-            <br>
-            <input type="checkbox" id="blended" name="style" value="blended" checked="checked">
-            <label for="blended">Blended</label>
-            <br>
-            <input type="checkbox" id="shaken" name="style" value="shaken" checked="checked">
-            <label for="shaken">Shaken</label>
+
+            <span *ngFor="let style of allStyles; let i = index">
+                <input type="checkbox" name="style" id=" {{ style | lowercase }}" 
+                value = "{{ style | lowercase }}" checked ="checked">
+                <label for="{{ style | lowercase }}">{{ style }}</label>
+            </span>
         </div>
 
         <div name="select-family">
             <label for="family">Family:</label>
             <br>
 
-            <input type="checkbox" id="cocktail" name="family" value="cocktail" checked="checked">
-            <label for="cocktail">Cocktail</label>
-            <br>
-            <input type="checkbox" id="highball" name="family" value="highball" checked="checked">
-            <label for="highball">Highball</label><br>
+            <input type="checkbox" id="all" name="family" value="all" checked="checked">
+            <label for="all">(Select All)</label>
+
+            <span *ngFor="let family of allFamilies; let i = index">
+                <input type="checkbox" name="family" id=" {{ family | lowercase }}" 
+                value = "{{ family | lowercase }}" checked ="checked">
+                <label for="{{ family | lowercase }}">{{ family }}</label>
+            </span>
         </div>
     </div>
     
@@ -41,43 +45,28 @@
         <label for="main">Main Component:</label>
         <br>
 
-        <input type="checkbox" id="vodka" name="main" value="vodka" checked="checked">
-        <label for="vodka">Vodka</label>
-        <br>
+        <input type="checkbox" id="all" name="type" value="all" checked="checked">
+            <label for="all">(Select All)</label>
 
-        <input type="checkbox" id="gin" name="main" value="gin" checked="checked">
-        <label for="gin">Gin</label>
-        <br>
+        <span *ngFor="let main of allPrimaryComponents; let i = index">
+            <input type="checkbox" name="main" id=" {{ main | lowercase }}" 
+            value = "{{ main | lowercase }}" checked ="checked">
+            <label for="{{ main | lowercase }}">{{ main }}</label>
+        </span>
 
-        <input type="checkbox" id="tequila" name="main" value="tequila" checked="checked">
-        <label for="tequila">Tequila</label>
-        <br>
-
-        <input type="checkbox" id="rum" name="main" value="rum" checked="checked">
-        <label for="rum">Rum</label>
-        <br>
-
-        <input type="checkbox" id="liqueur" name="main" value="liqueur" checked="checked">
-        <label for="liqueur">Liqueur</label>
         <br>
 
         <label for="auxiliary">Auxiliary Component:</label>
         <br>
 
-        <input type="checkbox" id="liqueur" name="aux" value="liqueur" checked="checked">
-        <label for="liqueur">Liqueur</label>
-        <br>
+        <input type="checkbox" id="all" name="type" value="all" checked="checked">
+            <label for="all">(Select All)</label>
 
-        <input type="checkbox" id="wine" name="aux" value="wine" checked="checked">
-        <label for="wine">Wine</label>
-        <br>
-
-        <input type="checkbox" id="mixer" name="aux" value="mixer" checked="checked">
-        <label for="mixer">Mixer</label>
-        <br>
-
-        <input type="checkbox" id="juice" name="aux" value="juice" checked="checked">
-        <label for="juice">Juice</label>
+        <span *ngFor="let aux of allSecondaryComponents; let i = index">
+            <input type="checkbox" name="aux" id=" {{ aux | lowercase }}" 
+            value = "{{ aux | lowercase }}" checked ="checked">
+            <label for="{{ aux | lowercase }}">{{ aux }}</label>
+        </span>
     </div>
 </div>
 
