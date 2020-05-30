@@ -27,7 +27,10 @@ export class RecipeListComponent implements OnInit {
 
   ngOnInit(): void {
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
-    this.recipeListService.GetRecipes().subscribe((data: any) => {this.allRecipes = data.recipes;});
+    this.recipeListService.GetRecipes(
+      this.drinkTypes, this.preparationStyles, this.families, 
+      this.primaryComponents, this.secondaryComponents, this.limitToAvailable
+      ).subscribe((data: any) => {this.allRecipes = data.recipes;});
   }
 
   onSelect(recipe: RecipeModel): void {

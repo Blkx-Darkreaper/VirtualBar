@@ -18,7 +18,9 @@ export class RecipeListService {
       return allRecipes;
     } */
 
-    GetRecipes(): Observable<any> {
+    GetRecipes(types: string[], styles: string[], families: string[], 
+      primaryComponents: string[], secondaryComponents: string[], limitToAvailable: boolean
+      ): Observable<any> {
       const allRecipes = {"recipes":[
         {name: '20th Century Cocktail', variant: ''}, 
         {name: 'Ahumado Seco', variant: ''}, 
