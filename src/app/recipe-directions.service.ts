@@ -1,4 +1,4 @@
-import { RecipeIdentity } from './recipe-identity';
+import { RecipeModel } from './recipe-model';
 import { of, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
@@ -28,7 +28,7 @@ export class RecipeDirectionsService {
       return allDirections;
   }*/
 
-  GetDirections(recipe: RecipeIdentity): Observable<any> {
+  GetDirections(recipe: RecipeModel): Observable<any> {
     let allDirections = {"directions": []};
 
     switch(recipe.name) {

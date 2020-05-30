@@ -1,4 +1,4 @@
-import { RecipeIdentity } from './recipe-identity';
+import { RecipeModel } from './recipe-model';
 import { of, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
@@ -28,7 +28,7 @@ export class RecipeIngredientsService {
     return allIngredients;
   }*/
 
-  GetIngredients(recipe: RecipeIdentity): Observable<any> {
+  GetIngredients(recipe: RecipeModel): Observable<any> {
     let allIngredients = {"ingredients": []};
     
     switch(recipe.name) {
