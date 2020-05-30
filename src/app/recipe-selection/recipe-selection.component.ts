@@ -19,6 +19,11 @@ export class RecipeSelectionComponent implements OnInit
 
   allInventories: Inventory[];
 
+  allSelectedTypes: string[];
+  allSelectedStyles: string[];
+  allSelectedFamilies: string[];
+  allSelectedPrimaryComponents: string[];
+  allSelectedSecondaryComponents: string[];
   limitToAvailable: boolean;
 
   constructor(private recipeCategoryService: RecipeCategoriesService, 
@@ -37,5 +42,4 @@ export class RecipeSelectionComponent implements OnInit
 
     this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = JSON.parse(data.inventories);});
   }
-
 }

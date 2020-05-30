@@ -82,3 +82,12 @@
     <input type="checkbox" id="available" name="available" value="isAvailable" [checked]="limitToAvailable">
     <label for="available">Limit to currently available</label>
 </div>
+<hr>
+<app-recipe-list 
+    [types]="allSelectedTypes" 
+    [styles]="allSelectedStyles" 
+    [families]="allSelectedFamilies"
+    [primaries]="allSelectedPrimaryComponents"
+    [secondaries]="allSelectedSecondaryComponents"
+    [limit]="limitToAvailable"
+></app-recipe-list>

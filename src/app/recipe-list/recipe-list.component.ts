@@ -1,7 +1,7 @@
 import { RecipeListService } from './../recipe-list.service';
 import { RecipeDirectionsService } from './../recipe-directions.service';
 import { RecipeIngredientsService } from './../recipe-ingredients.service';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { RecipeModel } from '../recipe-model';
 
 @Component({
@@ -13,6 +13,13 @@ export class RecipeListComponent implements OnInit {
   title = "Recipes";
   allRecipes: RecipeModel[];
   selectedRecipe: RecipeModel;
+
+  @Input('types') drinkTypes: string[];
+  @Input('styles') preparationStyles:string[];
+  @Input() families: string[];
+  @Input('primaries') primaryComponents: string[];
+  @Input('secondaries') secondaryComponents: string[];
+  @Input('limit') limitToAvailable: boolean;
 
   constructor(private recipeListService: RecipeListService, 
     private ingredientService: RecipeIngredientsService, 
