@@ -1,7 +1,9 @@
 <h3>{{ title }}</h3>
 <ul class="recipes">
     <li *ngFor="let recipe of allRecipes" [class.selected]="recipe === selectedRecipe" (click)="onSelect(recipe)">
-        {{ recipe.name }}
+    <!-- <li *ngFor="let recipe of allRecipes"> -->
+        {{ recipe.fields.name }} {{ recipe.fields.variant }}
 	</li>
 </ul>
-<app-recipe *ngIf="selectedRecipe" [name]="selectedRecipe.name" [variant]="selectedRecipe.variant"></app-recipe>
+<!-- <pre>{{ allRecipes | json }}</pre> -->
+<app-recipe *ngIf="selectedRecipe" [name]="selectedRecipe.fields.name" [variant]="selectedRecipe.fields.variant"></app-recipe>

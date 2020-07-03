@@ -1,6 +1,6 @@
 import { RecipeModel } from './../recipe-model';
-import { RecipeDirectionsService } from './../recipe-directions.service';
-import { RecipeIngredientsService } from './../recipe-ingredients.service';
+import { RecipeDirectionsService } from '../Services/recipe-directions.service';
+import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
@@ -19,8 +19,8 @@ export class RecipeComponent implements OnInit {
 
   ngOnInit(): void {
     let model: RecipeModel;
-    model.name = this.name;
-    model.variant = this.variant;
+    model.fields.name = this.name;
+    model.fields.variant = this.variant;
 
     // this.allIngredients = this.ingredientService.GetIngredients(name);
     // this.allDirections = this.directionService.GetDirections(name);

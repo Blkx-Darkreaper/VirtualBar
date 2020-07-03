@@ -1,6 +1,6 @@
-import { RecipeListService } from './../recipe-list.service';
-import { RecipeDirectionsService } from './../recipe-directions.service';
-import { RecipeIngredientsService } from './../recipe-ingredients.service';
+import { RecipeListService } from '../Services/recipe-list.service';
+import { RecipeDirectionsService } from '../Services/recipe-directions.service';
+import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input } from '@angular/core';
 import { RecipeModel } from '../recipe-model';
 
@@ -28,9 +28,10 @@ export class RecipeListComponent implements OnInit {
   ngOnInit(): void {
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
     this.recipeListService.GetRecipes(
+    //this.recipeListService.GetRecipesFromAirtable(
       this.drinkTypes, this.preparationStyles, this.families, 
       this.primaryComponents, this.secondaryComponents, this.limitToAvailable
-      ).subscribe((data: any) => {this.allRecipes = data.recipes;});
+      ).subscribe((data: any) => { this.allRecipes = data.records; });
   }
 
   onSelect(recipe: RecipeModel): void {
