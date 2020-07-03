@@ -1,5 +1,5 @@
 import { of, Observable } from 'rxjs';
-import { Inventory } from './inventory.component';
+import { Inventory } from '../inventory.component';
 import { Injectable } from '@angular/core';
 
 @Injectable({

@@ -1,4 +1,4 @@
-import { RecipeModel } from './recipe-model';
+import { RecipeModel } from '../recipe-model';
 import { of, Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 
@@ -31,7 +31,7 @@ export class RecipeDirectionsService {
   GetDirections(recipe: RecipeModel): Observable<any> {
     let allDirections = {"directions": []};
 
-    switch(recipe.name) {
+    switch(recipe.fields.name) {
       case '20th Century Cocktail':
         allDirections = {"directions": ["Add ice, lemon juice, creme de cacao, lillet blanc, and gin to shaker and mix thoroughly", 
         "Strain into chilled nick and nora glass", "Garnish with twist of lemon"]};
