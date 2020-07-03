@@ -1,16 +1,17 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
 import { RecipeSelectionComponent } from './recipe-selection/recipe-selection.component';
 import { RecipeListComponent } from './recipe-list/recipe-list.component';
-import { RecipeListService } from './recipe-list.service';
+import { RecipeListService } from './Services/recipe-list.service';
 import { RecipeComponent } from './recipe/recipe.component';
-import { RecipeIngredientsService } from './recipe-ingredients.service';
-import { RecipeDirectionsService } from './recipe-directions.service';
+import { RecipeIngredientsService } from './Services/recipe-ingredients.service';
+import { RecipeDirectionsService } from './Services/recipe-directions.service';
 import { RecipeInfoComponent } from './recipe-info/recipe-info.component';
 import { CheckboxComponent } from './checkbox/checkbox.component';
 
@@ -25,7 +26,9 @@ import { CheckboxComponent } from './checkbox/checkbox.component';
   ],
   imports: [
     BrowserModule,
+    HttpClientModule,
     FormsModule,
+    ReactiveFormsModule,
     AppRoutingModule
   ],
   providers: [

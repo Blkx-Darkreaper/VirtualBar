@@ -1,8 +1,9 @@
 import { Inventory } from './../inventory.component';
-import { IngredientInventoriesService } from './../ingredient-inventories.service';
-import { RecipeComponentsService } from './../recipe-components.service';
-import { RecipeCategoriesService } from './../recipe-categories.service';
+import { IngredientInventoriesService } from '../Services/ingredient-inventories.service';
+import { RecipeComponentsService } from '../Services/recipe-components.service';
+import { RecipeCategoriesService } from '../Services/recipe-categories.service';
 import { Component, OnInit } from '@angular/core';
+import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-recipe-selection',
@@ -19,19 +20,30 @@ export class RecipeSelectionComponent implements OnInit
 
   allInventories: Inventory[];
 
-  allSelectedTypes: string[];
+  selectionForm: FormGroup;
+  typesForm: FormGroup;
+
+  allSelectedTypes: [];
   allSelectedStyles: string[];
   allSelectedFamilies: string[];
   allSelectedPrimaryComponents: string[];
   allSelectedSecondaryComponents: string[];
   limitToAvailable: boolean;
 
-  constructor(private recipeCategoryService: RecipeCategoriesService, 
+  constructor(private formBuilder: FormBuilder,
+    private recipeCategoryService: RecipeCategoriesService, 
     private recipeComponentService: RecipeComponentsService, 
-    private ingredientInventory: IngredientInventoriesService) 
+    private ingredientInventory: IngredientInventoriesService
+) 
     { 
+      //this.selectionForm = this.formBuilder.group({});
+      this.typesForm = this.formBuilder.group({ typesArray: this.formBuilder.array([]) });
       this.limitToAvailable = false;
     }
+
+  get typesArray(): FormArray {
+    return this.typesForm.controls.typesArray as FormArray;
+  }
 
   ngOnInit(): void {
     this.recipeCategoryService.GetTypes().subscribe((data: any) => {this.allTypes = data.types;});
@@ -41,5 +53,23 @@ export class RecipeSelectionComponent implements OnInit
     this.recipeComponentService.GetSecondaries().subscribe((data: any) => {this.allSecondaryComponents = data.components;});
 
     this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = JSON.parse(data.inventories);});
+
+    this.addTypes();
+  }
+
+  addTypes() {
+    /* this.allTypes.forEach((o, i) => {
+      const control: FormControl = new FormControl(true);
+
+      (this.typesForm.controls.typesArray as FormArray).push(control);
+    }); */
+
+    for(let type in this.allTypes) {
+      this.typesArray.push(this.formBuilder.control(true));
+    }
+  }
+
+  onSubmit() {
+      console.log(this.typesArray.value);
   }
 }

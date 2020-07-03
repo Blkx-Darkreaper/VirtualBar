@@ -1,88 +1,99 @@
-<div class = "top-bar" name="criteria">
-    <div name = "select-category">
-        <div name ="select-type">
+<!-- <form [formGroup]="selectionForm" (ngSubmit)="onSubmit()"> -->
+    <div class = "top-bar" name="criteria">
+        <div name = "select-category">
+            <div name ="select-type">
+                <input type="checkbox" id="all" name="type" value="all" checked="checked">
+                <label for="all">(Select All)</label>
+                <form [formGroup]="typesForm" (ngSubmit)="onSubmit()">
+                    <span formArrayName="typesArray" *ngFor="let type of allTypes; let i = index">
+                        <input type="checkbox" [formControl]="typesArray.controls[i]" formControlName="{{ i }}"
+                            name="type" id="{{ type | lowercase }}" />
+                        <label for="{{ type | lowercase }}">
+                            {{ type }}
+                        </label>
+                    </span>
+
+                    
+                </form>
+            </div>
+
+            <div name = "select-style">
+                <label for="style">Preparation Style:</label>
+                <br>
+
+                <input type="checkbox" id="all" name="style" value="all" checked="checked">
+                <label for="all">(Select All)</label>
+
+                <span *ngFor="let style of allStyles; let i = index">
+                    <input type="checkbox" name="style" id="{{ style | lowercase }}" 
+                    value = "{{ style | lowercase }}" checked ="checked">
+                    <label for="{{ style | lowercase }}">{{ style }}</label>
+                </span>
+            </div>
+
+            <div name="select-family">
+                <label for="family">Family:</label>
+                <br>
+
+                <input type="checkbox" id="all" name="family" value="all" checked="checked">
+                <label for="all">(Select All)</label>
+
+                <span *ngFor="let family of allFamilies; let i = index">
+                    <input type="checkbox" name="family" id="{{ family | lowercase }}" 
+                    value = "{{ family | lowercase }}" checked ="checked">
+                    <label for="{{ family | lowercase }}">{{ family }}</label>
+                </span>
+            </div>
+        </div>
+        
+        <div name = "select-components">
+            <label for="main">Main Component:</label>
+            <br>
+
             <input type="checkbox" id="all" name="type" value="all" checked="checked">
-            <label for="all">(Select All)</label>
+                <label for="all">(Select All)</label>
 
-            <span *ngFor="let type of allTypes; let i = index">
-                <input type="checkbox" name="type" id=" {{ type | lowercase }}" 
-                value = "{{ type | lowercase }}" checked ="checked">
-                <label for="{{ type | lowercase }}">{{ type }}</label>
+            <span *ngFor="let main of allPrimaryComponents; let i = index">
+                <input type="checkbox" name="main" id="{{ main | lowercase }}" 
+                value = "{{ main | lowercase }}" checked ="checked">
+                <label for="{{ main | lowercase }}">{{ main }}</label>
             </span>
-            <!-- <pre>{{ allTypes | json }}</pre> -->
-        </div>
 
-        <div name = "select-style">
-            <label for="style">Preparation Style:</label>
             <br>
 
-            <input type="checkbox" id="all" name="style" value="all" checked="checked">
-            <label for="all">(Select All)</label>
-
-            <span *ngFor="let style of allStyles; let i = index">
-                <input type="checkbox" name="style" id=" {{ style | lowercase }}" 
-                value = "{{ style | lowercase }}" checked ="checked">
-                <label for="{{ style | lowercase }}">{{ style }}</label>
-            </span>
-        </div>
-
-        <div name="select-family">
-            <label for="family">Family:</label>
+            <label for="auxiliary">Auxiliary Component:</label>
             <br>
 
-            <input type="checkbox" id="all" name="family" value="all" checked="checked">
-            <label for="all">(Select All)</label>
+            <input type="checkbox" id="all" name="type" value="all" checked="checked">
+                <label for="all">(Select All)</label>
 
-            <span *ngFor="let family of allFamilies; let i = index">
-                <input type="checkbox" name="family" id=" {{ family | lowercase }}" 
-                value = "{{ family | lowercase }}" checked ="checked">
-                <label for="{{ family | lowercase }}">{{ family }}</label>
+            <span *ngFor="let aux of allSecondaryComponents; let i = index">
+                <input type="checkbox" name="aux" id="{{ aux | lowercase }}" 
+                value = "{{ aux | lowercase }}" checked ="checked">
+                <label for="{{ aux | lowercase }}">{{ aux }}</label>
             </span>
         </div>
     </div>
-    
-    <div name = "select-components">
-        <label for="main">Main Component:</label>
-        <br>
 
-        <input type="checkbox" id="all" name="type" value="all" checked="checked">
-            <label for="all">(Select All)</label>
+    <br>
+            
+    <div class = "bottom-bar" name = "inventory">
+        <label for="location">Inventory Location:</label><br>
 
-        <span *ngFor="let main of allPrimaryComponents; let i = index">
-            <input type="checkbox" name="main" id=" {{ main | lowercase }}" 
-            value = "{{ main | lowercase }}" checked ="checked">
-            <label for="{{ main | lowercase }}">{{ main }}</label>
-        </span>
+        <select id="location">
+            <option *ngFor="let inventory of allInventories" value="{{ inventory.name | lowercase }}">{{ inventory.name }}</option>
+        </select>
 
-        <br>
-
-        <label for="auxiliary">Auxiliary Component:</label>
-        <br>
-
-        <input type="checkbox" id="all" name="type" value="all" checked="checked">
-            <label for="all">(Select All)</label>
-
-        <span *ngFor="let aux of allSecondaryComponents; let i = index">
-            <input type="checkbox" name="aux" id=" {{ aux | lowercase }}" 
-            value = "{{ aux | lowercase }}" checked ="checked">
-            <label for="{{ aux | lowercase }}">{{ aux }}</label>
-        </span>
+        <input type="checkbox" id="available" name="available" value="isAvailable" [(ngModel)]="limitToAvailable">
+        <label for="available">Limit to currently available</label>
+        <!-- <pre>{{ limitToAvailable }}</pre> -->
     </div>
-</div>
 
-<br>
-		
-<div class = "bottom-bar" name = "inventory">
-    <label for="location">Inventory Location:</label><br>
+<!--     <button type="submit" [disabled]="!selectionForm.valid">Refresh Recipe List</button>
+</form> -->
 
-    <select id="location">
-        <option *ngFor="let inventory of allInventories" value="{{ inventory.name | lowercase }}">{{ inventory.name }}</option>
-    </select>
-
-    <input type="checkbox" id="available" name="available" value="isAvailable" [checked]="limitToAvailable">
-    <label for="available">Limit to currently available</label>
-</div>
 <hr>
+
 <app-recipe-list 
     [types]="allSelectedTypes" 
     [styles]="allSelectedStyles" 
