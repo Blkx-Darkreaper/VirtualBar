@@ -2,34 +2,44 @@
     <div class = "top-bar" name="criteria">
         <div name = "select-category">
             <div name ="select-type">
-                <form [formGroup]="typesForm">
-                    <input type="checkbox" id="type-all" name="type" value="all" checked="checked" 
-                        ng-model="allTypesBox" />
+                <form #typeForm="ngForm">
+                    <label for="Type">Drink Type:</label>
+                    <br>
+
+                    <input type="checkbox" 
+                        id="type-all" 
+                        name="{{ typeOptions.name }}" 
+                        value="all" 
+                        [checked]="areAllTypesSelected"
+                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
                     <label for="type-all">(Select All)</label>
 
-                    <span formArrayName="typesArray" *ngFor="let type of allTypes; let i = index">
-                        <input type="checkbox" [formControl]="typesArray.controls[i]"
-                            name="type" id="type-{{ type | lowercase }}" [value]="type" ng-checked="allTypesBox" 
-                            [checked]="allSelectedTypes[i]" />
-                        <label for="{{ type | lowercase }}">
-                            {{ type }}
+                    <span *ngFor="let subOption of typeOptions.subOptions; let i = index">
+                        <input type="checkbox"
+                            id="type-{{ typeOptions.subOptions[i].name | lowercase }}" 
+                            name="{{ typeOptions.name }}"
+                            value="{{ typeOptions.subOptions[i].name }}"
+                            [(ngModel)]="typeOptions.subOptions[i].selected" 
+                            (ngModelChange)="toggleSelected(typeOptions.name, typeOptions.subOptions[i].name, $event)">
+                        <label for="type-{{ typeOptions.subOptions[i].name | lowercase }}">
+                            {{ typeOptions.subOptions[i].name }}
                         </label>
                     </span>
                 </form>
             </div>
-            <!-- <pre>{{ typesArray.controls | json }}</pre> -->
-            <!-- <button type="submit" [disabled]="!typesForm.valid">Refresh Recipe List</button> -->
+            <pre>Types: {{ allTypes | json }}</pre>
+            <pre>Selected: {{ allSelectedTypes | json }}</pre>
 
             <div name = "select-style">
                 <form #styleForm="ngForm">
-                    <label for="style">Preparation Style:</label>
+                    <label for="Style">Preparation Style:</label>
                     <br>
 
                     <input type="checkbox" 
                         id="style-all" 
                         name="{{ styleOptions.name }}" 
                         value="all" 
-                        [checked]="allStylesSelected" 
+                        [checked]="areAllStylesSelected" 
                         (change)="setGroupSelected($event.target.name, $event.target.checked)" />
                     <label for="style-all">(Select All)</label>
 
@@ -40,7 +50,9 @@
                             value="{{ styleOptions.subOptions[i].name }}"
                             [(ngModel)]="styleOptions.subOptions[i].selected" 
                             (ngModelChange)="toggleSelected(styleOptions.name, styleOptions.subOptions[i].name, $event)">
-                        <label for="style-{{ styleOptions.subOptions[i].name | lowercase }}">{{ styleOptions.subOptions[i].name }}</label>
+                        <label for="style-{{ styleOptions.subOptions[i].name | lowercase }}">
+                            {{ styleOptions.subOptions[i].name }}
+                        </label>
                     </span>
                 </form>
             </div>
@@ -48,46 +60,89 @@
             <pre>Selected: {{ allSelectedStyles | json }}</pre>
 
             <div name="select-family">
-                <label for="family">Family:</label>
-                <br>
+                <form #familyForm="ngForm">
+                    <label for="Family">Cocktail Family:</label>
+                    <br>
 
-                <input type="checkbox" id="all" name="family" value="all" checked="checked">
-                <label for="all">(Select All)</label>
+                    <input type="checkbox" 
+                        id="family-all" 
+                        name="{{ familyOptions.name }}" 
+                        value="all" 
+                        [checked]="areAllFamiliesSelected" 
+                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
+                    <label for="family-all">(Select All)</label>
 
-                <span *ngFor="let family of allFamilies; let i = index">
-                    <input type="checkbox" name="family" id="{{ family | lowercase }}" 
-                    value = "{{ family | lowercase }}" checked ="checked">
-                    <label for="{{ family | lowercase }}">{{ family }}</label>
-                </span>
+                    <span *ngFor="let subOption of familyOptions.subOptions; let i = index">
+                        <input type="checkbox"
+                            id="family-{{ familyOptions.subOptions[i].name | lowercase }}" 
+                            name="{{ familyOptions.name }}"
+                            value="{{ familyOptions.subOptions[i].name }}"
+                            [(ngModel)]="familyOptions.subOptions[i].selected" 
+                            (ngModelChange)="toggleSelected(familyOptions.name, familyOptions.subOptions[i].name, $event)">
+                        <label for="family-{{ familyOptions.subOptions[i].name | lowercase }}">
+                            {{ familyOptions.subOptions[i].name }}
+                        </label>
+                    </span>
+                </form>
             </div>
+            <pre>Families: {{ allFamilies | json }}</pre>
+            <pre>Selected: {{ allSelectedFamilies | json }}</pre>
         </div>
         
         <div name = "select-components">
-            <label for="main">Main Component:</label>
-            <br>
+            <form #componentsForm="ngForm">
+                <label for="Main">Main Components:</label>
+                <br>
 
-            <input type="checkbox" id="all" name="type" value="all" checked="checked">
-                <label for="all">(Select All)</label>
+                <input type="checkbox" 
+                    id="primary-all" 
+                    name="{{ primaryOptions.name }}" 
+                    value="all" 
+                    [checked]="areAllPrimaryComponentsSelected" 
+                    (change)="setGroupSelected($event.target.name, $event.target.checked)" />
+                <label for="primary-all">(Select All)</label>
 
-            <span *ngFor="let main of allPrimaryComponents; let i = index">
-                <input type="checkbox" name="main" id="{{ main | lowercase }}" 
-                value = "{{ main | lowercase }}" checked ="checked">
-                <label for="{{ main | lowercase }}">{{ main }}</label>
-            </span>
+                <span *ngFor="let subOption of primaryOptions.subOptions; let i = index">
+                    <input type="checkbox"
+                        id="primary-{{ primaryOptions.subOptions[i].name | lowercase }}" 
+                        name="{{ primaryOptions.name }}"
+                        value="{{ primaryOptions.subOptions[i].name }}"
+                        [(ngModel)]="primaryOptions.subOptions[i].selected" 
+                        (ngModelChange)="toggleSelected(primaryOptions.name, primaryOptions.subOptions[i].name, $event)">
+                    <label for="primary-{{ primaryOptions.subOptions[i].name | lowercase }}">
+                        {{ primaryOptions.subOptions[i].name }}
+                    </label>
+                </span>
+                <pre>Main Components: {{ allPrimaryComponents | json }}</pre>
+                <pre>Selected: {{ allSelectedPrimaryComponents | json }}</pre>
 
-            <br>
+                <br>
 
-            <label for="auxiliary">Auxiliary Component:</label>
-            <br>
+                <label for="Auxiliary">Auxiliary Components:</label>
+                <br>
 
-            <input type="checkbox" id="all" name="type" value="all" checked="checked">
-                <label for="all">(Select All)</label>
+                <input type="checkbox" 
+                        id="secondary-all" 
+                        name="{{ secondaryOptions.name }}" 
+                        value="all" 
+                        [checked]="areAllSecondaryComponentsSelected" 
+                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
+                    <label for="secondary-all">(Select All)</label>
 
-            <span *ngFor="let aux of allSecondaryComponents; let i = index">
-                <input type="checkbox" name="aux" id="{{ aux | lowercase }}" 
-                value = "{{ aux | lowercase }}" checked ="checked">
-                <label for="{{ aux | lowercase }}">{{ aux }}</label>
-            </span>
+                    <span *ngFor="let subOption of secondaryOptions.subOptions; let i = index">
+                        <input type="checkbox"
+                            id="secondary-{{ secondaryOptions.subOptions[i].name | lowercase }}" 
+                            name="{{ secondaryOptions.name }}"
+                            value="{{ secondaryOptions.subOptions[i].name }}"
+                            [(ngModel)]="secondaryOptions.subOptions[i].selected" 
+                            (ngModelChange)="toggleSelected(secondaryOptions.name, secondaryOptions.subOptions[i].name, $event)">
+                        <label for="secondary-{{ secondaryOptions.subOptions[i].name | lowercase }}">
+                            {{ secondaryOptions.subOptions[i].name }}
+                        </label>
+                    </span>
+                    <pre>Auxiliary Components: {{ allSecondaryComponents | json }}</pre>
+                    <pre>Selected: {{ allSelectedSecondaryComponents | json }}</pre>
+            </form>
         </div>
     </div>
 
