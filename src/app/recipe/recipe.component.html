@@ -1,15 +1,17 @@
 <h3>{{ name }} {{ variant }}</h3>
+<!-- <pre>ID: {{ id }}</pre> -->
 <h4>Ingredients:</h4>
 <ul>
-	<li *ngFor="let ingredient of allIngredients">
-		{{ ingredient }}
+	<li *ngFor="let ingredient of allIngredients; let i = index" >
+		<!-- {{ ingredient | json }} -->
+		{{ getIngredientDesc(i) }}
 	</li>
 </ul>
-<pre>Ingredients: {{ allIngredients | json }}</pre>
+<!-- <pre>Ingredients: {{ allIngredients | json }}</pre> -->
 <h4>Directions:</h4>
 <ol>
 	<li *ngFor="let direction of allDirections">
-		{{ direction }}
+		{{ direction.direction }}
 	</li>
 </ol>
-<pre>Directions: {{ allDirections | json }}</pre>
+<!-- <pre>Directions: {{ allDirections | json }}</pre> -->
