@@ -10,6 +10,7 @@
 <pre>Families: {{ allFamilies | json }}</pre>
 <pre>Primary Components: {{ allPrimaryComponents | json }}</pre>
 <pre>Secondary Components: {{ allSecondaryComponents | json }}</pre> -->
-<pre>Recipes: {{ allRecipes | json }}</pre>
-<pre>Selected: {{ selectedRecipe | json }}</pre>
-<app-recipe *ngIf="selectedRecipe" [name]="selectedRecipe.name" [variant]="selectedRecipe.variant"></app-recipe>
+
+<!-- <pre>Recipes: {{ allRecipes | json }}</pre>
+<pre>Selected: {{ selectedRecipe | json }}</pre> -->
+<app-recipe *ngIf="selectedRecipe" [id]="selectedRecipe.id" [name]="selectedRecipe.name" [variant]="selectedRecipe.variant"></app-recipe>
