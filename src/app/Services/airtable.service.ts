@@ -13,8 +13,8 @@ export class AirtableService {
   protected appId: string;
 
   constructor(private http: HttpClient) {
-    this.http.get('assets/apiKey.txt', { responseType: 'text'}).subscribe((data: string) => { this.apiKey = data });
-    this.http.get('assets/appId.txt', { responseType: 'text'}).subscribe((data: string) => { this.appId = data });
+    this.http.get('assets/apiKey.txt', { responseType: 'text'}).subscribe(data => { this.apiKey = data });
+    this.http.get('assets/appId.txt', { responseType: 'text'}).subscribe(data => { this.appId = data });
    }
 
   get headers(): HttpHeaders {
@@ -22,7 +22,7 @@ export class AirtableService {
   }
 
   get url(): string {
-    return this.apiKey + this.appId + '/';
+    return this.apiUrl + this.appId + '/';
   }
 
   getRequest(url: string): Observable<any> {
@@ -32,7 +32,7 @@ export class AirtableService {
       responseType: 'json' as const
     };
 
-    return this.http.get(url, options).pipe(retry(3), catchError(this.handleError));
+    return this.http.get(url, options).pipe(retry(2), catchError(this.handleError));
   }
 
   // postRequest(url: string): Observable<any> {
