@@ -1,10 +1,7 @@
 export interface RecipeModel {
-    id: string;
-    fields: {
-      name: string;
-      variant: string;
-    }
-    createdTime: Date;
+    id: number;
+    name: string;
+    variant?: string;
     allIngredients?: string[];
     allDirections?: string[];
   }
