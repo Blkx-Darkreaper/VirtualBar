@@ -1,4 +1,4 @@
-import { RecipeModel } from './../recipe-model';
+//import { Recipe } from './../recipe';
 import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input } from '@angular/core';
@@ -9,6 +9,7 @@ import { Component, OnInit, Input } from '@angular/core';
   styleUrls: ['./recipe.component.sass']
 })
 export class RecipeComponent implements OnInit {
+  @Input() id: number;
   @Input() name: string;
   @Input() variant: string;
   allIngredients: string[];
@@ -18,13 +19,9 @@ export class RecipeComponent implements OnInit {
    }
 
   ngOnInit(): void {
-    let model: RecipeModel;
-    model.fields.name = this.name;
-    model.fields.variant = this.variant;
-
     // this.allIngredients = this.ingredientService.GetIngredients(name);
     // this.allDirections = this.directionService.GetDirections(name);
-    this.ingredientService.GetIngredients(model).subscribe((data: any) => {this.allIngredients = data.ingredients;});
-    this.directionService.GetDirections(model).subscribe((data: any) => {this.allDirections = data.directions;});
+    this.ingredientService.GetIngredients(this.id).subscribe((data: any) => {this.allIngredients = data.ingredients;});
+    this.directionService.GetDirections(this.id).subscribe((data: any) => {this.allDirections = data.directions;});
   }
 }
