@@ -2,34 +2,49 @@
     <div class = "top-bar" name="criteria">
         <div name = "select-category">
             <div name ="select-type">
-                <input type="checkbox" id="all" name="type" value="all" checked="checked">
-                <label for="all">(Select All)</label>
-                <form [formGroup]="typesForm" (ngSubmit)="onSubmit()">
+                <form [formGroup]="typesForm">
+                    <input type="checkbox" id="type-all" name="type" value="all" checked="checked" 
+                        ng-model="allTypesBox" />
+                    <label for="type-all">(Select All)</label>
+
                     <span formArrayName="typesArray" *ngFor="let type of allTypes; let i = index">
-                        <input type="checkbox" [formControl]="typesArray.controls[i]" formControlName="{{ i }}"
-                            name="type" id="{{ type | lowercase }}" />
+                        <input type="checkbox" [formControl]="typesArray.controls[i]"
+                            name="type" id="type-{{ type | lowercase }}" [value]="type" ng-checked="allTypesBox" 
+                            [checked]="allSelectedTypes[i]" />
                         <label for="{{ type | lowercase }}">
                             {{ type }}
                         </label>
                     </span>
-
-                    
                 </form>
             </div>
+            <!-- <pre>{{ typesArray.controls | json }}</pre> -->
+            <!-- <button type="submit" [disabled]="!typesForm.valid">Refresh Recipe List</button> -->
 
             <div name = "select-style">
-                <label for="style">Preparation Style:</label>
-                <br>
+                <form #styleForm="ngForm">
+                    <label for="style">Preparation Style:</label>
+                    <br>
 
-                <input type="checkbox" id="all" name="style" value="all" checked="checked">
-                <label for="all">(Select All)</label>
+                    <input type="checkbox" 
+                        id="style-all" 
+                        name="{{ styleOptions.name }}" 
+                        value="all" 
+                        [checked]="allStylesSelected" 
+                        (change)="setAllStylesSelected($event.target.id, $event.target.checked)" />
+                    <label for="style-all">(Select All)</label>
 
-                <span *ngFor="let style of allStyles; let i = index">
-                    <input type="checkbox" name="style" id="{{ style | lowercase }}" 
-                    value = "{{ style | lowercase }}" checked ="checked">
-                    <label for="{{ style | lowercase }}">{{ style }}</label>
-                </span>
+                    <span *ngFor="let subOption of styleOptions.subOptions; let i = index">
+                        <input type="checkbox" 
+                            name="{{ styleOptions.subOptions[i].name }}" 
+                            id="style-{{ styleOptions.subOptions[i].name | lowercase }}" 
+                            [(ngModel)]="styleOptions.subOptions[i].selected" 
+                            (ngModelChange)="toggleStyleSelected(styleOptions.subOptions[i].name, $event)">
+                        <label for="style-{{ styleOptions.subOptions[i].name | lowercase }}">{{ styleOptions.subOptions[i].name }}</label>
+                    </span>
+                </form>
             </div>
+            <pre>Styles: {{ allStyles | json }}</pre>
+            <pre>Selected: {{ allSelectedStyles | json }}</pre>
 
             <div name="select-family">
                 <label for="family">Family:</label>
@@ -86,17 +101,17 @@
 
         <input type="checkbox" id="available" name="available" value="isAvailable" [(ngModel)]="limitToAvailable">
         <label for="available">Limit to currently available</label>
-        <!-- <pre>{{ limitToAvailable }}</pre> -->
+        <pre>{{ limitToAvailable }}</pre>
     </div>
 
-<!--     <button type="submit" [disabled]="!selectionForm.valid">Refresh Recipe List</button>
-</form> -->
+     <!-- <button type="submit" [disabled]="!selectionForm.valid">Refresh Recipe List</button> -->
+<!--</form> -->
 
 <hr>
 
 <app-recipe-list 
-    [types]="allSelectedTypes" 
-    [styles]="allSelectedStyles" 
+    [types]="allSelectedTypes"
+    [styles]="allSelectedStyles"
     [families]="allSelectedFamilies"
     [primaries]="allSelectedPrimaryComponents"
     [secondaries]="allSelectedSecondaryComponents"

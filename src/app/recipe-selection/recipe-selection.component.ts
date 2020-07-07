@@ -3,7 +3,15 @@ import { IngredientInventoriesService } from '../Services/ingredient-inventories
 import { RecipeComponentsService } from '../Services/recipe-components.service';
 import { RecipeCategoriesService } from '../Services/recipe-categories.service';
 import { Component, OnInit } from '@angular/core';
+//import {ThemePalette} from '@angular/material/core';
 import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
+
+export interface Option {
+  name: string;
+  selected: boolean;
+  //color: ThemePalette;
+  subOptions?: Option[];
+}
 
 @Component({
   selector: 'app-recipe-selection',
@@ -20,30 +28,40 @@ export class RecipeSelectionComponent implements OnInit
 
   allInventories: Inventory[];
 
-  selectionForm: FormGroup;
+  // selectionForm: FormGroup;
   typesForm: FormGroup;
 
-  allSelectedTypes: [];
-  allSelectedStyles: string[];
-  allSelectedFamilies: string[];
-  allSelectedPrimaryComponents: string[];
-  allSelectedSecondaryComponents: string[];
-  limitToAvailable: boolean;
+  allSelectedTypes: string[] = [];
+
+  styleOptions: Option = {
+    name: 'Style',
+    selected: true,
+    subOptions: [ ]
+  };
+  allSelectedStyles: string[] = [];
+  allStylesSelected: boolean = true;
+
+  allSelectedFamilies: string[] = [];
+
+  allSelectedPrimaryComponents: string[] = [];
+
+  allSelectedSecondaryComponents: string[] = [];
+
+  limitToAvailable: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private recipeCategoryService: RecipeCategoriesService, 
     private recipeComponentService: RecipeComponentsService, 
     private ingredientInventory: IngredientInventoriesService
-) 
-    { 
-      //this.selectionForm = this.formBuilder.group({});
-      this.typesForm = this.formBuilder.group({ typesArray: this.formBuilder.array([]) });
-      this.limitToAvailable = false;
-    }
+) { }
 
   get typesArray(): FormArray {
     return this.typesForm.controls.typesArray as FormArray;
   }
+
+  // get types() {
+  //   return this.typesForm.get('types');
+  // }
 
   ngOnInit(): void {
     this.recipeCategoryService.GetTypes().subscribe((data: any) => {this.allTypes = data.types;});
@@ -54,22 +72,81 @@ export class RecipeSelectionComponent implements OnInit
 
     this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = JSON.parse(data.inventories);});
 
-    this.addTypes();
-  }
+    //this.selectionForm = this.formBuilder.group({});
 
-  addTypes() {
-    /* this.allTypes.forEach((o, i) => {
-      const control: FormControl = new FormControl(true);
-
-      (this.typesForm.controls.typesArray as FormArray).push(control);
-    }); */
-
+    this.typesForm = this.formBuilder.group({ typesArray: this.formBuilder.array([]) });
     for(let type in this.allTypes) {
       this.typesArray.push(this.formBuilder.control(true));
     }
+
+    for(let i in this.allStyles) {
+      let style = this.allStyles[i];
+      this.styleOptions.subOptions.push({ name: style, selected: true});
+    }
+
+    this.updateSelectedStyles();
   }
 
-  onSubmit() {
-      console.log(this.typesArray.value);
+  // addTypes() {
+  //   /* this.allTypes.forEach((o, i) => {
+  //     const control: FormControl = new FormControl(true);
+
+  //     (this.typesForm.controls.typesArray as FormArray).push(control);
+  //   }); */
+
+  //   for(let type in this.allTypes) {
+  //     this.typesArray.push(this.formBuilder.control(true));
+  //   }
+  // }
+
+  // submitTypes() {
+  //     console.log(this.typesArray.value);
+  // }
+
+  updateSelectedStyles() {
+    this.allStylesSelected = this.styleOptions.subOptions != null && this.styleOptions.subOptions.every(o => o.selected);
+
+    if(this.allStylesSelected == true) {
+      this.allSelectedStyles = ["all"];
+      return;
+    }
+
+    this.allSelectedStyles = [];
+    for(let i in this.styleOptions.subOptions) {
+      let style = this.styleOptions.subOptions[i];
+      if(style.selected != true) {
+        continue;
+      }
+
+      this.allSelectedStyles.push(style.name);
+    }
+  }
+
+  areSomeStylesSelected(): boolean {
+    if (this.styleOptions.subOptions == null) {
+      return false;
+    }
+
+    return this.styleOptions.subOptions.filter(o => o.selected).length > 0 && !this.allStylesSelected;
+  }
+
+  setAllStylesSelected(name: string, selected: boolean) {
+    console.log(name + ' checkbox has been set to ' + selected);  //debug
+
+    this.allStylesSelected = selected;
+
+    if (this.styleOptions.subOptions == null) {
+      return;
+    }
+
+    this.styleOptions.subOptions.forEach(o => o.selected = selected);
+
+    this.updateSelectedStyles();
+  }
+
+  toggleStyleSelected(name: string, selected: boolean) {
+    console.log(name + ' checkbox has been set to ' + selected);  //debug
+
+    this.updateSelectedStyles();
   }
 }
