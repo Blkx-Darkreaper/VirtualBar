@@ -2,6 +2,7 @@ import { RecipeListService } from '../Services/recipe-list.service';
 import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input } from '@angular/core';
+import { map } from 'rxjs/operators';
 import { RecipeModel } from '../recipe-model';
 
 @Component({
@@ -14,12 +15,12 @@ export class RecipeListComponent implements OnInit {
   allRecipes: RecipeModel[];
   selectedRecipe: RecipeModel;
 
-  @Input('types') drinkTypes: string[];
-  @Input('styles') preparationStyles:string[];
-  @Input() families: string[];
-  @Input('primaries') primaryComponents: string[];
-  @Input('secondaries') secondaryComponents: string[];
-  @Input('limit') limitToAvailable: boolean;
+  @Input('types') allDrinkTypes: string[] = ['all'];
+  @Input('styles') allPreparationStyles:string[] = ['all'];
+  @Input('families') allFamilies: string[] = ['all'];
+  @Input('primaries') allPrimaryComponents: string[] = ['all'];
+  @Input('secondaries') allSecondaryComponents: string[] = ['all'];
+  @Input('limit') limitToAvailable: boolean = false;
 
   constructor(private recipeListService: RecipeListService, 
     private ingredientService: RecipeIngredientsService, 
@@ -27,16 +28,31 @@ export class RecipeListComponent implements OnInit {
 
   ngOnInit(): void {
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
+
     this.recipeListService.GetRecipes(
     //this.recipeListService.GetRecipesFromAirtable(
-      this.drinkTypes, this.preparationStyles, this.families, 
-      this.primaryComponents, this.secondaryComponents, this.limitToAvailable
-      ).subscribe((data: any) => { this.allRecipes = data.records; });
+      this.allDrinkTypes, this.allPreparationStyles, this.allFamilies, 
+      this.allPrimaryComponents, this.allSecondaryComponents, this.limitToAvailable
+      ).pipe(map(response => {
+        let allRecipes = response.records.map(
+          recipeObj => {
+            return recipeObj.fields;
+          }
+        )
+
+        return allRecipes;
+      }))
+      .subscribe((data: RecipeModel[]) => { this.allRecipes = data; });
   }
 
   onSelect(recipe: RecipeModel): void {
-    this.ingredientService.GetIngredients(recipe).subscribe((data: any) => {recipe.allIngredients = data.ingredients;});
-    this.directionService.GetDirections(recipe).subscribe((data: any) => {recipe.allDirections = data.directions; });
+    this.ingredientService.GetIngredients(
+      // this.ingredientService.GetIngredientsFromAirtable(
+      recipe.id).subscribe((data: any) => {recipe.allIngredients = data.records;});
+
+    this.directionService.GetDirections(
+      // this.directionService.GetDirectionsFromAirtable(
+      recipe.id).subscribe((data: any) => {recipe.allDirections = data.records; });
 
     this.selectedRecipe = recipe;
   }
