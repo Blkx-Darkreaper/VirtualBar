@@ -27,14 +27,14 @@ export class RecipeListComponent implements OnInit {
     private directionService: RecipeDirectionsService) { }
 
   ngOnInit(): void {
-    // if(this.allDrinkTypes.length == 0 
-    //   || this.allPreparationStyles.length == 0 
-    //   || this.allFamilies.length == 0
-    //   || this.allPrimaryComponents.length == 0
-    //   || this.allSecondaryComponents.length == 0) {
-    //     this.allRecipes = [];
-    //     return;
-    //   }
+    if(this.allDrinkTypes.length == 0 
+      && this.allPreparationStyles.length == 0 
+      && this.allFamilies.length == 0
+      && this.allPrimaryComponents.length == 0
+      && this.allSecondaryComponents.length == 0) {
+        this.allRecipes = [];
+        return;
+      }
 
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
 
