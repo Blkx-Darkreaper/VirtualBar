@@ -30,15 +30,16 @@
                         name="{{ styleOptions.name }}" 
                         value="all" 
                         [checked]="allStylesSelected" 
-                        (change)="setAllStylesSelected($event.target.id, $event.target.checked)" />
+                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
                     <label for="style-all">(Select All)</label>
 
                     <span *ngFor="let subOption of styleOptions.subOptions; let i = index">
-                        <input type="checkbox" 
-                            name="{{ styleOptions.subOptions[i].name }}" 
+                        <input type="checkbox"
                             id="style-{{ styleOptions.subOptions[i].name | lowercase }}" 
+                            name="{{ styleOptions.name }}"
+                            value="{{ styleOptions.subOptions[i].name }}"
                             [(ngModel)]="styleOptions.subOptions[i].selected" 
-                            (ngModelChange)="toggleStyleSelected(styleOptions.subOptions[i].name, $event)">
+                            (ngModelChange)="toggleSelected(styleOptions.name, styleOptions.subOptions[i].name, $event)">
                         <label for="style-{{ styleOptions.subOptions[i].name | lowercase }}">{{ styleOptions.subOptions[i].name }}</label>
                     </span>
                 </form>
@@ -101,7 +102,7 @@
 
         <input type="checkbox" id="available" name="available" value="isAvailable" [(ngModel)]="limitToAvailable">
         <label for="available">Limit to currently available</label>
-        <pre>{{ limitToAvailable }}</pre>
+        <pre>Limit: {{ limitToAvailable }}</pre>
     </div>
 
      <!-- <button type="submit" [disabled]="!selectionForm.valid">Refresh Recipe List</button> -->

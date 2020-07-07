@@ -103,6 +103,46 @@ export class RecipeSelectionComponent implements OnInit
   //     console.log(this.typesArray.value);
   // }
 
+  // areSomeStylesSelected(): boolean {
+  //   if (this.styleOptions.subOptions == null) {
+  //     return false;
+  //   }
+
+  //   return this.styleOptions.subOptions.filter(o => o.selected).length > 0 && !this.allStylesSelected;
+  // }
+
+  setGroupSelected(group: string, selected: boolean) {
+    console.log(group + ' group checkboxes have been set to ' + selected);  //debug
+
+    switch(group) {
+      case "Style":
+        this.setAllStylesSelected(selected);
+        break;
+    }
+  }
+
+  setAllStylesSelected(selected: boolean) {
+    this.allStylesSelected = selected;
+
+    if (this.styleOptions.subOptions == null) {
+      return;
+    }
+
+    this.styleOptions.subOptions.forEach(o => o.selected = selected);
+
+    this.updateSelectedStyles();
+  }
+
+  toggleSelected(group: string, name: string, selected: boolean) {
+    console.log(group + " " + name + ' checkbox has been set to ' + selected);  //debug
+
+    switch(group) {
+      case "Style":
+        this.updateSelectedStyles();
+        break;
+    }
+  }
+
   updateSelectedStyles() {
     this.allStylesSelected = this.styleOptions.subOptions != null && this.styleOptions.subOptions.every(o => o.selected);
 
@@ -120,33 +160,5 @@ export class RecipeSelectionComponent implements OnInit
 
       this.allSelectedStyles.push(style.name);
     }
-  }
-
-  areSomeStylesSelected(): boolean {
-    if (this.styleOptions.subOptions == null) {
-      return false;
-    }
-
-    return this.styleOptions.subOptions.filter(o => o.selected).length > 0 && !this.allStylesSelected;
-  }
-
-  setAllStylesSelected(name: string, selected: boolean) {
-    console.log(name + ' checkbox has been set to ' + selected);  //debug
-
-    this.allStylesSelected = selected;
-
-    if (this.styleOptions.subOptions == null) {
-      return;
-    }
-
-    this.styleOptions.subOptions.forEach(o => o.selected = selected);
-
-    this.updateSelectedStyles();
-  }
-
-  toggleStyleSelected(name: string, selected: boolean) {
-    console.log(name + ' checkbox has been set to ' + selected);  //debug
-
-    this.updateSelectedStyles();
   }
 }
