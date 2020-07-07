@@ -5,9 +5,11 @@
 		{{ ingredient }}
 	</li>
 </ul>
+<pre>Ingredients: {{ allIngredients | json }}</pre>
 <h4>Directions:</h4>
 <ol>
 	<li *ngFor="let direction of allDirections">
 		{{ direction }}
 	</li>
 </ol>
+<pre>Directions: {{ allDirections | json }}</pre>
