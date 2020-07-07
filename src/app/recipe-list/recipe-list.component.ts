@@ -1,16 +1,16 @@
 import { RecipeListService } from '../Services/recipe-list.service';
 import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { RecipeModel } from '../recipe-model';
+import { RecipeModel } from '../Models/recipe-model';
 
 @Component({
   selector: 'app-recipe-list',
   templateUrl: './recipe-list.component.html',
   styleUrls: ['./recipe-list.component.sass']
 })
-export class RecipeListComponent implements OnInit {
+export class RecipeListComponent implements OnInit, OnChanges {
   title = "Recipes";
   allRecipes: RecipeModel[];
   selectedRecipe: RecipeModel;
@@ -27,6 +27,14 @@ export class RecipeListComponent implements OnInit {
     private directionService: RecipeDirectionsService) { }
 
   ngOnInit(): void {
+    this.updateRecipeList();
+  }
+
+  ngOnChanges(): void {
+    this.updateRecipeList();
+  }
+
+  updateRecipeList() {
     if(this.allDrinkTypes.length == 0 
       && this.allPreparationStyles.length == 0 
       && this.allFamilies.length == 0
@@ -52,6 +60,8 @@ export class RecipeListComponent implements OnInit {
         return allRecipes;
       }))
       .subscribe((data: RecipeModel[]) => { this.allRecipes = data; });
+
+      this.allRecipes.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   onSelect(recipe: RecipeModel): void {
