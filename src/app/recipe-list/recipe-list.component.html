@@ -1,15 +1,23 @@
 <h3>{{ title }}</h3>
 <ul class="recipes">
-    <li *ngFor="let recipe of allRecipes" [class.selected]="recipe === selectedRecipe" (click)="onSelect(recipe)">
+    <!-- <li *ngFor="let recipe of allRecipes | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize"  -->
+        <li *ngFor="let recipe of currentRecipePage" 
+        [class.selected]="recipe === selectedRecipe" 
+        (click)="onSelect(recipe)">
     <!-- <li *ngFor="let recipe of allRecipes"> -->
         {{ recipe.name }} {{ recipe.variant }}
 	</li>
 </ul>
-<!-- <pre>Types: {{ allDrinkTypes | json }}</pre>
-<pre>Styles: {{ allPreparationStyles | json }}</pre>
-<pre>Families: {{ allFamilies | json }}</pre>
-<pre>Primary Components: {{ allPrimaryComponents | json }}</pre>
-<pre>Secondary Components: {{ allSecondaryComponents | json }}</pre> -->
+<jw-pagination [items]="allRecipes" (changePage)="onChangePage($event)"></jw-pagination>
+<!-- <ngb-pagination
+    [collectionSize]="15" 
+    [(page)]="page" 
+    [(pageSize)]
+    [maxSize]="5" 
+    [rotate]="true" 
+    [ellipses]="false" 
+    [boundaryLinks]="true">
+</ngb-pagination> -->
 
 <!-- <pre>Recipes: {{ allRecipes | json }}</pre> -->
 <!-- <pre>Selected: {{ selectedRecipe | json }}</pre> -->

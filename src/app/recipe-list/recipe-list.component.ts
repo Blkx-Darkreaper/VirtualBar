@@ -15,6 +15,9 @@ export class RecipeListComponent implements OnInit, OnChanges {
   allRecipes: RecipeModel[];
   selectedRecipe: RecipeModel;
 
+  currentRecipePage: Array<RecipeModel>;
+  // page = 1;
+
   @Input('types') allDrinkTypes: string[] = ['all'];
   @Input('styles') allPreparationStyles:string[] = ['all'];
   @Input('families') allFamilies: string[] = ['all'];
@@ -74,5 +77,10 @@ export class RecipeListComponent implements OnInit, OnChanges {
       recipe.id).subscribe((data: any) => {recipe.allDirections = data.records; });
 
     this.selectedRecipe = recipe;
+  }
+
+  onChangePage(recipePage: Array<RecipeModel>) {
+    // update current page of recipes
+    this.currentRecipePage = recipePage;
   }
 }
