@@ -30,6 +30,35 @@
             <!-- <pre>Types: {{ allTypes | json }}</pre>
             <pre>Selected: {{ allSelectedTypes | json }}</pre> -->
 
+            <div name ="select-occassion">
+                <form #occassionForm="ngForm">
+                    <label for="Type">Appropriate for Occassion:</label>
+                    <br>
+
+                    <input type="checkbox" 
+                        id="occassion-all" 
+                        name="{{ occassionOptions.name }}" 
+                        value="all" 
+                        [checked]="areAllOccassionsSelected"
+                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
+                    <label for="occassion-all">(Select All)</label>
+
+                    <span *ngFor="let subOption of occassionOptions.subOptions; let i = index">
+                        <input type="checkbox"
+                            id="occassion-{{ occassionOptions.subOptions[i].name | lowercase }}" 
+                            name="{{ occassionOptions.name }}"
+                            value="{{ occassionOptions.subOptions[i].name }}"
+                            [(ngModel)]="occassionOptions.subOptions[i].selected" 
+                            (ngModelChange)="toggleSelected(occassionOptions.name, occassionOptions.subOptions[i].name, $event)">
+                        <label for="type-{{ occassionOptions.subOptions[i].name | lowercase }}">
+                            {{ occassionOptions.subOptions[i].name }}
+                        </label>
+                    </span>
+                </form>
+            </div>
+            <!-- <pre>Types: {{ allOccassions | json }}</pre>
+            <pre>Selected: {{ allSelectedOccassions | json }}</pre> -->
+
             <div name = "select-style">
                 <form #styleForm="ngForm">
                     <label for="Style">Preparation Style:</label>
@@ -167,6 +196,7 @@
 
 <app-recipe-list 
     [types]="allSelectedTypes"
+    [occassions]="allSelectedOccassions"
     [styles]="allSelectedStyles"
     [families]="allSelectedFamilies"
     [primaries]="allSelectedPrimaryComponents"

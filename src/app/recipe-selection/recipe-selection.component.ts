@@ -21,6 +21,7 @@ export interface Option {
 export class RecipeSelectionComponent implements OnInit 
 {
   allTypes: string[];
+  allOccassions: string[];
   allStyles: string[];
   allFamilies: string[];
   allPrimaryComponents: string[];
@@ -37,6 +38,14 @@ export class RecipeSelectionComponent implements OnInit
   };
   allSelectedTypes: string[] = [];
   areAllTypesSelected: boolean = true;
+
+  occassionOptions: Option = {
+    name: 'Occassion',
+    selected: true,
+    subOptions: []
+  };
+  allSelectedOccassions: string[] = [];
+  areAllOccassionsSelected: boolean = true;
 
   styleOptions: Option = {
     name: 'Style',
@@ -89,9 +98,10 @@ export class RecipeSelectionComponent implements OnInit
 
     //this.selectionForm = this.formBuilder.group({});
 
-    let allGroups: string[][] = [this.allTypes, this.allStyles, this.allFamilies, 
+    let allGroups: string[][] = [this.allTypes, this.allOccassions, this.allStyles, this.allFamilies, 
       this.allPrimaryComponents, this.allSecondaryComponents];
-    let allOptions: Option[] = [this.typeOptions, this.styleOptions, this.familyOptions,
+
+    let allOptions: Option[] = [this.typeOptions, this.occassionOptions, this.styleOptions, this.familyOptions,
       this.primaryOptions, this.secondaryOptions];
 
     for(let i in allGroups) {
@@ -105,6 +115,7 @@ export class RecipeSelectionComponent implements OnInit
     }
 
     this.updateSelectedTypes();
+    this.updateSelectedOccassions();
     this.updateSelectedStyles();
     this.updateSelectedFamilies();
     this.updateSelectedPrimaryComponents();
@@ -143,21 +154,25 @@ export class RecipeSelectionComponent implements OnInit
         this.setAllTypesSelected(selected);
         break;
 
+      case "Occassion":
+        this.setAllOccassionsSelected(selected);
+        break;
+
       case "Style":
         this.setAllStylesSelected(selected);
         break;
 
-        case "Family":
-          this.setAllFamiliesSelected(selected);
-          break;
+      case "Family":
+        this.setAllFamiliesSelected(selected);
+        break;
 
-          case "Main":
-            this.setAllPrimaryComponentsSelected(selected);
-            break;
+      case "Main":
+        this.setAllPrimaryComponentsSelected(selected);
+        break;
 
-            case "Auxiliary":
-              this.setAllSecondaryComponentsSelected(selected);
-              break;
+      case "Auxiliary":
+        this.setAllSecondaryComponentsSelected(selected);
+        break;
     }
   }
 
@@ -171,6 +186,18 @@ export class RecipeSelectionComponent implements OnInit
     this.typeOptions.subOptions.forEach(o => o.selected = selected);
 
     this.updateSelectedTypes();
+  }
+
+  setAllOccassionsSelected(selected: boolean) {
+    this.areAllOccassionsSelected = selected;
+
+    if (this.occassionOptions.subOptions == null) {
+      return;
+    }
+
+    this.occassionOptions.subOptions.forEach(o => o.selected = selected);
+
+    this.updateSelectedOccassions();
   }
 
   setAllStylesSelected(selected: boolean) {
@@ -229,21 +256,25 @@ export class RecipeSelectionComponent implements OnInit
         this.updateSelectedTypes();
         break;
 
+      case "Occassion":
+        this.updateSelectedOccassions();
+        break;
+
       case "Style":
         this.updateSelectedStyles();
         break;
 
-        case "Family":
-          this.updateSelectedFamilies();
-          break;
+      case "Family":
+        this.updateSelectedFamilies();
+        break;
 
-          case "Main":
-            this.updateSelectedPrimaryComponents();
-            break;
+      case "Main":
+        this.updateSelectedPrimaryComponents();
+        break;
 
-            case "Auxiliary":
-              this.updateSelectedSecondaryComponents();
-              break;
+      case "Auxiliary":
+        this.updateSelectedSecondaryComponents();
+        break;
     }
   }
 
@@ -264,6 +295,26 @@ export class RecipeSelectionComponent implements OnInit
       }
 
       this.allSelectedTypes.push(type.name);
+    }
+  }
+
+  updateSelectedOccassions() {
+    this.areAllOccassionsSelected = this.occassionOptions.subOptions != null 
+    && this.occassionOptions.subOptions.every(o => o.selected);
+
+    if(this.areAllOccassionsSelected == true) {
+      this.allSelectedOccassions = ["all"];
+      return;
+    }
+
+    this.allSelectedOccassions = [];
+    for(let i in this.occassionOptions.subOptions) {
+      let occassion = this.occassionOptions.subOptions[i];
+      if(occassion.selected != true) {
+        continue;
+      }
+
+      this.allSelectedOccassions.push(occassion.name);
     }
   }
 

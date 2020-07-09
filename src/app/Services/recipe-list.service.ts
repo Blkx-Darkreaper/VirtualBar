@@ -11,7 +11,7 @@ export class RecipeListService extends AirtableService {
 
     constructor(http: HttpClient) { super(http) }
 
-    GetRecipes(allTypes: string[], allStyles: string[], allFamilies: string[], 
+    GetRecipes(allTypes: string[], allOccassions: string[], allStyles: string[], allFamilies: string[], 
       allPrimaryComponents: string[], allSecondaryComponents: string[], limitToAvailable: boolean
       ): Observable<any> {
       const allRecipes = {"records":[
@@ -23,19 +23,24 @@ export class RecipeListService extends AirtableService {
       return of(allRecipes);
     }
 
-     GetRecipesFromAirtable(allTypes: string[], allStyles: string[], allFamilies: string[], 
+     GetRecipesFromAirtable(allTypes: string[], allOccassions: string[], allStyles: string[], allFamilies: string[], 
     allPrimaryComponents: string[], allSecondaryComponents: string[], limitToAvailable: boolean
     ): Observable<any> {
       let url = this.url as string;
       url += this.requestUrl;
 
       let totalFilters = 0;
-      let typeFilter :string = "", styleFilter: string = "", familyFilter: string = "", 
+      let typeFilter: string = "", occassionsFilter: string = "", styleFilter: string = "", familyFilter: string = "", 
       primaryFilter: string = "", secondaryFilter: string = "";
 
       if(allTypes.length > 1 || allTypes[0].toLowerCase() != "all") {
         totalFilters++;
         typeFilter = this.AppendFieldFilters(typeFilter, "Type", allTypes);
+      }
+
+      if(allOccassions.length > 1 || allTypes[0].toLowerCase() != "all") {
+        totalFilters++;
+        occassionsFilter = this.AppendFieldFilters(occassionsFilter, "Occassions", allOccassions);
       }
 
       if(allStyles.length > 1 || allStyles[0].toLowerCase() != "all") {
@@ -63,6 +68,7 @@ export class RecipeListService extends AirtableService {
 
         // Add filters
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, typeFilter);
+        filterByFormula = this.AppendToFilterByFormula(filterByFormula, occassionsFilter)
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, styleFilter);
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, familyFilter);
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, primaryFilter);

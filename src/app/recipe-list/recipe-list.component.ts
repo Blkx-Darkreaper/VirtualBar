@@ -19,6 +19,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
   // page = 1;
 
   @Input('types') allDrinkTypes: string[] = ['all'];
+  @Input('occassions') allDrinkOccassions: string[] = ['all'];
   @Input('styles') allPreparationStyles:string[] = ['all'];
   @Input('families') allFamilies: string[] = ['all'];
   @Input('primaries') allPrimaryComponents: string[] = ['all'];
@@ -39,6 +40,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
 
   updateRecipeList() {
     if(this.allDrinkTypes.length == 0 
+      && this.allDrinkOccassions.length == 0
       && this.allPreparationStyles.length == 0 
       && this.allFamilies.length == 0
       && this.allPrimaryComponents.length == 0
@@ -51,7 +53,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
 
     this.recipeListService.GetRecipes(
     //this.recipeListService.GetRecipesFromAirtable(
-      this.allDrinkTypes, this.allPreparationStyles, this.allFamilies, 
+      this.allDrinkTypes, this.allDrinkOccassions, this.allPreparationStyles, this.allFamilies, 
       this.allPrimaryComponents, this.allSecondaryComponents, this.limitToAvailable
       ).pipe(map(response => {
         let allRecipes = response.records.map(
