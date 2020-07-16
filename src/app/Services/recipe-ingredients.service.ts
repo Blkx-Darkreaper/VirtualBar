@@ -8,8 +8,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class RecipeIngredientsService extends AirtableService {
-  requestUrl: string = 'Recipe%20Ingredients?filterByFormula=FIND('
-  requestUrlSuffix: string = ', {Recipe ID})';
+  requestUrl: string = 'Recipe%20Ingredients?filterByFormula={Recipe%20ID}='
   fieldFilter: string = '&fields[]=Ingredient Name&fields[]=Order&fields[]=Ounces&fields[]=Millilitres&fields[]=Quantity'
     + '&fields[]=Grams&fields[]=Dashes&fields[]=Barspoons&fields[]=Teaspoons&fields[]=Cups';
 
@@ -377,7 +376,7 @@ export class RecipeIngredientsService extends AirtableService {
 
   GetIngredientsFromAirtable(recipeId: number): Observable<any> {
     let url = this.url as string;
-    url += this.requestUrl + recipeId + this.requestUrlSuffix;
+    url += this.requestUrl + recipeId;
     return this.getRequest(url);
   }
 }

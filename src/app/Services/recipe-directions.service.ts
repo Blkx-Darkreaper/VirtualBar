@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class RecipeDirectionsService extends AirtableService {
-  requestUrl: string = 'Recipe%20Directions?filterByFormula={Recipe ID}=';
+  requestUrl: string = 'Recipe%20Directions?filterByFormula={Recipe%20ID}=';
 
   constructor(http: HttpClient) { super(http) }
 
