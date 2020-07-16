@@ -1,14 +1,15 @@
 <h3>{{ title }}</h3>
 <ul class="recipes">
-    <!-- <li *ngFor="let recipe of allRecipes | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize"  -->
-        <li *ngFor="let recipe of currentRecipePage" 
+    <!-- <li *ngFor="let recipe of allRecipes | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize" -->
+        <!-- <li *ngFor="let recipe of currentRecipePage"  -->
+    <li *ngFor="let recipe of allRecipes"
         [class.selected]="recipe === selectedRecipe" 
         (click)="onSelect(recipe)">
     <!-- <li *ngFor="let recipe of allRecipes"> -->
-        {{ recipe.name }} {{ recipe.variant }}
+        {{ recipe.name }}{{ getVariantSuffix(recipe) }}
 	</li>
 </ul>
-<jw-pagination [items]="allRecipes" (changePage)="onChangePage($event)"></jw-pagination>
+<!-- <jw-pagination [items]="allRecipes" (changePage)="onChangePage($event)"></jw-pagination> -->
 <!-- <ngb-pagination
     [collectionSize]="15" 
     [(page)]="page" 

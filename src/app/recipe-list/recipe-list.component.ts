@@ -110,4 +110,14 @@ export class RecipeListComponent implements OnInit, OnChanges {
     // update current page of recipes
     this.currentRecipePage = recipePage;
   }
+
+  getVariantSuffix(recipe: RecipeModel) {
+    let suffix = '';
+
+    if(isNullOrUndefined(recipe.variant) !== true && recipe.variant.length > 0) {
+      suffix += ': ' + recipe.variant + ' version';
+    }
+
+    return suffix;
+  }
 }
