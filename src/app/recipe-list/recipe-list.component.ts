@@ -3,6 +3,7 @@ import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { map } from 'rxjs/operators';
+import { isNullOrUndefined } from 'util';
 import { RecipeModel } from '../Models/recipe-model';
 
 @Component({
@@ -31,7 +32,9 @@ export class RecipeListComponent implements OnInit, OnChanges {
     private directionService: RecipeDirectionsService) { }
 
   ngOnInit(): void {
-    this.updateRecipeList();
+    this.allRecipes = [];
+
+    // this.updateRecipeList();
   }
 
   ngOnChanges(): void {
@@ -39,26 +42,47 @@ export class RecipeListComponent implements OnInit, OnChanges {
   }
 
   updateRecipeList() {
+    this.allRecipes = [];
+
+    // console.log("Types(" + this.allDrinkTypes + ")"); //debug
+    // console.log("Occassions(" + this.allDrinkOccassions + ")"); //debug
+    // console.log("Styles(" + this.allPreparationStyles + ")"); //debug
+    // console.log("Families(" + this.allFamilies + ")"); //debug
+    // console.log("Primary(" + this.allPrimaryComponents + ")"); //debug
+    // console.log("Secondary(" + this.allSecondaryComponents + ")"); //debug
+
     if(this.allDrinkTypes.length == 0 
-      && this.allDrinkOccassions.length == 0
-      && this.allPreparationStyles.length == 0 
-      && this.allFamilies.length == 0
-      && this.allPrimaryComponents.length == 0
-      && this.allSecondaryComponents.length == 0) {
+      || this.allDrinkOccassions.length == 0
+      || this.allPreparationStyles.length == 0 
+      || this.allFamilies.length == 0
+      || this.allPrimaryComponents.length == 0
+      || this.allSecondaryComponents.length == 0) {
         this.allRecipes = [];
         return;
       }
 
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
 
-    this.recipeListService.GetRecipes(
-    //this.recipeListService.GetRecipesFromAirtable(
+    // this.recipeListService.GetRecipes(
+    this.recipeListService.GetRecipesFromAirtable(
       this.allDrinkTypes, this.allDrinkOccassions, this.allPreparationStyles, this.allFamilies, 
       this.allPrimaryComponents, this.allSecondaryComponents, this.limitToAvailable
       ).pipe(map(response => {
         let allRecipes = response.records.map(
           recipeObj => {
-            return recipeObj.fields;
+            //console.log(recipeObj.fields);
+
+            let model: RecipeModel = {
+              id: recipeObj.fields["Recipe ID"],
+              name: recipeObj.fields["Name"]
+            }
+
+            let variant: string = recipeObj.fields["Variant"];
+            if(isNullOrUndefined(variant) !== true) {
+              model.variant = variant;
+            }
+
+            return model;
           }
         )
 
@@ -70,13 +94,13 @@ export class RecipeListComponent implements OnInit, OnChanges {
   }
 
   onSelect(recipe: RecipeModel): void {
-    this.ingredientService.GetIngredients(
-      // this.ingredientService.GetIngredientsFromAirtable(
-      recipe.id).subscribe((data: any) => {recipe.allIngredients = data.records;});
+    // // this.ingredientService.GetIngredients(
+    //   this.ingredientService.GetIngredientsFromAirtable(
+    //   recipe.id).subscribe((data: any) => {recipe.allIngredients = data.records;});
 
-    this.directionService.GetDirections(
-      // this.directionService.GetDirectionsFromAirtable(
-      recipe.id).subscribe((data: any) => {recipe.allDirections = data.records; });
+    // // this.directionService.GetDirections(
+    //   this.directionService.GetDirectionsFromAirtable(
+    //   recipe.id).subscribe((data: any) => {recipe.allDirections = data.records; });
 
     this.selectedRecipe = recipe;
   }

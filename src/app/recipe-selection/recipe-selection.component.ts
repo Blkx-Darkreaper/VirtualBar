@@ -5,6 +5,7 @@ import { RecipeCategoriesService } from '../Services/recipe-categories.service';
 import { Component, OnInit } from '@angular/core';
 //import {ThemePalette} from '@angular/material/core';
 import { FormGroup, FormBuilder, FormArray, FormControl } from '@angular/forms';
+import { map } from 'rxjs/operators';
 
 export interface Option {
   name: string;
@@ -36,7 +37,7 @@ export class RecipeSelectionComponent implements OnInit
     selected: true,
     subOptions: []
   };
-  allSelectedTypes: string[] = [];
+  allSelectedTypes: string[] = ['all'];
   areAllTypesSelected: boolean = true;
 
   occassionOptions: Option = {
@@ -44,7 +45,7 @@ export class RecipeSelectionComponent implements OnInit
     selected: true,
     subOptions: []
   };
-  allSelectedOccassions: string[] = [];
+  allSelectedOccassions: string[] = ['all'];
   areAllOccassionsSelected: boolean = true;
 
   styleOptions: Option = {
@@ -52,7 +53,7 @@ export class RecipeSelectionComponent implements OnInit
     selected: true,
     subOptions: [ ]
   };
-  allSelectedStyles: string[] = [];
+  allSelectedStyles: string[] = ['all'];
   areAllStylesSelected: boolean = true;
 
   familyOptions: Option = {
@@ -60,7 +61,7 @@ export class RecipeSelectionComponent implements OnInit
     selected: true,
     subOptions: []
   };
-  allSelectedFamilies: string[] = [];
+  allSelectedFamilies: string[] = ['all'];
   areAllFamiliesSelected: boolean = true;
 
   primaryOptions: Option = {
@@ -68,7 +69,7 @@ export class RecipeSelectionComponent implements OnInit
     selected: true,
     subOptions: []
   };
-  allSelectedPrimaryComponents: string[] = [];
+  allSelectedPrimaryComponents: string[] = ['all'];
   areAllPrimaryComponentsSelected: boolean = true;
 
   secondaryOptions: Option = {
@@ -76,7 +77,7 @@ export class RecipeSelectionComponent implements OnInit
     selected: true,
     subOptions: []
   };
-  allSelectedSecondaryComponents: string[] = [];
+  allSelectedSecondaryComponents: string[] = ['all'];
   areAllSecondaryComponentsSelected: boolean = true;
 
   limitToAvailable: boolean = false;
@@ -88,39 +89,189 @@ export class RecipeSelectionComponent implements OnInit
 ) { }
 
   ngOnInit(): void {
-    this.recipeCategoryService.GetTypes().subscribe((data: any) => {this.allTypes = data.types;});
-    this.recipeCategoryService.GetStyles().subscribe((data: any) => {this.allStyles = data.styles;});
-    this.recipeCategoryService.GetFamilies().subscribe((data: any) => {this.allFamilies = data.families;});
-    this.recipeComponentService.GetPrimaries().subscribe((data: any) => {this.allPrimaryComponents = data.components;});
-    this.recipeComponentService.GetSecondaries().subscribe((data: any) => {this.allSecondaryComponents = data.components;});
+    this.allTypes = [];
+    this.allOccassions = [];
+    this.allStyles = [];
+    this.allFamilies = [];
+    this.allPrimaryComponents = [];
+    this.allSecondaryComponents = [];
+
+    // this.recipeCategoryService.GetTypes()
+    this.recipeCategoryService.GetTypesFromAirtable()
+    .pipe(
+      map(response => {
+      let allValues = response.records.map(
+        obj => { 
+          return obj.fields.Name;
+        }
+      )
+
+      return allValues;
+    }))
+    .subscribe((data: string[]) => {
+      data = data.sort((a, b) => a.localeCompare(b));
+      this.allTypes = data;
+      this.addSubOptions(data, this.typeOptions);
+      this.updateSelectedTypes();
+    });
+
+    // this.recipeCategoryService.GetOccassions()
+    this.recipeCategoryService.GetOccassionsFromAirtable()
+    .pipe(
+      map(response => {
+      let allValues = response.records.map(
+        obj => { 
+          return obj.fields.Name;
+        }
+      )
+
+      return allValues;
+    }))
+    .subscribe((data: string[]) => {
+      data = data.sort((a, b) => a.localeCompare(b));
+      this.allOccassions = data;
+      this.addSubOptions(data, this.occassionOptions);
+      this.updateSelectedOccassions();
+    });
+
+    // this.recipeCategoryService.GetStyles()
+    this.recipeCategoryService.GetStylesFromAirtable()
+    .pipe(
+      map(response => {
+      let allValues = response.records.map(
+        obj => { 
+          return obj.fields.Name;
+        }
+      )
+
+      return allValues;
+    }))
+    .subscribe((data: string[]) => {
+      data = data.sort((a, b) => a.localeCompare(b));
+      this.allStyles = data;
+      this.addSubOptions(data, this.styleOptions);
+      this.updateSelectedTypes();
+    });
+
+    // this.recipeCategoryService.GetFamilies()
+    this.recipeCategoryService.GetFamiliesFromAirtable()
+    .pipe(
+      map(response => {
+      let allValues = response.records.map(
+        obj => { 
+          return obj.fields.Name;
+        }
+      )
+
+      return allValues;
+    }))
+    .subscribe((data: string[]) => {
+      data = data.sort((a, b) => a.localeCompare(b));
+      this.allFamilies = data;
+      this.addSubOptions(data, this.familyOptions);
+      this.updateSelectedFamilies();
+    });
+
+    // this.recipeComponentService.GetPrimaries()
+    this.recipeComponentService.GetPrimariesFromAirtable()
+    .pipe(
+      map(response => {
+      let allValues = response.records.map(
+        obj => { 
+          // return obj.fields.Name;
+          return obj.fields.Subtype;
+        }
+      )
+
+      return allValues;
+    }))
+    .subscribe((data: string[]) => {
+      let sortedList = data.sort((a, b) => a.localeCompare(b));
+      let filteredList = sortedList.filter(n => n !== null && n !== undefined); // Remove blanks
+
+      this.allPrimaryComponents = filteredList;
+      this.addSubOptions(filteredList, this.primaryOptions);
+      this.updateSelectedPrimaryComponents();
+    });
+
+    // this.recipeComponentService.GetSecondaries()
+    this.recipeComponentService.GetSecondariesFromAirtable()
+    .pipe(
+      map(response => {
+      let allValues = response.records.map(
+        obj => { 
+          // return obj.fields.Name;
+          return obj.fields.Subtype;
+        }
+      )
+
+      return allValues;
+    }))
+    .subscribe((data: string[]) => {
+      let sortedList = data.sort((a, b) => a.localeCompare(b));
+      let filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i);  // Remove duplicates
+      filteredList = filteredList.filter(n => n !== null && n !== undefined); // Remove blanks
+
+      // for(let i in filteredList) {
+      //   console.log(filteredList[i]);  //debug
+      // }
+
+      this.allSecondaryComponents = filteredList;
+      this.addSubOptions(filteredList, this.secondaryOptions);
+      this.updateSelectedSecondaryComponents();
+    });
 
     this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = JSON.parse(data.inventories);});
 
     //this.selectionForm = this.formBuilder.group({});
-
-    let allGroups: string[][] = [this.allTypes, this.allOccassions, this.allStyles, this.allFamilies, 
-      this.allPrimaryComponents, this.allSecondaryComponents];
-
-    let allOptions: Option[] = [this.typeOptions, this.occassionOptions, this.styleOptions, this.familyOptions,
-      this.primaryOptions, this.secondaryOptions];
-
-    for(let i in allGroups) {
-      let option: Option = allOptions[i];
-
-      let group = allGroups[i];
-      for(let j in group) {
-        let value = group[j];
-        option.subOptions.push({ name: value, selected: true});
-      }
-    }
-
-    this.updateSelectedTypes();
-    this.updateSelectedOccassions();
-    this.updateSelectedStyles();
-    this.updateSelectedFamilies();
-    this.updateSelectedPrimaryComponents();
-    this.updateSelectedSecondaryComponents();
   }
+
+  protected addSubOptions(group: string[], option: Option) {
+    for(let i in group) {
+      let value = group[i];
+      //console.log("Group Option(" + value + ")");  //debug
+
+      option.subOptions.push({ name: value, selected: true});
+    }
+  }
+
+  // ngOnChanges() {
+  //   console.log("Changes made");  //debug
+
+  //   this.allTypes.sort((a, b) => a.localeCompare(b));
+  //   this.allOccassions.sort((a, b) => a.localeCompare(b));
+  //   this.allStyles.sort((a, b) => a.localeCompare(b));
+  //   this.allFamilies.sort((a, b) => a.localeCompare(b));
+  //   this.allPrimaryComponents.sort((a, b) => a.localeCompare(b));
+  //   this.allSecondaryComponents.sort((a, b) => a.localeCompare(b));
+
+  //   let allGroups: string[][] = [this.allTypes, this.allOccassions, this.allStyles, this.allFamilies, 
+  //     this.allPrimaryComponents, this.allSecondaryComponents];
+
+  //   let allOptions: Option[] = [this.typeOptions, this.occassionOptions, this.styleOptions, this.familyOptions,
+  //     this.primaryOptions, this.secondaryOptions];
+
+  //   for(let i in allGroups) {
+  //     let option: Option = allOptions[i];
+
+  //     let group = allGroups[i];
+  //     console.log("Group(" + group + ")");  //debug
+
+  //     for(let j in group) {
+  //       let value = group[j];
+  //       console.log("Group Option(" + value + ")");  //debug
+
+  //       option.subOptions.push({ name: value, selected: true});
+  //     }
+  //   }
+
+  //   this.updateSelectedTypes();
+  //   this.updateSelectedOccassions();
+  //   this.updateSelectedStyles();
+  //   this.updateSelectedFamilies();
+  //   this.updateSelectedPrimaryComponents();
+  //   this.updateSelectedSecondaryComponents();
+  // }
 
   // addTypes() {
   //   /* this.allTypes.forEach((o, i) => {
@@ -283,6 +434,7 @@ export class RecipeSelectionComponent implements OnInit
     && this.typeOptions.subOptions.every(o => o.selected);
 
     if(this.areAllTypesSelected == true) {
+      //console.log("All Types selected");  //debug
       this.allSelectedTypes = ["all"];
       return;
     }
