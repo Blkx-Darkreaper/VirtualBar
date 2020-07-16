@@ -22,8 +22,11 @@ export class RecipeComponent implements OnInit, OnChanges {
   constructor(private ingredientService: RecipeIngredientsService, private directionService: RecipeDirectionsService) { }
 
   ngOnInit(): void {
-    this.updateIngredients(this.id);
-    this.updateDirections(this.id);
+    this.allIngredients = [];
+    this.allDirections = [];
+    
+    // this.updateIngredients(this.id);
+    // this.updateDirections(this.id);
   }
 
   ngOnChanges(): void {
@@ -32,7 +35,10 @@ export class RecipeComponent implements OnInit, OnChanges {
   }
 
   private updateIngredients(id) {
-    this.ingredientService.GetIngredients(id)
+    this.allIngredients = [];
+
+    // this.ingredientService.GetIngredients(id)
+    this.ingredientService.GetIngredientsFromAirtable(id)
     .pipe(
       map(response => {
       let allIngredients = response.records.map(
@@ -72,13 +78,31 @@ export class RecipeComponent implements OnInit, OnChanges {
 
       return allIngredients;
     }))
-    .subscribe((data: IngredientModel[]) => { this.allIngredients = data; });
+    .subscribe((data: IngredientModel[]) => {
+      let allModels: IngredientModel[] = data;
+      // console.log('Unsorted:'); //debug
+      // for(let i in allModels) {
+      //   let model = allModels[i];
+      //   console.log(model); //debug
+      // }
 
-    this.allIngredients.sort((a, b) => a.order - b.order);  // Sort
+      allModels.sort((a, b) => a.order - b.order);  // Sort
+
+      // console.log('Sorted:' + allModels); //debug
+      // for(let i in allModels) {
+      //   let model = allModels[i];
+      //   console.log(model); //debug
+      // }
+
+      this.allIngredients = allModels;
+    });
   }
 
   private updateDirections(id) {
-    this.directionService.GetDirections(id)
+    this.allDirections = [];
+
+    // this.directionService.GetDirections(id)
+    this.directionService.GetDirectionsFromAirtable(id)
     .pipe(map(response => {
       let allDirections = response.records.map(
         directionObj => {
@@ -93,9 +117,11 @@ export class RecipeComponent implements OnInit, OnChanges {
 
       return allDirections;
     }))
-    .subscribe((data: any) => { this.allDirections = data; });
-
-    this.allDirections.sort((a, b) => a.step - b.step);  // Sort
+    .subscribe((data: DirectionModel[]) => {
+      let allModels: DirectionModel[] = data;
+      allModels.sort((a, b) => a.step - b.step);  // Sort
+      this.allDirections = allModels;
+    });
   }
 
   getIngredientDesc(index: number) {
