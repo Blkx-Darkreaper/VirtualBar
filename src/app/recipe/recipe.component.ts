@@ -6,6 +6,7 @@ import { RecipeIngredientsService } from '../Services/recipe-ingredients.service
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { isNullOrUndefined } from 'util';
+import { RecipeModel } from '../Models/recipe-model';
 
 @Component({
   selector: 'app-recipe',
@@ -122,6 +123,16 @@ export class RecipeComponent implements OnInit, OnChanges {
       allModels.sort((a, b) => a.step - b.step);  // Sort
       this.allDirections = allModels;
     });
+  }
+
+  getVariantSuffix(variant: string) {
+    let suffix = '';
+
+    if(isNullOrUndefined(variant) !== true && variant.length > 0) {
+      suffix += ': ' + variant + ' version';
+    }
+
+    return suffix;
   }
 
   getIngredientDesc(index: number) {

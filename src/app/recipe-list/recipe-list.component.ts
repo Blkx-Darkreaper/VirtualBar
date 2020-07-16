@@ -115,7 +115,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
     let suffix = '';
 
     if(isNullOrUndefined(recipe.variant) !== true && recipe.variant.length > 0) {
-      suffix += ': ' + recipe.variant + ' version';
+      suffix += '; ' + recipe.variant;
     }
 
     return suffix;
