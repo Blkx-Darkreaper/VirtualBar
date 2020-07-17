@@ -89,7 +89,10 @@ export class RecipeListComponent implements OnInit, OnChanges {
         return allRecipes;
       }))
       .subscribe((data: RecipeModel[]) => {
-        let sortedList = data.sort((a, b) => a.name.localeCompare(b.name));
+        let sortedList = data.sort(
+          (a, b) => a.name.localeCompare(b.name) !== 0 ? a.name.localeCompare(b.name) : a.variant.localeCompare(b.variant)
+        );
+        
         this.allRecipes = sortedList;
       });
   }
