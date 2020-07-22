@@ -55,7 +55,8 @@ export class RecipeComponent implements OnInit, OnChanges {
             order: ingredientObj.fields["Order"],
             name: ingredientObj.fields["Ingredient Name"][0],
             /*qualifier: ingredientObj.fields[""],*/
-            amounts: { }
+            amounts: { },
+            notes: ingredientObj.fields["Notes"]
           }
 
           let allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], ["Grams", "g"], 
@@ -160,6 +161,11 @@ export class RecipeComponent implements OnInit, OnChanges {
     }
 
     desc += " " + ingredient.name;
+
+    if(isNullOrUndefined(ingredient.notes) !== true && ingredient.notes.length > 0) {
+      desc += " (" + ingredient.notes + ")";
+    }
+
     return desc;
   }
 }

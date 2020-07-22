@@ -12,6 +12,7 @@ export interface IngredientModel {
     barspoons?: IngredientAmountModel;
     teaspoons?: IngredientAmountModel;
   }
+  notes?: string;
 }
 
 export interface IngredientAmountModel {
