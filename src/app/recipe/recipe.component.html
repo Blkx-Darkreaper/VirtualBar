@@ -2,9 +2,10 @@
 <!-- <pre>ID: {{ id }}</pre> -->
 <h4>Ingredients:</h4>
 <ul>
-	<li *ngFor="let ingredient of allIngredients; let i = index" >
+	<li *ngFor="let order of allIngredientOrders; let i = index" >
+		<!-- {{ order }} -->
 		<!-- {{ ingredient | json }} -->
-		{{ getIngredientDesc(i) }}
+		{{ getIngredientDesc(order) }}
 	</li>
 </ul>
 <!-- <pre>Ingredients: {{ allIngredients | json }}</pre> -->
