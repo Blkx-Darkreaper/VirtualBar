@@ -188,6 +188,7 @@ export class RecipeSelectionComponent implements OnInit
     .subscribe((data: string[]) => {
       let sortedList = data.sort((a, b) => a.localeCompare(b));
       let filteredList = sortedList.filter(n => n !== null && n !== undefined); // Remove blanks
+      filteredList = filteredList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
       this.allPrimaryComponents = filteredList;
       this.addSubOptions(filteredList, this.primaryOptions);
