@@ -226,9 +226,9 @@ export class RecipeComponent implements OnInit, OnChanges {
 
       // console.log("Previous(" + prevAmountDesc + ")");  //debug
       // console.log("Current(" + amountDesc + ")"); //debug
-      // console.log("Match(" + prevAmountDesc.localeCompare(amountDesc) + ")"); //debug
+      // console.log("Match(" + (amountDesc === prevAmountDesc) + ")"); //debug
 
-      if((prevAmountDesc.length == 0 && amountDesc.length > 0) || amountDesc.localeCompare(prevAmountDesc) === -1) {
+      if((prevAmountDesc.length == 0 && amountDesc.length > 0) || amountDesc !== prevAmountDesc) {
         // console.log("Amounts don't match"); //debug
         desc += amountDesc + " ";
       }
