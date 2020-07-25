@@ -66,7 +66,7 @@ export class RecipeComponent implements OnInit, OnChanges {
           }
 
           let allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], ["Grams", "g"], 
-            ["Dashes", ""], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"]];
+            ["Dashes", ""], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"], ["Misc", ""]];
           for(let i = 0; i < allFields.length; i++) {   
             let fieldName: string = allFields[i][0];
             let value: string = ingredientObj.fields[fieldName];
@@ -80,10 +80,11 @@ export class RecipeComponent implements OnInit, OnChanges {
             model.amounts[fieldName.toLowerCase()] = {units: allFields[i][1], amount: value};
           }
 
-          let value: string = ingredientObj.fields['Misc'];
-          if(isNullOrUndefined(value) !== true && value.length > 0) {
-            model.amounts.misc = value;
-          }
+          // // start debug
+          // for(let amount in model.amounts) {
+          //   console.log(amount + "(" + model.amounts[amount] + ")"); //debug
+          // }
+          // // end debug
 
           return model;
         }
@@ -207,7 +208,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       // console.log("Index(" + index + ")");  //debug
 
       let ingredient: IngredientModel = this.allIngredients[index];
-      // console.log("Ingredient(" + ingredient.name + ")"); //debug
+      console.log("Ingredient(" + ingredient.name + ")"); //debug
 
       let allIngredientAmounts = ingredient.amounts;
       //console.log("Ingredient Index " + index + ":"); //debug
@@ -216,7 +217,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       for(let field in allIngredientAmounts) {
         let ingredientAmount: IngredientAmountModel = allIngredientAmounts[field];
         let amount: string = ingredientAmount.amount;
-        // console.log(field + "(" + amount + ")");  //debug
+        console.log(field + "(" + amount + ")");  //debug
 
         if(isNullOrUndefined(amount) === true || amount.length === 0) {
           console.log(amount + " is invalid");

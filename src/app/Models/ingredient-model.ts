@@ -11,7 +11,7 @@ export interface IngredientModel {
     dashes?: IngredientAmountModel;
     barspoons?: IngredientAmountModel;
     teaspoons?: IngredientAmountModel;
-    misc?: string;
+    misc?: IngredientAmountModel;
   }
   notes?: string;
 }
