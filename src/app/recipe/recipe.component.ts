@@ -208,7 +208,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       // console.log("Index(" + index + ")");  //debug
 
       let ingredient: IngredientModel = this.allIngredients[index];
-      console.log("Ingredient(" + ingredient.name + ")"); //debug
+      // console.log("Ingredient(" + ingredient.name + ")"); //debug
 
       let allIngredientAmounts = ingredient.amounts;
       //console.log("Ingredient Index " + index + ":"); //debug
@@ -217,7 +217,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       for(let field in allIngredientAmounts) {
         let ingredientAmount: IngredientAmountModel = allIngredientAmounts[field];
         let amount: string = ingredientAmount.amount;
-        console.log(field + "(" + amount + ")");  //debug
+        // console.log(field + "(" + amount + ")");  //debug
 
         if(isNullOrUndefined(amount) === true || amount.length === 0) {
           console.log(amount + " is invalid");
