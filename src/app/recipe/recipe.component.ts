@@ -6,7 +6,7 @@ import { RecipeIngredientsService } from '../Services/recipe-ingredients.service
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { map } from 'rxjs/operators';
 import { isNullOrUndefined } from 'util';
-import { RecipeModel } from '../Models/recipe-model';
+//import { RecipeModel } from '../Models/recipe-model';
 
 @Component({
   selector: 'app-recipe',
@@ -69,15 +69,20 @@ export class RecipeComponent implements OnInit, OnChanges {
             ["Dashes", ""], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"]];
           for(let i = 0; i < allFields.length; i++) {   
             let fieldName: string = allFields[i][0];
-            let value: number = ingredientObj.fields[fieldName];
+            let value: string = ingredientObj.fields[fieldName];
             // console.log(fieldName + "(" + value + ")"); //debug
 
-            if(isNullOrUndefined(value) === true || isNaN(value) === true) {
+            if(isNullOrUndefined(value) === true || value.length == 0) {
               //console.log(fieldName + " is invalid");
               continue;
             }
 
             model.amounts[fieldName.toLowerCase()] = {units: allFields[i][1], amount: value};
+          }
+
+          let value: string = ingredientObj.fields['Misc'];
+          if(isNullOrUndefined(value) !== true && value.length > 0) {
+            model.amounts.misc = value;
           }
 
           return model;
@@ -94,11 +99,15 @@ export class RecipeComponent implements OnInit, OnChanges {
       //   console.log(model); //debug
       // }
 
-      allModels.sort((a, b) => a.order - b.order);  // Sort
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.order - b.order);  // Sort
+      
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
       // Organize ingredients by index and order #
-      for(let i = 0; i < allModels.length; i++) {
-        let model = allModels[i];
+      for(let i = 0; i < filteredList.length; i++) {
+        let model = filteredList[i];
         let allIndexes = this.allIngredientIndexesByOrder[model.order];
         
         if(isNullOrUndefined(allIndexes)) {
@@ -120,7 +129,7 @@ export class RecipeComponent implements OnInit, OnChanges {
           let index = allIndexes[i];
           //console.log("Index(" + index + ")");  //debug
 
-          let ingredient = allModels[index];
+          let ingredient = filteredList[index];
           if(isNullOrUndefined(ingredient)) {
             continue;
           }
@@ -132,13 +141,13 @@ export class RecipeComponent implements OnInit, OnChanges {
       }
       // end debug */
 
-      // console.log('Sorted:' + allModels); //debug
-      // for(let i in allModels) {
-      //   let model = allModels[i];
+      // console.log('Sorted:' + filteredList); //debug
+      // for(let i in filteredList) {
+      //   let model = filteredList[i];
       //   console.log(model); //debug
       // }
 
-      this.allIngredients = allModels;
+      this.allIngredients = filteredList;
     });
   }
 
@@ -163,8 +172,14 @@ export class RecipeComponent implements OnInit, OnChanges {
     }))
     .subscribe((data: DirectionModel[]) => {
       let allModels: DirectionModel[] = data;
-      allModels.sort((a, b) => a.step - b.step);  // Sort
-      this.allDirections = allModels;
+
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.step - b.step);  // Sort
+      
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+      this.allDirections = filteredList;
     });
   }
 

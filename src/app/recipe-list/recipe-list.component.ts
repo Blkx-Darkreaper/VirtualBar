@@ -89,11 +89,26 @@ export class RecipeListComponent implements OnInit, OnChanges {
         return allRecipes;
       }))
       .subscribe((data: RecipeModel[]) => {
-        let sortedList = data.sort(
+        let filteredList = data.filter(
+          n => isNullOrUndefined(n) !== true 
+          && isNullOrUndefined(n.name) !== true 
+          && isNullOrUndefined(n.id) !== true && isNaN(n.id) !== true
+          ); // Remove blanks
+
+        // // start debug
+        // for(let i in filteredList) {
+        //   let item = filteredList[i];
+        //   console.log(item);  //debug
+        // }
+        // // end debug
+      
+        let sortedList = filteredList.sort(
           (a, b) => a.name.localeCompare(b.name) !== 0 ? a.name.localeCompare(b.name) : a.variant.localeCompare(b.variant)
-        );
+        );  // Sort
         
-        this.allRecipes = sortedList;
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+        this.allRecipes = filteredList;
       });
   }
 

@@ -11,11 +11,12 @@ export interface IngredientModel {
     dashes?: IngredientAmountModel;
     barspoons?: IngredientAmountModel;
     teaspoons?: IngredientAmountModel;
+    misc?: string;
   }
   notes?: string;
 }
 
 export interface IngredientAmountModel {
   units: string;
-  amount: number;
+  amount: string;
 }

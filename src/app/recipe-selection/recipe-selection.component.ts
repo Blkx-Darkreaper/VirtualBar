@@ -109,9 +109,14 @@ export class RecipeSelectionComponent implements OnInit
       return allValues;
     }))
     .subscribe((data: string[]) => {
-      data = data.sort((a, b) => a.localeCompare(b));
-      this.allTypes = data;
-      this.addSubOptions(data, this.typeOptions);
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+      
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+      this.allTypes = filteredList;
+      this.addSubOptions(filteredList, this.typeOptions);
       this.updateSelectedTypes();
     });
 
@@ -128,9 +133,14 @@ export class RecipeSelectionComponent implements OnInit
       return allValues;
     }))
     .subscribe((data: string[]) => {
-      data = data.sort((a, b) => a.localeCompare(b));
-      this.allOccassions = data;
-      this.addSubOptions(data, this.occassionOptions);
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+      
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+      this.allOccassions = filteredList;
+      this.addSubOptions(filteredList, this.occassionOptions);
       this.updateSelectedOccassions();
     });
 
@@ -147,9 +157,14 @@ export class RecipeSelectionComponent implements OnInit
       return allValues;
     }))
     .subscribe((data: string[]) => {
-      data = data.sort((a, b) => a.localeCompare(b));
-      this.allStyles = data;
-      this.addSubOptions(data, this.styleOptions);
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+      
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+      this.allStyles = filteredList;
+      this.addSubOptions(filteredList, this.styleOptions);
       this.updateSelectedTypes();
     });
 
@@ -166,9 +181,14 @@ export class RecipeSelectionComponent implements OnInit
       return allValues;
     }))
     .subscribe((data: string[]) => {
-      data = data.sort((a, b) => a.localeCompare(b));
-      this.allFamilies = data;
-      this.addSubOptions(data, this.familyOptions);
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+      
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+      this.allFamilies = filteredList;
+      this.addSubOptions(filteredList, this.familyOptions);
       this.updateSelectedFamilies();
     });
 
@@ -186,9 +206,11 @@ export class RecipeSelectionComponent implements OnInit
       return allValues;
     }))
     .subscribe((data: string[]) => {
-      let sortedList = data.sort((a, b) => a.localeCompare(b));
-      let filteredList = sortedList.filter(n => n !== null && n !== undefined); // Remove blanks
-      filteredList = filteredList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
       this.allPrimaryComponents = filteredList;
       this.addSubOptions(filteredList, this.primaryOptions);
@@ -209,9 +231,11 @@ export class RecipeSelectionComponent implements OnInit
       return allValues;
     }))
     .subscribe((data: string[]) => {
-      let sortedList = data.sort((a, b) => a.localeCompare(b));
-      let filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i);  // Remove duplicates
-      filteredList = filteredList.filter(n => n !== null && n !== undefined); // Remove blanks
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+      
+      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+      
+      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
       // for(let i in filteredList) {
       //   console.log(filteredList[i]);  //debug
