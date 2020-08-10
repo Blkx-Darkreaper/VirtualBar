@@ -80,6 +80,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
             let variant: string = recipeObj.fields["Variant"];
             if(isNullOrUndefined(variant) !== true) {
               model.variant = variant;
+            } else {
+              model.variant = '';
             }
 
             return model;
