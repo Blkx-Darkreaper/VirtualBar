@@ -3,7 +3,7 @@
     <!-- <li *ngFor="let recipe of allRecipes | slice: (page-1) * pageSize : (page-1) * pageSize + pageSize" -->
         <!-- <li *ngFor="let recipe of currentRecipePage"  -->
     <div *ngFor="let recipe of allRecipes"
-        class="recipe"
+        class="recipeButton"
         [class.selected]="recipe === selectedRecipe" 
         (click)="onSelect(recipe)">
     <!-- <li *ngFor="let recipe of allRecipes"> -->
@@ -29,4 +29,3 @@
     [name]="selectedRecipe.name" 
     [variant]="selectedRecipe.variant">
 </app-recipe>
-<app-recipe-info></app-recipe-info>

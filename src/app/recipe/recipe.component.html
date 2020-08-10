@@ -1,18 +1,27 @@
-<h3>{{ name }}{{ getVariantSuffix(variant) }}</h3>
-<!-- <pre>ID: {{ id }}</pre> -->
-<h4>Ingredients:</h4>
-<ul>
-	<li *ngFor="let order of allIngredientOrders; let i = index" >
-		<!-- {{ order }} -->
-		<!-- {{ ingredient | json }} -->
-		{{ getIngredientDesc(order) }}
-	</li>
-</ul>
-<!-- <pre>Ingredients: {{ allIngredients | json }}</pre> -->
-<h4>Directions:</h4>
-<ol>
-	<li *ngFor="let direction of allDirections">
-		{{ direction.direction }}
-	</li>
-</ol>
-<!-- <pre>Directions: {{ allDirections | json }}</pre> -->
+<div class="recipe">
+	<div class="recipeDetails">
+		<h3>{{ name }}{{ getVariantSuffix(variant) }}</h3>
+		<!-- <pre>ID: {{ id }}</pre> -->
+		<h4>Ingredients:</h4>
+		<ul>
+			<li *ngFor="let order of allIngredientOrders; let i = index" >
+				<!-- {{ order }} -->
+				<!-- {{ ingredient | json }} -->
+				{{ getIngredientDesc(order) }}
+			</li>
+		</ul>
+		<!-- <pre>Ingredients: {{ allIngredients | json }}</pre> -->
+		<h4>Directions:</h4>
+		<ol>
+			<li *ngFor="let direction of allDirections">
+				{{ direction.direction }}
+			</li>
+		</ol>
+		<!-- <pre>Directions: {{ allDirections | json }}</pre> -->
+	</div>
+	<app-recipe-info 
+		[id]="id" 
+		[name]="name" 
+		[variant]="variant">
+	</app-recipe-info>
+</div>

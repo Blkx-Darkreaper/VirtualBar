@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 
 @Component({
   selector: 'app-recipe-info',
@@ -6,8 +6,12 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./recipe-info.component.sass']
 })
 export class RecipeInfoComponent implements OnInit {
+  @Input() id: number;
+  @Input() name: string;
+  @Input() variant: string;
+  allPhotos: HTMLImageElement[];
 
-  constructor() { }
+  constructor(/*private infoService: RecipeInfoService*/) { }
 
   ngOnInit(): void {
   }
