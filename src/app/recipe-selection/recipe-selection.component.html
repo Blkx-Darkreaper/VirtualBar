@@ -4,7 +4,7 @@
             <label for="Type">Drink Type:</label>
             <br>
 
-            <div name ="select-type">
+            <div class="wrap" name ="select-type">
                 <div>
                     <input type="checkbox" 
                         id="type-all" 
@@ -35,7 +35,7 @@
             <label for="Type">Appropriate for Occassion:</label>
             <br>
 
-            <div name ="select-occassion">
+            <div class="wrap" name ="select-occassion">
                 <div>
                     <input type="checkbox" 
                         id="occassion-all" 
@@ -67,7 +67,7 @@
             <label for="Style">Preparation Style:</label>
             <br>
 
-            <div name = "select-style">
+            <div class="wrap" name = "select-style">
                 <div>
                     <input type="checkbox" 
                         id="style-all" 
@@ -126,11 +126,18 @@
         <!-- <pre>Families: {{ allFamilies | json }}</pre> -->
         <!-- <pre>Selected: {{ allSelectedFamilies | json }}</pre> -->
 
+        <div>
+            <label>Muddling:</label>
+            <br>
+            <input type="checkbox" id="muddle" name="muddle" value="reqMuddling" [(ngModel)]="muddlingRequired">
+            <label for="search">Required</label>
+        </div>
+
         <form #mainComponentsForm="ngForm">
             <label for="Main">Main Component:</label>
             <br>
 
-            <div name="main-components">
+            <div class="wrap" name="main-components">
                 <div>
                     <input type="checkbox" 
                         id="primary-all" 
@@ -156,7 +163,11 @@
         <!-- <pre>Main Components: {{ allPrimaryComponents | json }}</pre> -->
         <!-- <pre>Selected: {{ allSelectedPrimaryComponents | json }}</pre> -->
         </form>
+    </div>
 
+    <br>
+
+    <div class="mid-bar">
         <form class="multi-column" #secondaryComponentsForm="ngForm">
             <label for="Auxiliary">Auxiliary Components:</label>
             <br>
@@ -190,17 +201,26 @@
     </div>
 
     <br>
-            
-    <div class = "bottom-bar" name = "inventory">
-        <label for="location">Inventory Location:</label><br>
+    <br>
 
-        <select id="location">
-            <option *ngFor="let inventory of allInventories" value="{{ inventory.name | lowercase }}">{{ inventory.name }}</option>
-        </select>
+    <div class = "bottom-bar">
+        <div name = "search">
+            <label for="search">Filter by name:</label>
+            <br>
+            <input type="text" id="search" name="search" placeholder="..." [(ngModel)] = "nameToFind">
+        </div>
 
-        <input type="checkbox" id="available" name="available" value="isAvailable" [(ngModel)]="limitToAvailable">
-        <label for="available">Limit to currently available</label>
-        <!-- <pre>Limit: {{ limitToAvailable }}</pre> -->
+        <div name = "inventory">
+            <label for="location">Inventory Location:</label><br>
+
+            <select id="location">
+                <option *ngFor="let inventory of allInventories" value="{{ inventory.name | lowercase }}">{{ inventory.name }}</option>
+            </select>
+
+            <input type="checkbox" id="available" name="available" value="isAvailable" [(ngModel)]="limitToAvailable">
+            <label for="available">Limit to currently available</label>
+            <!-- <pre>Limit: {{ limitToAvailable }}</pre> -->
+        </div>
     </div>
 
      <!-- <button type="submit" [disabled]="!selectionForm.valid">Refresh Recipe List</button> -->
@@ -213,7 +233,9 @@
     [occassions]="allSelectedOccassions"
     [styles]="allSelectedStyles"
     [families]="allSelectedFamilies"
+    [muddling]="muddlingRequired"
     [primaries]="allSelectedPrimaryComponents"
     [secondaries]="allSelectedSecondaryComponents"
+    [name]="nameToFind"
     [limit]="limitToAvailable"
 ></app-recipe-list>

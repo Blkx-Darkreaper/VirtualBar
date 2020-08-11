@@ -11,20 +11,9 @@ export class RecipeListService extends AirtableService {
 
     constructor(http: HttpClient) { super(http) }
 
-    GetRecipes(allTypes: string[], allOccassions: string[], allStyles: string[], allFamilies: string[], 
-      allPrimaryComponents: string[], allSecondaryComponents: string[], limitToAvailable: boolean
-      ): Observable<any> {
-      const allRecipes = {"records":[
-        {id: 'recwlMsjYThiXto6x', fields: {id: 1, name: '20th Century Cocktail'}, createdTime: '2020-04-16T16:37:28.000Z'}, 
-        {id: 'recZpZn7bWbxauSmP', fields: {id: 2, name: 'Ahumado Seco'}, createdTime: '2020-04-16T18:17:00.000Z'}, 
-        {id: 'recK7mTjXbgoIPryN', fields: {id: 6, name: 'Appletini', variant: 'Sour apple schnapps'}, createdTime: '2020-04-17T02:53:04.000Z'}
-      ]};
-
-      return of(allRecipes);
-    }
-
      GetRecipesFromAirtable(allTypes: string[], allOccassions: string[], allStyles: string[], allFamilies: string[], 
-    allPrimaryComponents: string[], allSecondaryComponents: string[], limitToAvailable: boolean
+    muddlingRequired: boolean, allPrimaryComponents: string[], allSecondaryComponents: string[], nameToFind: string,
+    limitToAvailable: boolean
     ): Observable<any> {
       let url = this.url as string;
       url += this.requestUrl;
@@ -38,7 +27,7 @@ export class RecipeListService extends AirtableService {
 
       let totalFilters = 0;
       let typeFilter: string = "", occassionsFilter: string = "", styleFilter: string = "", familyFilter: string = "", 
-      primaryFilter: string = "", secondaryFilter: string = "";
+      muddlingFilter: string = "", primaryFilter: string = "", secondaryFilter: string = "", nameFilter: string = "";
 
       if(allTypes.length > 1 || allTypes[0].toLowerCase() != "all") {
         totalFilters++;
@@ -60,6 +49,11 @@ export class RecipeListService extends AirtableService {
         familyFilter = this.AppendExactFieldFilters(familyFilter, "Family", allFamilies);
       }
 
+      if(muddlingRequired === true) {
+        totalFilters++;
+        muddlingFilter = "{Muddled}";
+      }
+
       if(allPrimaryComponents.length > 1 || allPrimaryComponents[0].toLowerCase() != "all") {
         totalFilters++;
         primaryFilter = this.AppendExactFieldFilters(primaryFilter, "Primary Components", allPrimaryComponents);
@@ -70,6 +64,11 @@ export class RecipeListService extends AirtableService {
         secondaryFilter = this.AppendContainsFieldFilters(secondaryFilter, "Secondary Components", allSecondaryComponents);
       }
 
+      if(nameToFind.length > 0) {
+        totalFilters++;
+        nameFilter = "SEARCH('" + nameToFind + "',{Name})";
+      }
+
       if(totalFilters > 0) {
         let filterByFormula = "";
 
@@ -78,8 +77,10 @@ export class RecipeListService extends AirtableService {
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, occassionsFilter)
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, styleFilter);
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, familyFilter);
+        filterByFormula = this.AppendToFilterByFormula(filterByFormula, muddlingFilter);
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, primaryFilter);
         filterByFormula = this.AppendToFilterByFormula(filterByFormula, secondaryFilter);
+        filterByFormula = this.AppendToFilterByFormula(filterByFormula, nameFilter);
 
         if(totalFilters > 1) {
           filterByFormula = "And(" + filterByFormula + ")";

@@ -80,6 +80,10 @@ export class RecipeSelectionComponent implements OnInit
   allSelectedSecondaryComponents: string[] = ['all'];
   areAllSecondaryComponentsSelected: boolean = true;
 
+  muddlingRequired: boolean = false;
+
+  nameToFind: string = '';
+
   limitToAvailable: boolean = false;
 
   constructor(private formBuilder: FormBuilder,

@@ -23,8 +23,10 @@ export class RecipeListComponent implements OnInit, OnChanges {
   @Input('occassions') allDrinkOccassions: string[] = ['all'];
   @Input('styles') allPreparationStyles:string[] = ['all'];
   @Input('families') allFamilies: string[] = ['all'];
+  @Input('muddling') muddlingRequired: boolean = false;
   @Input('primaries') allPrimaryComponents: string[] = ['all'];
   @Input('secondaries') allSecondaryComponents: string[] = ['all'];
+  @Input('name') nameToFind: string = '';
   @Input('limit') limitToAvailable: boolean = false;
 
   constructor(private recipeListService: RecipeListService, 
@@ -63,10 +65,12 @@ export class RecipeListComponent implements OnInit, OnChanges {
 
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
 
+    //console.log("Name(" + this.nameToFind + ")"); //debug
+
     // this.recipeListService.GetRecipes(
     this.recipeListService.GetRecipesFromAirtable(
-      this.allDrinkTypes, this.allDrinkOccassions, this.allPreparationStyles, this.allFamilies, 
-      this.allPrimaryComponents, this.allSecondaryComponents, this.limitToAvailable
+      this.allDrinkTypes, this.allDrinkOccassions, this.allPreparationStyles, this.allFamilies, this.muddlingRequired, 
+      this.allPrimaryComponents, this.allSecondaryComponents, this.nameToFind, this.limitToAvailable
       ).pipe(map(response => {
         let allRecipes = response.records.map(
           recipeObj => {
