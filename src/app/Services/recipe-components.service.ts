@@ -10,7 +10,8 @@ export class RecipeComponentsService extends AirtableService {
   requestUrl: string = 'Ingredients';
   primaryFilter: string = '?filterByFormula=And({Type}="Spirit",{Qualifier}=Blank())';
   // secondaryFilter: string = '?filterByFormula=And({Supertype}="Liquor",{Qualifier}=Blank())';
-  secondaryFilter: string = '?filterByFormula={Supertype}="Liquor"';
+  // secondaryFilter: string = '?filterByFormula={Supertype}="Liquor"';
+  secondaryFilter: string = '?filterByFormula=And({Supertype}="Liquor",{Type}!="Spirit")';
 
   constructor(http: HttpClient) { super(http) }
 
