@@ -79,12 +79,18 @@ export class RecipeListComponent implements OnInit, OnChanges {
             let model: RecipeModel = {
               id: recipeObj.fields["Recipe ID"],
               name: recipeObj.fields["Name"],
-              variant: ''
+              variant: '',
+              version: 0
             }
 
             let variant: string = recipeObj.fields["Variant"];
             if(isNullOrUndefined(variant) !== true) {
               model.variant = variant;
+            }
+
+            let version: number = recipeObj.fields["Version"];
+            if(isNullOrUndefined(version) !== true && isNaN(version) !== true) {
+              model.version = version;
             }
 
             return model;
@@ -112,6 +118,29 @@ export class RecipeListComponent implements OnInit, OnChanges {
         );  // Sort
         
         filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+        // // start debug
+        // for(let i in filteredList) {
+        //   let item = filteredList[i];
+
+        //   let subArr = filteredList.filter(o => o.name === item.name);
+
+        //   if(subArr.length <= 1) {
+        //     continue;
+        //   }
+
+        //   for(let j in subArr) {
+        //     let subItem = subArr[j];
+        //     console.log(subItem);  //debug
+        //   }
+        // }
+        // // end debug
+
+        filteredList = filteredList.filter((n) => n.version === 
+          filteredList.filter(o => o.name === n.name)
+          .reduce((previous, current) => (previous.version > current.version) ? previous : current)
+          .version
+          ); // Return only most recent version
 
         this.allRecipes = filteredList;
       });
