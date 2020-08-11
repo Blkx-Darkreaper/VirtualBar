@@ -7,14 +7,14 @@
 			<li *ngFor="let order of allIngredientOrders; let i = index" >
 				<!-- {{ order }} -->
 				<!-- {{ ingredient | json }} -->
-				{{ getIngredientDesc(order) }}
+				<i *ngIf="getIsOptional(order)">Optional: </i>{{ getIngredientDesc(order) }}
 			</li>
 		</ul>
 		<!-- <pre>Ingredients: {{ allIngredients | json }}</pre> -->
 		<h4>Directions:</h4>
 		<ol>
 			<li *ngFor="let direction of allDirections">
-				{{ direction.direction }}
+				<i *ngIf="direction.optional">Optionally: </i>{{ direction.direction }}
 			</li>
 		</ol>
 		<!-- <pre>Directions: {{ allDirections | json }}</pre> -->

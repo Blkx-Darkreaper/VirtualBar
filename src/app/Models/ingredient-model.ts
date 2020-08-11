@@ -2,6 +2,7 @@ export interface IngredientModel {
   order: number;
   name: string;
   qualifier?: string;
+  optional: boolean;
   amounts: {
     cups?: IngredientAmountModel;
     ounces?: IngredientAmountModel;

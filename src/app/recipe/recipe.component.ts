@@ -61,6 +61,7 @@ export class RecipeComponent implements OnInit, OnChanges {
             order: ingredientObj.fields["Order"],
             name: ingredientObj.fields["Ingredient Name"][0],
             /*qualifier: ingredientObj.fields[""],*/
+            optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
             amounts: { },
             notes: ingredientObj.fields["Notes"]
           }
@@ -162,7 +163,8 @@ export class RecipeComponent implements OnInit, OnChanges {
         directionObj => {
           let model = {
             step: directionObj.fields["Step"],
-            direction: directionObj.fields["Direction"]
+            direction: directionObj.fields["Direction"],
+            optional: directionObj.fields["Optional"] ? directionObj.fields["Optional"] : false
           }
 
           return model;
@@ -194,7 +196,7 @@ export class RecipeComponent implements OnInit, OnChanges {
     return suffix;
   }
 
-  getIngredientDesc(order: number) {
+  getIngredientDesc(order: number): string {
     // console.log("Order(" + order + ")"); //debug
 
     let allIndexes = this.allIngredientIndexesByOrder[order];
@@ -214,6 +216,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       //console.log("Ingredient Index " + index + ":"); //debug
 
       let amountDesc = "";
+
       for(let field in allIngredientAmounts) {
         let ingredientAmount: IngredientAmountModel = allIngredientAmounts[field];
         let amount: string = ingredientAmount.amount;
@@ -259,5 +262,26 @@ export class RecipeComponent implements OnInit, OnChanges {
     }
 
     return desc;
+  }
+
+  getIsOptional(order: number): boolean {
+    let allIndexes = this.allIngredientIndexesByOrder[order];
+    //console.log("All Indexes(" + allIndexes + ")"); //debug
+
+    let optional: boolean = false;
+    for(let i in allIndexes) {
+      let index = allIndexes[i];
+      // console.log("Index(" + index + ")");  //debug
+
+      let ingredient: IngredientModel = this.allIngredients[index];
+      if(ingredient.optional !== true) {
+        continue;
+      }
+
+      optional = true;
+      break;
+    }
+
+    return optional;
   }
 }
