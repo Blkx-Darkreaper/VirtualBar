@@ -66,7 +66,7 @@ export class RecipeListService extends AirtableService {
 
       if(nameToFind.length > 0) {
         totalFilters++;
-        nameFilter = "SEARCH('" + nameToFind + "',{Name})";
+        nameFilter = "SEARCH('" + nameToFind.toLowerCase() + "',LOWER({Name}))";
       }
 
       if(totalFilters > 0) {
