@@ -80,7 +80,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
               id: recipeObj.fields["Recipe ID"],
               name: recipeObj.fields["Name"],
               variant: '',
-              version: 0
+              version: 0,
+              type: recipeObj.fields["Type"]
             }
 
             let variant: string = recipeObj.fields["Variant"];
@@ -137,7 +138,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
         // // end debug
 
         filteredList = filteredList.filter((n) => n.version === 
-          filteredList.filter(o => o.name === n.name)
+          filteredList.filter(o => o.name === n.name && o.type === n.type)
           .reduce((previous, current) => (previous.version > current.version) ? previous : current)
           .version
           ); // Return only most recent version
