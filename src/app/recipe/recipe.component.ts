@@ -39,7 +39,7 @@ export class RecipeComponent implements OnInit, OnChanges {
     this.updateDirections(this.id);
   }
 
-  private updateIngredients(id) {
+  private updateIngredients(id: number) {
     this.allIngredientIndexesByOrder = {};
     this.allIngredientOrders = [];
     this.allIngredients = [];
@@ -62,12 +62,12 @@ export class RecipeComponent implements OnInit, OnChanges {
             name: ingredientObj.fields["Ingredient Name"][0],
             /*qualifier: ingredientObj.fields[""],*/
             optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
-            amounts: { },
+            amountReq: { },
             notes: ingredientObj.fields["Notes"]
           }
 
           let allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], ["Grams", "g"], 
-            ["Dashes", ""], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"], ["Misc", ""]];
+            ["Dashes", "dashes of"], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"], ["Misc", ""]];
           for(let i = 0; i < allFields.length; i++) {   
             let fieldName: string = allFields[i][0];
             let value: string = ingredientObj.fields[fieldName];
@@ -78,7 +78,7 @@ export class RecipeComponent implements OnInit, OnChanges {
               continue;
             }
 
-            model.amounts[fieldName.toLowerCase()] = {units: allFields[i][1], amount: value};
+            model.amountReq[fieldName.toLowerCase()] = {units: allFields[i][1], amount: value};
           }
 
           // // start debug
@@ -212,7 +212,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       let ingredient: IngredientModel = this.allIngredients[index];
       // console.log("Ingredient(" + ingredient.name + ")"); //debug
 
-      let allIngredientAmounts = ingredient.amounts;
+      let allIngredientAmounts = ingredient.amountReq;
       //console.log("Ingredient Index " + index + ":"); //debug
 
       let amountDesc = "";
