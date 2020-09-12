@@ -60,14 +60,15 @@ export class RecipeComponent implements OnInit, OnChanges {
           let model: IngredientModel = {
             order: ingredientObj.fields["Order"],
             name: ingredientObj.fields["Ingredient Name"][0],
-            /*qualifier: ingredientObj.fields[""],*/
+            qualifier: ingredientObj.fields["Qualifier"],
             optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
             amountReq: { },
             notes: ingredientObj.fields["Notes"]
           }
 
-          let allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], ["Grams", "g"], 
-            ["Dashes", "dashes of"], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"], ["Misc", ""]];
+          let allFields: [string, string][] = [["Ounces", "oz"], ["Millilitres", "mL"], 
+            ["Quantity", ""], ["Grams", "g"], ["Dashes", "dashes of"], ["Barspoons", "barspoons"], 
+            ["Teaspoons", "tsp"], ["Cups", "cup"]];
           for(let i = 0; i < allFields.length; i++) {   
             let fieldName: string = allFields[i][0];
             let value: string = ingredientObj.fields[fieldName];
@@ -247,6 +248,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       // console.log("Current(" + amountDesc + ")"); //debug
       // console.log("Match(" + (amountDesc === prevAmountDesc) + ")"); //debug
 
+      // Add amounts
       if((prevAmountDesc.length == 0 && amountDesc.length > 0) || amountDesc !== prevAmountDesc) {
         // console.log("Amounts don't match"); //debug
         desc += amountDesc + " ";
@@ -256,12 +258,65 @@ export class RecipeComponent implements OnInit, OnChanges {
 
       desc += ingredient.name;
 
+      // Add qualifier
+      // console.log("Ingredient(" + ingredient.qualifier + ")"); //debug
+      if(isNullOrUndefined(ingredient.qualifier) !== true && ingredient.qualifier.length > 0) {
+        desc += ' - ' + ingredient.qualifier;
+      }
+
+      // Add notes
+      let notes: string = '';
+
+      // Add ingredient quantity deficiences
+      notes += this.getDeficiency(ingredient);
+
       if(isNullOrUndefined(ingredient.notes) !== true && ingredient.notes.length > 0) {
-        desc += " (" + ingredient.notes + ")";
+        if(notes.length > 0) {
+          notes += '; ';
+        }
+
+        notes += ingredient.notes;
+      }
+
+      if(notes.length > 0) {
+        desc += " (" + notes + ")";
       }
     }
 
     return desc;
+  }
+
+  getDeficiency(ingredient: IngredientModel) {
+    let deficiency = '';
+
+    if(isNullOrUndefined(ingredient.amountAvailable) === true
+    || isNaN(ingredient.amountAvailable.millilitres) == true) {
+      return deficiency;
+    }
+
+    let available = ingredient.amountAvailable.millilitres;
+    let amount = ingredient.amountReq.millilitres.amount;
+    let units = ingredient.amountReq.millilitres.units;
+
+    // TODO: convert other req units for comparison if mL not available
+
+    if(amount.indexOf('-') !== -1) {
+      amount = amount.split('-')[1];
+    }
+
+    let req = parseFloat(amount);
+    if(isNaN(req) === true) {
+      return deficiency;
+    }
+
+    if(available >= req) {
+      return deficiency;
+    }
+
+    let diff = req - available;
+
+    deficiency = 'Short ' + diff + ' ' + units;
+    return deficiency;
   }
 
   getIsOptional(order: number): boolean {
