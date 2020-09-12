@@ -1,10 +1,11 @@
+import { IngredientTypeModel } from './Ingredient-type-model';
 export interface IngredientModel {
   order: number;
   name: string;
   qualifier?: string;
   optional: boolean;
-  amounts: {
-    cups?: IngredientAmountModel;
+  type?: IngredientTypeModel;
+  amountReq: {
     ounces?: IngredientAmountModel;
     millilitres?: IngredientAmountModel;
     quantity?: IngredientAmountModel;
@@ -12,7 +13,11 @@ export interface IngredientModel {
     dashes?: IngredientAmountModel;
     barspoons?: IngredientAmountModel;
     teaspoons?: IngredientAmountModel;
-    misc?: IngredientAmountModel;
+    cups?: IngredientAmountModel;
+  }
+  amountAvailable?: {
+    ounces: number;
+    millilitres: number;
   }
   notes?: string;
 }
