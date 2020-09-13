@@ -1,5 +1,4 @@
-import { Inventory } from './../inventory.component';
-import { IngredientInventoriesService } from '../Services/ingredient-inventories.service';
+import { InventoryService } from './../Services/inventory.service';
 import { RecipeComponentsService } from '../Services/recipe-components.service';
 import { RecipeCategoriesService } from '../Services/recipe-categories.service';
 import { Component, OnInit } from '@angular/core';
@@ -28,7 +27,7 @@ export class RecipeSelectionComponent implements OnInit
   allPrimaryComponents: string[];
   allSecondaryComponents: string[];
 
-  allInventories: Inventory[];
+  allInventories: string[];
 
   // selectionForm: FormGroup;
 
@@ -84,12 +83,13 @@ export class RecipeSelectionComponent implements OnInit
 
   nameToFind: string = '';
 
+  selectedInventory: string = '';
   limitToAvailable: boolean = false;
 
   constructor(private formBuilder: FormBuilder,
     private recipeCategoryService: RecipeCategoriesService, 
     private recipeComponentService: RecipeComponentsService, 
-    private ingredientInventory: IngredientInventoriesService
+    private inventoryService: InventoryService
 ) { }
 
   ngOnInit(): void {
@@ -250,7 +250,27 @@ export class RecipeSelectionComponent implements OnInit
       this.updateSelectedSecondaryComponents();
     });
 
-    this.ingredientInventory.GetInventories().subscribe((data: any) => {this.allInventories = JSON.parse(data.inventories);});
+    this.inventoryService.GetInventoriesFromAirtable()
+    .pipe(map(response => {
+      let allInventories = response.records.map(
+        inventoryObj => {
+          return inventoryObj.fields["Address"];
+        }
+      )
+
+      return allInventories;
+    }))
+    .subscribe((data: any) => {
+      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+
+        filteredList = filteredList.filter((n, i) => filteredList.indexOf(n) === i); // Remove duplicates
+
+      this.allInventories = filteredList;
+      
+      if(this.allInventories !== null && this.allInventories !== undefined && this.allInventories.length > 0) {
+        this.selectedInventory = this.allInventories[0];  // default to first element
+      }
+    });
 
     //this.selectionForm = this.formBuilder.group({});
   }
@@ -264,8 +284,9 @@ export class RecipeSelectionComponent implements OnInit
     }
   }
 
-  // ngOnChanges() {
+  ngOnChanges() {
   //   console.log("Changes made");  //debug
+    console.log("Inventory(" + this.selectedInventory + ")"); //debug
 
   //   this.allTypes.sort((a, b) => a.localeCompare(b));
   //   this.allOccassions.sort((a, b) => a.localeCompare(b));
@@ -324,7 +345,7 @@ export class RecipeSelectionComponent implements OnInit
   //   }
 
   //   return this.styleOptions.subOptions.filter(o => o.selected).length > 0 && !this.allStylesSelected;
-  // }
+  }
 
   setGroupSelected(group: string, selected: boolean) {
     console.log(group + ' group checkboxes have been set to ' + selected);  //debug

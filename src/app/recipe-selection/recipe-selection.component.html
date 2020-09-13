@@ -213,8 +213,12 @@
         <div name = "inventory">
             <label for="location">Inventory Location:</label><br>
 
-            <select id="location">
-                <option *ngFor="let inventory of allInventories" value="{{ inventory.name | lowercase }}">{{ inventory.name }}</option>
+            <select id="location" [(ngModel)]="selectedInventory">
+                <option *ngFor="let inventory of allInventories" 
+                    ng-selected="selectedInventory" 
+                    [ngValue]="inventory">
+                    {{ inventory }}
+                </option>
             </select>
 
             <input type="checkbox" id="available" name="available" value="isAvailable" [(ngModel)]="limitToAvailable">
@@ -237,5 +241,6 @@
     [primaries]="allSelectedPrimaryComponents"
     [secondaries]="allSelectedSecondaryComponents"
     [name]="nameToFind"
+    [inventory]="selectedInventory"
     [limit]="limitToAvailable"
 ></app-recipe-list>
