@@ -1,13 +1,28 @@
+<div>
+    <p>recipe-info works!</p>
+</div>
 <div class = "recipeInfo">
-    <div>
-        <p>recipe-info works!</p>
-    </div>
-
+    <!-- <pre>Images: {{ allImageLinks | json }}</pre> -->
+    <!-- <pre>Total Images: {{ allImageLinks.length }}</pre> -->
+    <!-- <pre>Width: {{ 100 / allImageLinks.length }}%</pre> -->
     <div class="recipePhotos">
-        <img>
+        <!-- <div *ngFor="let imageLink of allImageLinks">
+            <pre>Url: {{ imageLink[0] | json }}</pre>
+            
+            <img *ngIf="imageLink" 
+                src="{{ imageLink }}" 
+                alt="{{ name }}" 
+                crossorigin="anonymous" 
+            />
+        </div> -->
+        <img *ngIf="allImageLinks[0]" 
+                src="{{ allImageLinks[0] }}" 
+                alt="{{ name }}" 
+                crossorigin="anonymous" 
+            />
     </div>
     
     <div class="recipeExtras">
-        
+        <p>These are extras</p>
     </div>
 </div>
