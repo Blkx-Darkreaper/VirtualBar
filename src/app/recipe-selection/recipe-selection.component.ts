@@ -203,7 +203,7 @@ export class RecipeSelectionComponent implements OnInit
       let allValues = response.records.map(
         obj => { 
           // return obj.fields.Name;
-          return obj.fields.Subtype;
+          return obj.fields.Name;
         }
       )
 
@@ -228,7 +228,7 @@ export class RecipeSelectionComponent implements OnInit
       let allValues = response.records.map(
         obj => { 
           // return obj.fields.Name;
-          return obj.fields.Subtype;
+          return obj.fields.Name;
         }
       )
 

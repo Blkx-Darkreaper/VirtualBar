@@ -7,33 +7,24 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class RecipeComponentsService extends AirtableService {
-  requestUrl: string = 'Ingredients';
-  primaryFilter: string = '?filterByFormula=And({Type}="Spirit",{Qualifier}=Blank())';
+  requestUrl: string = 'Ingredient%20Types';
+  fieldsFilter: string = '?fields[]=Name';
+  primaryFilter: string = '&filterByFormula=And({Type}="Spirit",{Subtype}!=Blank())';
   // secondaryFilter: string = '?filterByFormula=And({Supertype}="Liquor",{Qualifier}=Blank())';
   // secondaryFilter: string = '?filterByFormula={Supertype}="Liquor"';
-  secondaryFilter: string = '?filterByFormula=And({Supertype}="Liquor",{Type}!="Spirit")';
+  secondaryFilter: string = '&filterByFormula=And({Supertype}="Liquor",{Type}!="Spirit")';
 
   constructor(http: HttpClient) { super(http) }
 
-  GetPrimaries(): Observable<any> {
-    const allComponents = {"components": ["Vodka", "Gin", "Tequila", "Rum", "Liqueur"]};
-      return of(allComponents);
-  }
-
   GetPrimariesFromAirtable(): Observable<any> {
     let url = this.url as string;
-    url += this.requestUrl + this.primaryFilter;
+    url += this.requestUrl + this.fieldsFilter + this.primaryFilter;
     return this.getRequest(url);
-  }
-
-  GetSecondaries(): Observable<any> {
-    const allComponents = {"components": ["Liqueur", "Wine", "Mixer", "Juice"]};
-      return of(allComponents);
   }
 
   GetSecondariesFromAirtable(): Observable<any> {
     let url = this.url as string;
-    url += this.requestUrl + this.secondaryFilter;
+    url += this.requestUrl + this.fieldsFilter + this.secondaryFilter;
     return this.getRequest(url);
   }
 }
