@@ -11,9 +11,8 @@ export class RecipeListService extends AirtableService {
 
     constructor(http: HttpClient) { super(http) }
 
-     GetRecipesFromAirtable(allTypes: string[], allOccassions: string[], allStyles: string[], allFamilies: string[], 
-    muddlingRequired: boolean, allPrimaryComponents: string[], allSecondaryComponents: string[], nameToFind: string,
-    limitToAvailable: boolean
+    GetRecipesFromAirtable(allTypes: string[], allOccassions: string[], allStyles: string[], allFamilies: string[], 
+    muddlingRequired: boolean, allPrimaryComponents: string[], allSecondaryComponents: string[], recipeNameToFind: string
     ): Observable<any> {
       let url = this.url as string;
       url += this.requestUrl;
@@ -64,9 +63,9 @@ export class RecipeListService extends AirtableService {
         secondaryFilter = this.AppendContainsFieldFilters(secondaryFilter, "Secondary Components", allSecondaryComponents);
       }
 
-      if(nameToFind.length > 0) {
+      if(recipeNameToFind.length > 0) {
         totalFilters++;
-        nameFilter = "SEARCH('" + nameToFind.toLowerCase() + "',LOWER({Name}))";
+        nameFilter = "SEARCH('" + recipeNameToFind.toLowerCase() + "',LOWER({Name}))";
       }
 
       if(totalFilters > 0) {
