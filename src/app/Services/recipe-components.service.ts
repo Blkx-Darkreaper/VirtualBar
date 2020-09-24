@@ -9,10 +9,10 @@ import { HttpClient } from '@angular/common/http';
 export class RecipeComponentsService extends AirtableService {
   requestUrl: string = 'Ingredient%20Types';
   fieldsFilter: string = '?fields[]=Name';
-  primaryFilter: string = '&filterByFormula=And({Type}="Spirit",{Subtype}!=Blank())';
+  primaryFilter: string = '&filterByFormula=And({Type}="Spirit",Len({Subtype})>0)';
   // secondaryFilter: string = '?filterByFormula=And({Supertype}="Liquor",{Qualifier}=Blank())';
   // secondaryFilter: string = '?filterByFormula={Supertype}="Liquor"';
-  secondaryFilter: string = '&filterByFormula=And({Supertype}="Liquor",{Type}!="Spirit")';
+  secondaryFilter: string = '&filterByFormula=And({Supertype}="Liquor",{Type}!="Spirit",Len({Subtype})>0)';
 
   constructor(http: HttpClient) { super(http) }
 

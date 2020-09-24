@@ -8,20 +8,26 @@ import { HttpClient } from '@angular/common/http';
 })
 export class InventoryService extends AirtableService {
   inventoryUrl: string = 'Inventory?';
+  simpleInventoryUrl: string = 'Simple%20Inventory?';
 
   addrField: string = 'fields[]=Address';
   brandField: string = 'fields[]=Brand';
   descField: string = 'fields[]=Description';
   volumeField: string = 'fields[]=Current Volume (mL)';
+  typeField: string = 'fields[]=Type';
+  subTypeField: string = 'fields[]=Subtype';
+  ingredientTypeField: string = 'fields[]=Ingredient Type Name';
 
   brandFilter: string = '{Brand}=';
   idescFilter: string = '{Description}=';
   addrFilter: string = '{Address}=';
+  typeFilter: string = '{Type}';
 
   filterPrefix: string = 'filterByFormula=And(';
   filterIngredientNamesPrefix = 'Or('
   filterFindPrefix: string = 'FIND(';
-  filterFindSuffix: string = ',{Ingredient Types})';
+  filterFindSuffix: string = '{Ingredient Types})';
+  statusFilter: string = '{Available}=True()'
 
   constructor(http: HttpClient) { super(http); }
 
@@ -31,7 +37,56 @@ export class InventoryService extends AirtableService {
     return this.getRequest(url);
   }
 
-  GetLiquorInventoryFromAirtable(brand: string, desc: string, address: string): Observable<any> {
+  GetLiquorTypesFromAirtable(address: string): Observable<any> {
+    let url = this.url as string;
+    url += this.simpleInventoryUrl;
+
+    url += this.brandField;
+    url += '&' + this.descField;
+    url += '&' + this.typeField;
+    url += '&' + this.subTypeField;
+    url += '&' + this.ingredientTypeField;
+
+    url += '&' + this.filterPrefix + this.addrFilter + "'" + address + "')";
+
+    return this.getRequest(url);
+  }
+
+  GetSpiritLiquorTypesFromAirtable(address: string): Observable<any> {
+    let url = this.url as string;
+    url += this.simpleInventoryUrl;
+
+    url += this.brandField;
+    url += '&' + this.descField;
+    url += '&' + this.typeField;
+    url += '&' + this.subTypeField;
+    url += '&' + this.ingredientTypeField;
+
+    url += '&' + this.filterPrefix + this.addrFilter + "'" + address + "'";
+    url += ',' + this.typeFilter + "='Spirit'";
+    url += ',' + this.statusFilter + ')';
+
+    return this.getRequest(url);
+  }
+
+  GetNonSpiritLiquorTypesFromAirtable(address: string): Observable<any> {
+    let url = this.url as string;
+    url += this.simpleInventoryUrl;
+
+    url += this.brandField;
+    url += '&' + this.descField;
+    url += '&' + this.typeField;
+    url += '&' + this.subTypeField;
+    url += '&' + this.ingredientTypeField;
+
+    url += '&' + this.filterPrefix + this.addrFilter + "'" + address + "'";
+    url += ',' + this.typeFilter + "!='Spirit'";
+    url += ',' + this.statusFilter + ')';
+
+    return this.getRequest(url);
+  }
+
+  GetLiquorVolumeFromAirtable(brand: string, desc: string, address: string): Observable<any> {
     let url = this.url as string;
     url += this.inventoryUrl;
 
@@ -62,7 +117,7 @@ export class InventoryService extends AirtableService {
         filterUrl += ',';
       }
 
-      url += this.filterFindPrefix + "'" + ingredientName + "'" + this.filterFindSuffix;
+      url += this.filterFindPrefix + "'" + ingredientName + "'," + this.filterFindSuffix;
     }
 
     if(filterUrl.length > 0) {
