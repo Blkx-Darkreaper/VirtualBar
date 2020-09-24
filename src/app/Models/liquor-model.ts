@@ -3,6 +3,7 @@ export interface LiquorModel {
     id?: number;
     brand: string;
     description: string;
+    ingredientNames: string[];
     ingredientType: IngredientTypeModel;
     //allTypes: IngredientTypeModel[];
     ounces?: number;
