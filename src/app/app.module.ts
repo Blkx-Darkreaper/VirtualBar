@@ -3,7 +3,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 
-import { JwPaginationComponent } from 'jw-angular-pagination';
+// import { JwPaginationComponent } from 'jw-angular-pagination';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -23,9 +23,9 @@ import { RecipeInfoComponent } from './recipe-info/recipe-info.component';
     RecipeSelectionComponent,
     RecipeListComponent,
     RecipeComponent,
-    RecipeInfoComponent,
+    RecipeInfoComponent
     // CheckboxComponent,
-    JwPaginationComponent
+    // JwPaginationComponent
   ],
   imports: [
     BrowserModule,
