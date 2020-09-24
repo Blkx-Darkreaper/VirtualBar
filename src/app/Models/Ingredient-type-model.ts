@@ -1,4 +1,5 @@
 export interface IngredientTypeModel {
+  name: string;
   superType: string;
   type?: string;
   subType?: string;
