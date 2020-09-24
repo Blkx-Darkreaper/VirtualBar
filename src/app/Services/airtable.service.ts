@@ -9,12 +9,17 @@ import { retry, catchError } from 'rxjs/operators';
 })
 export class AirtableService {
   private apiUrl = 'https://api.airtable.com/v0/';
-  protected apiKey: string;
-  protected appId: string;
+  protected apiKey: string = 'keydd8XpkyCPuRrAA';
+  protected appId: string = 'app4QIYQMEneJlvdK';
 
   constructor(private http: HttpClient) {
-    this.http.get('assets/apiKey.txt', { responseType: 'text'}).subscribe(data => { this.apiKey = data });
-    this.http.get('assets/appId.txt', { responseType: 'text'}).subscribe(data => { this.appId = data });
+    // this.http.get('assets/apiKey.txt', { responseType: 'text'}).subscribe(data => { this.apiKey = data });
+    // this.http.get('assets/appId.txt', { responseType: 'text'}).subscribe(data => { this.appId = data });
+
+    // console.log("Key(" + this.apiKey + ")");  //debug
+    // console.log("App ID(" + this.appId + ")");  //debug
+
+    // console.log(this.http.get('assets/apiKey.txt', { responseType: 'text'})); //debug
    }
 
   get headers(): HttpHeaders {
