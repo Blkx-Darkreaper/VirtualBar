@@ -5,7 +5,6 @@ import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { isNullOrUndefined } from 'util';
 //import { RecipeModel } from '../Models/recipe-model';
 
 @Component({
@@ -39,13 +38,13 @@ export class RecipeComponent implements OnInit, OnChanges {
     this.updateDirections(this.id);
   }
 
-  private updateIngredients(id: number) {
+  private updateIngredients(recipeId: number) {
     this.allIngredientIndexesByOrder = {};
     this.allIngredientOrders = [];
     this.allIngredients = [];
 
     // this.ingredientService.GetIngredients(id)
-    this.ingredientService.GetIngredientsFromAirtable(id)
+    this.ingredientService.GetIngredientsFromAirtable(recipeId)
     .pipe(
       map(response => {
       let allIngredients = response.records.map(
@@ -74,7 +73,7 @@ export class RecipeComponent implements OnInit, OnChanges {
             let value: string = ingredientObj.fields[fieldName];
             // console.log(fieldName + "(" + value + ")"); //debug
 
-            if(isNullOrUndefined(value) === true || value.length == 0) {
+            if(value === null || value === undefined || value.length == 0) {
               //console.log(fieldName + " is invalid");
               continue;
             }
@@ -113,7 +112,7 @@ export class RecipeComponent implements OnInit, OnChanges {
         let model = filteredList[i];
         let allIndexes = this.allIngredientIndexesByOrder[model.order];
         
-        if(isNullOrUndefined(allIndexes)) {
+        if(allIndexes === null || allIndexes === undefined) {
           allIndexes = [];
           this.allIngredientOrders.push(model.order);
           // console.log("Added array for order " + model.order);  //debug
@@ -133,7 +132,7 @@ export class RecipeComponent implements OnInit, OnChanges {
           //console.log("Index(" + index + ")");  //debug
 
           let ingredient = filteredList[index];
-          if(isNullOrUndefined(ingredient)) {
+          if(ingredient === null || ingredient === undefined) {
             continue;
           }
 
@@ -154,11 +153,11 @@ export class RecipeComponent implements OnInit, OnChanges {
     });
   }
 
-  private updateDirections(id) {
+  private updateDirections(recipeId) {
     this.allDirections = [];
 
     // this.directionService.GetDirections(id)
-    this.directionService.GetDirectionsFromAirtable(id)
+    this.directionService.GetDirectionsFromAirtable(recipeId)
     .pipe(map(response => {
       let allDirections = response.records.map(
         directionObj => {
@@ -190,7 +189,7 @@ export class RecipeComponent implements OnInit, OnChanges {
   getVariantSuffix(variant: string) {
     let suffix = '';
 
-    if(isNullOrUndefined(variant) !== true && variant.length > 0) {
+    if(variant === null || variant === undefined && variant.length > 0) {
       suffix += ': ' + variant + ' variant';
     }
 
@@ -223,7 +222,7 @@ export class RecipeComponent implements OnInit, OnChanges {
         let amount: string = ingredientAmount.amount;
         // console.log(field + "(" + amount + ")");  //debug
 
-        if(isNullOrUndefined(amount) === true || amount.length === 0) {
+        if(amount === null || amount === undefined || amount.length === 0) {
           console.log(amount + " is invalid");
           continue;
         }
@@ -260,7 +259,7 @@ export class RecipeComponent implements OnInit, OnChanges {
 
       // Add qualifier
       // console.log("Ingredient(" + ingredient.qualifier + ")"); //debug
-      if(isNullOrUndefined(ingredient.qualifier) !== true && ingredient.qualifier.length > 0) {
+      if(ingredient.qualifier !== null && ingredient.qualifier !== undefined && ingredient.qualifier.length > 0) {
         desc += ' - ' + ingredient.qualifier;
       }
 
@@ -270,7 +269,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       // Add ingredient quantity deficiences
       notes += this.getDeficiency(ingredient);
 
-      if(isNullOrUndefined(ingredient.notes) !== true && ingredient.notes.length > 0) {
+      if(ingredient.notes !== null && ingredient.notes !== undefined && ingredient.notes.length > 0) {
         if(notes.length > 0) {
           notes += '; ';
         }
@@ -289,7 +288,7 @@ export class RecipeComponent implements OnInit, OnChanges {
   getDeficiency(ingredient: IngredientModel) {
     let deficiency = '';
 
-    if(isNullOrUndefined(ingredient.amountAvailable) === true
+    if(ingredient.amountAvailable === null || ingredient.amountAvailable === undefined
     || isNaN(ingredient.amountAvailable.millilitres) == true) {
       return deficiency;
     }
