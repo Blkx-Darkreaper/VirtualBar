@@ -3,6 +3,7 @@ export interface IngredientModel {
   order: number;
   name: string;
   qualifier?: string;
+  recipeId?: number;
   optional: boolean;
   type?: IngredientTypeModel;
   amountReq: {

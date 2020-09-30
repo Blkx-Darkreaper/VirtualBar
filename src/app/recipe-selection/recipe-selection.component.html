@@ -153,6 +153,7 @@
                         id="primary-{{ primaryOptions.subOptions[i].name | lowercase }}" 
                         name="{{ primaryOptions.name }}"
                         value="{{ primaryOptions.subOptions[i].name }}"
+                        [disabled]="!primaryOptions.subOptions[i].enabled"
                         [(ngModel)]="primaryOptions.subOptions[i].selected" 
                         (ngModelChange)="toggleSelected(primaryOptions.name, primaryOptions.subOptions[i].name, $event)">
                     <label for="primary-{{ primaryOptions.subOptions[i].name | lowercase }}">
@@ -161,7 +162,7 @@
                 </div>
             </div>
         <!-- <pre>Main Components: {{ allPrimaryComponents | json }}</pre> -->
-        <!-- <pre>Selected: {{ allSelectedPrimaryComponents | json }}</pre> -->
+        <pre>Selected: {{ allSelectedPrimaryComponents | json }}</pre>
         </form>
     </div>
 
@@ -188,6 +189,7 @@
                         id="secondary-{{ secondaryOptions.subOptions[i].name | lowercase }}" 
                         name="{{ secondaryOptions.name }}"
                         value="{{ secondaryOptions.subOptions[i].name }}"
+                        [disabled]="!secondaryOptions.subOptions[i].enabled"
                         [(ngModel)]="secondaryOptions.subOptions[i].selected" 
                         (ngModelChange)="toggleSelected(secondaryOptions.name, secondaryOptions.subOptions[i].name, $event)">
                     <label for="secondary-{{ secondaryOptions.subOptions[i].name | lowercase }}">
@@ -221,7 +223,9 @@
                 </option>
             </select>
 
-            <input type="checkbox" id="available" name="available" value="isAvailable" [(ngModel)]="limitToAvailable">
+            <input type="checkbox" id="available" name="available" value="isAvailable" 
+            [(ngModel)]="limitToAvailable"
+            (ngModelChange)="updateAvailableComponentsBasedOnInventory()">
             <label for="available">Limit to currently available</label>
             <!-- <pre>Limit: {{ limitToAvailable }}</pre> -->
         </div>
@@ -243,4 +247,6 @@
     [name]="nameToFind"
     [inventory]="selectedInventory"
     [limit]="limitToAvailable"
+    [spirits]="allAvailableSpirits"
+    [nonspirits]="allAvailableNonSpirits"
 ></app-recipe-list>

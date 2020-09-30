@@ -1,3 +1,5 @@
+import { IngredientTypeModel } from './../Models/Ingredient-type-model';
+import { LiquorModel } from './../Models/liquor-model';
 import { InventoryService } from './../Services/inventory.service';
 import { RecipeComponentsService } from '../Services/recipe-components.service';
 import { RecipeCategoriesService } from '../Services/recipe-categories.service';
@@ -9,6 +11,7 @@ import { map } from 'rxjs/operators';
 export interface Option {
   name: string;
   selected: boolean;
+  enabled: boolean;
   //color: ThemePalette;
   subOptions?: Option[];
 }
@@ -18,8 +21,7 @@ export interface Option {
   templateUrl: './recipe-selection.component.html',
   styleUrls: ['./recipe-selection.component.sass']
 })
-export class RecipeSelectionComponent implements OnInit 
-{
+export class RecipeSelectionComponent implements OnInit {
   allTypes: string[];
   allOccassions: string[];
   allStyles: string[];
@@ -34,6 +36,7 @@ export class RecipeSelectionComponent implements OnInit
   typeOptions: Option = {
     name: 'Type',
     selected: true,
+    enabled: true,
     subOptions: []
   };
   allSelectedTypes: string[] = ['all'];
@@ -42,6 +45,7 @@ export class RecipeSelectionComponent implements OnInit
   occassionOptions: Option = {
     name: 'Occassion',
     selected: true,
+    enabled: true,
     subOptions: []
   };
   allSelectedOccassions: string[] = ['all'];
@@ -50,7 +54,8 @@ export class RecipeSelectionComponent implements OnInit
   styleOptions: Option = {
     name: 'Style',
     selected: true,
-    subOptions: [ ]
+    enabled: true,
+    subOptions: []
   };
   allSelectedStyles: string[] = ['all'];
   areAllStylesSelected: boolean = true;
@@ -58,6 +63,7 @@ export class RecipeSelectionComponent implements OnInit
   familyOptions: Option = {
     name: 'Family',
     selected: true,
+    enabled: true,
     subOptions: []
   };
   allSelectedFamilies: string[] = ['all'];
@@ -66,6 +72,7 @@ export class RecipeSelectionComponent implements OnInit
   primaryOptions: Option = {
     name: 'Main',
     selected: true,
+    enabled: true,
     subOptions: []
   };
   allSelectedPrimaryComponents: string[] = ['all'];
@@ -74,6 +81,7 @@ export class RecipeSelectionComponent implements OnInit
   secondaryOptions: Option = {
     name: 'Auxiliary',
     selected: true,
+    enabled: true,
     subOptions: []
   };
   allSelectedSecondaryComponents: string[] = ['all'];
@@ -86,13 +94,95 @@ export class RecipeSelectionComponent implements OnInit
   selectedInventory: string = '';
   limitToAvailable: boolean = false;
 
+  allAvailableSpirits: { [type: string]: LiquorModel[]; } = {};
+  allAvailableNonSpirits: { [type: string]: LiquorModel[]; } = {};
+
   constructor(private formBuilder: FormBuilder,
-    private recipeCategoryService: RecipeCategoriesService, 
-    private recipeComponentService: RecipeComponentsService, 
+    private recipeCategoryService: RecipeCategoriesService,
+    private recipeComponentService: RecipeComponentsService,
     private inventoryService: InventoryService
-) { }
+  ) { }
 
   ngOnInit(): void {
+    // console.log("Inventory(" + this.selectedInventory + ")"); //debug
+
+    this.updateSelectionChecklists();
+
+    //this.selectionForm = this.formBuilder.group({});
+
+    this.updateAvailableComponentsBasedOnInventory();
+  }
+
+  ngOnChanges() {
+    //   console.log("Changes made");  //debug
+    // console.log("Inventory(" + this.selectedInventory + ")"); //debug
+
+    // this.updateSelectionChecklists();
+
+    // this.updateAvailableBasedOnInventory();
+
+    //   this.allTypes.sort((a, b) => a.localeCompare(b));
+    //   this.allOccassions.sort((a, b) => a.localeCompare(b));
+    //   this.allStyles.sort((a, b) => a.localeCompare(b));
+    //   this.allFamilies.sort((a, b) => a.localeCompare(b));
+    //   this.allPrimaryComponents.sort((a, b) => a.localeCompare(b));
+    //   this.allSecondaryComponents.sort((a, b) => a.localeCompare(b));
+
+    //   let allGroups: string[][] = [this.allTypes, this.allOccassions, this.allStyles, this.allFamilies, 
+    //     this.allPrimaryComponents, this.allSecondaryComponents];
+
+    //   let allOptions: Option[] = [this.typeOptions, this.occassionOptions, this.styleOptions, this.familyOptions,
+    //     this.primaryOptions, this.secondaryOptions];
+
+    //   for(let i in allGroups) {
+    //     let option: Option = allOptions[i];
+
+    //     let group = allGroups[i];
+    //     console.log("Group(" + group + ")");  //debug
+
+    //     for(let j in group) {
+    //       let value = group[j];
+    //       console.log("Group Option(" + value + ")");  //debug
+
+    //       option.subOptions.push({ name: value, selected: true});
+    //     }
+    //   }
+
+    //   this.updateSelectedTypes();
+    //   this.updateSelectedOccassions();
+    //   this.updateSelectedStyles();
+    //   this.updateSelectedFamilies();
+    //   this.updateSelectedPrimaryComponents();
+    //   this.updateSelectedSecondaryComponents();
+    // }
+
+    // addTypes() {
+    //   /* this.allTypes.forEach((o, i) => {
+    //     const control: FormControl = new FormControl(true);
+
+    //     (this.typesForm.controls.typesArray as FormArray).push(control);
+    //   }); */
+
+    //   for(let type in this.allTypes) {
+    //     this.typesArray.push(this.formBuilder.control(true));
+    //   }
+    // }
+
+    // submitTypes() {
+    //     console.log(this.typesArray.value);
+    // }
+
+    // areSomeStylesSelected(): boolean {
+    //   if (this.styleOptions.subOptions == null) {
+    //     return false;
+    //   }
+
+    //   return this.styleOptions.subOptions.filter(o => o.selected).length > 0 && !this.allStylesSelected;
+  }
+
+  private updateSelectionChecklists() {
+    // console.log('updateSelectionChecklists()');  //debug
+
     this.allTypes = [];
     this.allOccassions = [];
     this.allStyles = [];
@@ -100,257 +190,444 @@ export class RecipeSelectionComponent implements OnInit
     this.allPrimaryComponents = [];
     this.allSecondaryComponents = [];
 
-    // this.recipeCategoryService.GetTypes()
-    this.recipeCategoryService.GetTypesFromAirtable()
-    .pipe(
-      map(response => {
-      let allValues = response.records.map(
-        obj => { 
-          return obj.fields.Name;
-        }
-      )
+    this.getRecipeTypesObservable()
+      .subscribe((data: string[]) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-      return allValues;
-    }))
-    .subscribe((data: string[]) => {
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
-      
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+        let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
 
-      this.allTypes = filteredList;
-      this.addSubOptions(filteredList, this.typeOptions);
-      this.updateSelectedTypes();
-    });
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
-    // this.recipeCategoryService.GetOccassions()
-    this.recipeCategoryService.GetOccassionsFromAirtable()
-    .pipe(
-      map(response => {
-      let allValues = response.records.map(
-        obj => { 
-          return obj.fields.Name;
-        }
-      )
+        this.allTypes = filteredList;
+        this.addSubOptions(filteredList, this.typeOptions);
+        this.updateSelectedTypes();
+      });
 
-      return allValues;
-    }))
-    .subscribe((data: string[]) => {
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
-      
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+    this.getRecipeOccassionsObservable()
+      .subscribe((data: string[]) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-      this.allOccassions = filteredList;
-      this.addSubOptions(filteredList, this.occassionOptions);
-      this.updateSelectedOccassions();
-    });
+        let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
 
-    // this.recipeCategoryService.GetStyles()
-    this.recipeCategoryService.GetStylesFromAirtable()
-    .pipe(
-      map(response => {
-      let allValues = response.records.map(
-        obj => { 
-          return obj.fields.Name;
-        }
-      )
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
-      return allValues;
-    }))
-    .subscribe((data: string[]) => {
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
-      
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+        this.allOccassions = filteredList;
+        this.addSubOptions(filteredList, this.occassionOptions);
+        this.updateSelectedOccassions();
+      });
 
-      this.allStyles = filteredList;
-      this.addSubOptions(filteredList, this.styleOptions);
-      this.updateSelectedTypes();
-    });
+    this.getRecipeStylesObservable()
+      .subscribe((data: string[]) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-    // this.recipeCategoryService.GetFamilies()
-    this.recipeCategoryService.GetFamiliesFromAirtable()
-    .pipe(
-      map(response => {
-      let allValues = response.records.map(
-        obj => { 
-          return obj.fields.Name;
-        }
-      )
+        let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
 
-      return allValues;
-    }))
-    .subscribe((data: string[]) => {
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
-      
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
-      this.allFamilies = filteredList;
-      this.addSubOptions(filteredList, this.familyOptions);
-      this.updateSelectedFamilies();
-    });
+        this.allStyles = filteredList;
+        this.addSubOptions(filteredList, this.styleOptions);
+        this.updateSelectedTypes();
+      });
 
-    // this.recipeComponentService.GetPrimaries()
-    this.recipeComponentService.GetPrimariesFromAirtable()
-    .pipe(
-      map(response => {
-      let allValues = response.records.map(
-        obj => { 
-          // return obj.fields.Name;
-          return obj.fields.Name;
-        }
-      )
+    this.getRecipeFamiliesObservable()
+      .subscribe((data: string[]) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-      return allValues;
-    }))
-    .subscribe((data: string[]) => {
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+        let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
 
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
-      this.allPrimaryComponents = filteredList;
-      this.addSubOptions(filteredList, this.primaryOptions);
-      this.updateSelectedPrimaryComponents();
-    });
+        this.allFamilies = filteredList;
+        this.addSubOptions(filteredList, this.familyOptions);
+        this.updateSelectedFamilies();
+      });
 
-    // this.recipeComponentService.GetSecondaries()
-    this.recipeComponentService.GetSecondariesFromAirtable()
-    .pipe(
-      map(response => {
-      let allValues = response.records.map(
-        obj => { 
-          // return obj.fields.Name;
-          return obj.fields.Name;
-        }
-      )
+    this.getRecipeMainComponentsObservable()
+      .subscribe((data: string[]) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-      return allValues;
-    }))
-    .subscribe((data: string[]) => {
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
-      
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+        let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
 
-      // for(let i in filteredList) {
-      //   console.log(filteredList[i]);  //debug
-      // }
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
-      this.allSecondaryComponents = filteredList;
-      this.addSubOptions(filteredList, this.secondaryOptions);
-      this.updateSelectedSecondaryComponents();
-    });
+        this.allPrimaryComponents = filteredList;
+        this.addSubOptions(filteredList, this.primaryOptions);
+        this.updateSelectedPrimaryComponents();
+      });
 
-    this.inventoryService.GetInventoriesFromAirtable()
-    .pipe(map(response => {
-      let allInventories = response.records.map(
-        inventoryObj => {
-          return inventoryObj.fields["Address"];
-        }
-      )
+    this.getRecipeAuxComponentsObservable()
+      .subscribe((data: string[]) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-      return allInventories;
-    }))
-    .subscribe((data: any) => {
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+        let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+        // for(let i in filteredList) {
+        //   console.log(filteredList[i]);  //debug
+        // }
+        this.allSecondaryComponents = filteredList;
+        this.addSubOptions(filteredList, this.secondaryOptions);
+        this.updateSelectedSecondaryComponents();
+      });
+
+    this.getInventoryListObservable()
+      .subscribe((data: any) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
         filteredList = filteredList.filter((n, i) => filteredList.indexOf(n) === i); // Remove duplicates
 
-      this.allInventories = filteredList;
-      
-      if(this.allInventories !== null && this.allInventories !== undefined && this.allInventories.length > 0) {
-        this.selectedInventory = this.allInventories[0];  // default to first element
+        this.allInventories = filteredList;
+        // console.log("Inventories(" + this.allInventories + ")");  //debug
+
+        if (this.allInventories !== null && this.allInventories !== undefined && this.allInventories.length > 0) {
+          this.selectedInventory = this.allInventories[0];
+          // console.log("Selected Inventory(" + this.selectedInventory + ")");  //debug
+
+          this.updateAvailableComponentsBasedOnInventory();
+        }
+      });
+  }
+
+  private getInventoryListObservable() {
+    return this.inventoryService.GetInventoriesFromAirtable()
+      .pipe(map(response => {
+        let allInventories = response.records.map(
+          inventoryObj => {
+            return inventoryObj.fields["Address"];
+          }
+        );
+
+        return allInventories;
+      }));
+  }
+
+  private getAvailableNonSpiritsObservable() {
+    return this.inventoryService.GetNonSpiritLiquorTypesFromAirtable(this.selectedInventory)
+      .pipe(map(response => {
+        let allSpiritTypes = response.records.map(
+          spiritObj => {
+            let ingredientTypeModel: IngredientTypeModel = {
+              name: spiritObj.fields["Ingredient Type Name"][0],
+              superType: 'Liquor',
+              type: spiritObj.fields["Type"][0],
+              subType: spiritObj.fields["Subtype"][0]
+            };
+
+            let liquorModel: LiquorModel = {
+              brand: spiritObj.fields["Brand"],
+              description: spiritObj.fields["Description"],
+              ingredientNames: spiritObj.fields["Ingredient Names"],
+              ingredientType: ingredientTypeModel
+            };
+
+            return liquorModel;
+          }
+        );
+
+        return allSpiritTypes;
+      }));
+  }
+
+  private getAvailableSpiritsObservable() {
+    return this.inventoryService.GetSpiritLiquorTypesFromAirtable(this.selectedInventory)
+      .pipe(map(response => {
+        let allSpiritTypes = response.records.map(
+          spiritObj => {
+            let ingredientTypeModel: IngredientTypeModel = {
+              name: spiritObj.fields["Ingredient Type Name"][0],
+              superType: 'Liquor',
+              type: spiritObj.fields["Type"][0],
+              subType: spiritObj.fields["Subtype"][0]
+            };
+
+            let liquorModel: LiquorModel = {
+              brand: spiritObj.fields["Brand"],
+              description: spiritObj.fields["Description"],
+              ingredientNames: spiritObj.fields["Ingredient Names"],
+              ingredientType: ingredientTypeModel
+            };
+
+            // debug
+            // for(let key in spiritObj.fields) {
+            //   console.log(key + '(' + spiritObj.fields[key] + ')'); //debug
+            // }
+            //end debug
+
+            // console.log(liquorModel.ingredientType.name + ' Names(' + liquorModel.ingredientNames +')');  //debug
+
+            return liquorModel;
+          }
+        );
+
+        return allSpiritTypes;
+      }));
+  }
+
+  private getRecipeAuxComponentsObservable() {
+    // this.recipeComponentService.GetSecondaries()
+    return this.recipeComponentService.GetSecondariesFromAirtable()
+      .pipe(
+        map(response => {
+          let allValues = response.records.map(
+            obj => {
+              // return obj.fields.Name;
+              return obj.fields.Name;
+            }
+          );
+
+          return allValues;
+        }));
+  }
+
+  private getRecipeMainComponentsObservable() {
+    // this.recipeComponentService.GetPrimaries()
+    return this.recipeComponentService.GetPrimariesFromAirtable()
+      .pipe(
+        map(response => {
+          let allValues = response.records.map(
+            obj => {
+              // return obj.fields.Name;
+              return obj.fields.Name;
+            }
+          );
+
+          return allValues;
+        }));
+  }
+
+  private getRecipeFamiliesObservable() {
+    // this.recipeCategoryService.GetFamilies()
+    return this.recipeCategoryService.GetFamiliesFromAirtable()
+      .pipe(
+        map(response => {
+          let allValues = response.records.map(
+            obj => {
+              return obj.fields.Name;
+            }
+          );
+
+          return allValues;
+        }));
+  }
+
+  private getRecipeStylesObservable() {
+    // this.recipeCategoryService.GetStyles()
+    return this.recipeCategoryService.GetStylesFromAirtable()
+      .pipe(
+        map(response => {
+          let allValues = response.records.map(
+            obj => {
+              return obj.fields.Name;
+            }
+          );
+
+          return allValues;
+        }));
+  }
+
+  private getRecipeOccassionsObservable() {
+    // this.recipeCategoryService.GetOccassions()
+    return this.recipeCategoryService.GetOccassionsFromAirtable()
+      .pipe(
+        map(response => {
+          let allValues = response.records.map(
+            obj => {
+              return obj.fields.Name;
+            }
+          );
+
+          return allValues;
+        }));
+  }
+
+  private getRecipeTypesObservable() {
+    // this.recipeCategoryService.GetTypes()
+    return this.recipeCategoryService.GetTypesFromAirtable()
+      .pipe(
+        map(response => {
+          let allValues = response.records.map(
+            obj => {
+              return obj.fields.Name;
+            }
+          );
+
+          return allValues;
+        }));
+  }
+
+  public updateAvailableComponentsBasedOnInventory() {
+    // console.log('updateAvailableComponentsBasedOnInventory()');  //debug
+
+    // console.log("Inventory(" + this.selectedInventory + ")"); //debug
+    // console.log("Limit(" + this.limitToAvailable + "), Inventory(" + this.selectedInventory + ")"); //debug
+
+    // get available liquors
+    if (this.selectedInventory !== null
+      && this.selectedInventory !== undefined
+      && this.selectedInventory.length > 0) {
+      // Get available main components
+      this.getAvailableSpiritsObservable()
+        .subscribe((data: LiquorModel[]) => {
+          // console.log("Total liquors(" + data.length + ")");  //debug
+
+          for (let i = 0; i < data.length; i++) {
+            let liquorModel: LiquorModel = data[i];
+
+            // Remove blanks
+            if (liquorModel === null || liquorModel === undefined) {
+              continue;
+            }
+
+            // console.log("Liquor(" + liquorModel.ingredientType.name + ")"); //debug
+
+            // // Prevent duplicates
+            // if(liquorModel.ingredientType.name in this.allAvailableSpirits) {
+            //   console.log("Ignoring duplicate " + liquorModel.brand + " " + liquorModel.description); //debug
+            //   continue;
+            // }
+
+            if (this.allAvailableSpirits[liquorModel.ingredientType.name] === undefined) {
+              this.allAvailableSpirits[liquorModel.ingredientType.name] = new Array();
+            }
+
+            this.allAvailableSpirits[liquorModel.ingredientType.name].push(liquorModel);
+          }
+        });
+
+      // Get available secondary components
+      this.getAvailableNonSpiritsObservable()
+        .subscribe((data: LiquorModel[]) => {
+          // console.log("Total liquors(" + data.length + ")");  //debug
+
+          for (let i = 0; i < data.length; i++) {
+            let liquorModel: LiquorModel = data[i];
+
+            // Remove blanks
+            if (liquorModel === null || liquorModel === undefined) {
+              continue;
+            }
+
+            // console.log("Liquor(" + liquorModel.ingredientType.name + ")"); //debug
+
+            // // Prevent duplicates
+            // if(liquorModel.ingredientType.name in this.allAvailableNonSpirits) {
+            //   console.log("Ignoring duplicate " + liquorModel.brand + " " + liquorModel.description); //debug
+            //   continue;
+            // }
+
+            if (this.allAvailableNonSpirits[liquorModel.ingredientType.name] === undefined) {
+              this.allAvailableNonSpirits[liquorModel.ingredientType.name] = new Array();
+            }
+
+            this.allAvailableNonSpirits[liquorModel.ingredientType.name].push(liquorModel);
+          }
+        });
+    }
+
+    // Enable all options
+    if (this.limitToAvailable !== true
+      || this.selectedInventory === null
+      || this.selectedInventory === undefined
+      || this.selectedInventory.length === 0
+      || Object.keys(this.allAvailableSpirits).length === 0
+      || Object.keys(this.allAvailableNonSpirits).length === 0) {
+      this.enableAllRecipeComponentOptions();
+      return;
+    }
+
+    // Enable all available spirits
+    let groupName = this.primaryOptions.name;
+    // console.log("Group(" + groupName + ")");  //debug
+
+    for (let i = 0; i < this.primaryOptions.subOptions.length; i++) {
+      let subOptionName = this.primaryOptions.subOptions[i].name
+      let isAvailable: boolean = subOptionName in this.allAvailableSpirits;
+      // console.log(subOptionName + ' available(' + isAvailable + ')');  //debug
+
+      // if (isAvailable === true) { console.log(subOptionName + ' available(' + isAvailable + ')'); }  //debug
+
+      // if (isAvailable != true) {
+      //   this.primaryOptions.subOptions[i].selected = false;
+      // }
+
+      // this.primaryOptions.subOptions[i].enabled = isAvailable;
+    }
+
+    this.updateSelectedPrimaryComponents();
+
+    // Enable all available non-spirits
+    groupName = this.secondaryOptions.name;
+    // console.log("Group(" + groupName + ")");  //debug
+
+    for (let i = 0; i < this.secondaryOptions.subOptions.length; i++) {
+      let subOptionName = this.secondaryOptions.subOptions[i].name
+      let isAvailable: boolean = subOptionName in this.allAvailableNonSpirits;
+      // console.log(subOptionName + ' available(' + isAvailable + ')');  //debug
+
+      // if (isAvailable === true) { console.log(subOptionName + ' available(' + isAvailable + ')'); }  //debug
+
+      // if (isAvailable != true) {
+      //   this.secondaryOptions.subOptions[i].selected = false;
+      // }
+
+      // this.secondaryOptions.subOptions[i].enabled = isAvailable;
+    }
+
+    this.updateSelectedSecondaryComponents();
+  }
+
+  private enableAllRecipeComponentOptions() {
+    this.primaryOptions.subOptions.forEach(o => {
+      if (this.areAllPrimaryComponentsSelected === true) {
+        o.selected = true;
       }
+
+      o.enabled = true;
     });
 
-    //this.selectionForm = this.formBuilder.group({});
+    // this.setAllEnabledPrimaryComponentsSelected(this.areAllPrimaryComponentsSelected);
+    this.updateSelectedPrimaryComponents();
+
+    this.secondaryOptions.subOptions.forEach(o => {
+      if (this.areAllSecondaryComponentsSelected === true) {
+        o.selected = true;
+      }
+
+      o.enabled = true;
+    });
+
+    this.updateSelectedSecondaryComponents();
   }
 
   protected addSubOptions(group: string[], option: Option) {
-    for(let i in group) {
-      let value = group[i];
-      //console.log("Group Option(" + value + ")");  //debug
+    // console.log('addSubOptions(' + group + ', ' + option + ')');  //debug
 
-      option.subOptions.push({ name: value, selected: true});
+    let isAvailable: boolean = true;
+
+    // // If limiting disable primary and secondary components by default
+    // if(this.limitToAvailable === true 
+    //   && this.selectedInventory !== null 
+    //   && this.selectedInventory !== undefined 
+    //   && this.selectedInventory.length > 0
+    //   && (option.name === this.primaryOptions.name || option.name === this.secondaryOptions.name)) {
+    //   isAvailable = false;
+    // }
+
+    for (let i in group) {
+      let value = group[i];
+      // console.log("Group Option(" + value + "), Available(" + isAvailable + ")");  //debug
+
+      option.subOptions.push({ name: value, selected: isAvailable, enabled: isAvailable });
     }
   }
 
-  ngOnChanges() {
-  //   console.log("Changes made");  //debug
-    console.log("Inventory(" + this.selectedInventory + ")"); //debug
-
-  //   this.allTypes.sort((a, b) => a.localeCompare(b));
-  //   this.allOccassions.sort((a, b) => a.localeCompare(b));
-  //   this.allStyles.sort((a, b) => a.localeCompare(b));
-  //   this.allFamilies.sort((a, b) => a.localeCompare(b));
-  //   this.allPrimaryComponents.sort((a, b) => a.localeCompare(b));
-  //   this.allSecondaryComponents.sort((a, b) => a.localeCompare(b));
-
-  //   let allGroups: string[][] = [this.allTypes, this.allOccassions, this.allStyles, this.allFamilies, 
-  //     this.allPrimaryComponents, this.allSecondaryComponents];
-
-  //   let allOptions: Option[] = [this.typeOptions, this.occassionOptions, this.styleOptions, this.familyOptions,
-  //     this.primaryOptions, this.secondaryOptions];
-
-  //   for(let i in allGroups) {
-  //     let option: Option = allOptions[i];
-
-  //     let group = allGroups[i];
-  //     console.log("Group(" + group + ")");  //debug
-
-  //     for(let j in group) {
-  //       let value = group[j];
-  //       console.log("Group Option(" + value + ")");  //debug
-
-  //       option.subOptions.push({ name: value, selected: true});
-  //     }
-  //   }
-
-  //   this.updateSelectedTypes();
-  //   this.updateSelectedOccassions();
-  //   this.updateSelectedStyles();
-  //   this.updateSelectedFamilies();
-  //   this.updateSelectedPrimaryComponents();
-  //   this.updateSelectedSecondaryComponents();
-  // }
-
-  // addTypes() {
-  //   /* this.allTypes.forEach((o, i) => {
-  //     const control: FormControl = new FormControl(true);
-
-  //     (this.typesForm.controls.typesArray as FormArray).push(control);
-  //   }); */
-
-  //   for(let type in this.allTypes) {
-  //     this.typesArray.push(this.formBuilder.control(true));
-  //   }
-  // }
-
-  // submitTypes() {
-  //     console.log(this.typesArray.value);
-  // }
-
-  // areSomeStylesSelected(): boolean {
-  //   if (this.styleOptions.subOptions == null) {
-  //     return false;
-  //   }
-
-  //   return this.styleOptions.subOptions.filter(o => o.selected).length > 0 && !this.allStylesSelected;
-  }
-
   setGroupSelected(group: string, selected: boolean) {
+    console.log('setGroupSelected(' + group + ', ' + selected + ')');  //debug
+
     console.log(group + ' group checkboxes have been set to ' + selected);  //debug
 
-    switch(group) {
+    switch (group) {
       case "Type":
         this.setAllTypesSelected(selected);
         break;
@@ -368,11 +645,11 @@ export class RecipeSelectionComponent implements OnInit
         break;
 
       case "Main":
-        this.setAllPrimaryComponentsSelected(selected);
+        this.setAllEnabledPrimaryComponentsSelected(selected);
         break;
 
       case "Auxiliary":
-        this.setAllSecondaryComponentsSelected(selected);
+        this.setAllEnabledSecondaryComponentsSelected(selected);
         break;
     }
   }
@@ -425,34 +702,45 @@ export class RecipeSelectionComponent implements OnInit
     this.updateSelectedFamilies();
   }
 
-  setAllPrimaryComponentsSelected(selected: boolean) {
+  setAllEnabledPrimaryComponentsSelected(selected: boolean) {
+    // console.log('setAllEnabledPrimaryComponentsSelected(' + selected + ')');  //debug
+
     this.areAllPrimaryComponentsSelected = selected;
 
     if (this.primaryOptions.subOptions == null) {
       return;
     }
 
-    this.primaryOptions.subOptions.forEach(o => o.selected = selected);
+    this.primaryOptions.subOptions.forEach(option => {
+      // console.log(o.name + ' enabled(' + o.enabled + ')');  //debug
+      if (option.enabled === true) {
+        // option.selected = selected; console.log('Set ' + option.name + ' selection to ' + selected);  //debug 
+      }
+    });
 
     this.updateSelectedPrimaryComponents();
   }
 
-  setAllSecondaryComponentsSelected(selected: boolean) {
+  setAllEnabledSecondaryComponentsSelected(selected: boolean) {
+    // console.log('setAllEnabledSecondaryComponentsSelected(' + selected + ')');  //debug
+
     this.areAllSecondaryComponentsSelected = selected;
 
     if (this.secondaryOptions.subOptions == null) {
       return;
     }
 
-    this.secondaryOptions.subOptions.forEach(o => o.selected = selected);
+    this.secondaryOptions.subOptions.forEach(o => { if (o.enabled) { o.selected = selected; } });
 
     this.updateSelectedSecondaryComponents();
   }
 
   toggleSelected(group: string, name: string, selected: boolean) {
-    console.log(group + " " + name + ' checkbox has been set to ' + selected);  //debug
+    // console.log('toggleSelected(' + group + ', ' + name + ', ' + selected + ')');  //debug
 
-    switch(group) {
+    // console.log(group + " " + name + ' checkbox has been set to ' + selected);  //debug
+
+    switch (group) {
       case "Type":
         this.updateSelectedTypes();
         break;
@@ -480,19 +768,19 @@ export class RecipeSelectionComponent implements OnInit
   }
 
   updateSelectedTypes() {
-    this.areAllTypesSelected = this.typeOptions.subOptions != null 
-    && this.typeOptions.subOptions.every(o => o.selected);
+    this.areAllTypesSelected = this.typeOptions.subOptions != null
+      && this.typeOptions.subOptions.every(o => o.selected);
 
-    if(this.areAllTypesSelected == true) {
+    if (this.areAllTypesSelected == true) {
       //console.log("All Types selected");  //debug
       this.allSelectedTypes = ["all"];
       return;
     }
 
     this.allSelectedTypes = [];
-    for(let i in this.typeOptions.subOptions) {
+    for (let i in this.typeOptions.subOptions) {
       let type = this.typeOptions.subOptions[i];
-      if(type.selected != true) {
+      if (type.selected != true) {
         continue;
       }
 
@@ -501,18 +789,18 @@ export class RecipeSelectionComponent implements OnInit
   }
 
   updateSelectedOccassions() {
-    this.areAllOccassionsSelected = this.occassionOptions.subOptions != null 
-    && this.occassionOptions.subOptions.every(o => o.selected);
+    this.areAllOccassionsSelected = this.occassionOptions.subOptions != null
+      && this.occassionOptions.subOptions.every(o => o.selected);
 
-    if(this.areAllOccassionsSelected == true) {
+    if (this.areAllOccassionsSelected == true) {
       this.allSelectedOccassions = ["all"];
       return;
     }
 
     this.allSelectedOccassions = [];
-    for(let i in this.occassionOptions.subOptions) {
+    for (let i in this.occassionOptions.subOptions) {
       let occassion = this.occassionOptions.subOptions[i];
-      if(occassion.selected != true) {
+      if (occassion.selected != true) {
         continue;
       }
 
@@ -521,18 +809,18 @@ export class RecipeSelectionComponent implements OnInit
   }
 
   updateSelectedStyles() {
-    this.areAllStylesSelected = this.styleOptions.subOptions != null 
-    && this.styleOptions.subOptions.every(o => o.selected);
+    this.areAllStylesSelected = this.styleOptions.subOptions != null
+      && this.styleOptions.subOptions.every(o => o.selected);
 
-    if(this.areAllStylesSelected == true) {
+    if (this.areAllStylesSelected == true) {
       this.allSelectedStyles = ["all"];
       return;
     }
 
     this.allSelectedStyles = [];
-    for(let i in this.styleOptions.subOptions) {
+    for (let i in this.styleOptions.subOptions) {
       let style = this.styleOptions.subOptions[i];
-      if(style.selected != true) {
+      if (style.selected != true) {
         continue;
       }
 
@@ -541,18 +829,18 @@ export class RecipeSelectionComponent implements OnInit
   }
 
   updateSelectedFamilies() {
-    this.areAllFamiliesSelected = this.familyOptions.subOptions != null 
-    && this.familyOptions.subOptions.every(o => o.selected);
+    this.areAllFamiliesSelected = this.familyOptions.subOptions != null
+      && this.familyOptions.subOptions.every(o => o.selected);
 
-    if(this.areAllFamiliesSelected == true) {
+    if (this.areAllFamiliesSelected == true) {
       this.allSelectedFamilies = ["all"];
       return;
     }
 
     this.allSelectedFamilies = [];
-    for(let i in this.familyOptions.subOptions) {
+    for (let i in this.familyOptions.subOptions) {
       let family = this.familyOptions.subOptions[i];
-      if(family.selected != true) {
+      if (family.selected != true) {
         continue;
       }
 
@@ -561,42 +849,72 @@ export class RecipeSelectionComponent implements OnInit
   }
 
   updateSelectedPrimaryComponents() {
-    this.areAllPrimaryComponentsSelected = this.primaryOptions.subOptions != null 
-    && this.primaryOptions.subOptions.every(o => o.selected);
+    // console.log('updateSelectedPrimaryComponents()'); //debug
 
-    if(this.areAllPrimaryComponentsSelected == true) {
-      this.allSelectedPrimaryComponents = ["all"];
+    let areAllAvailableSelected = true;
+    let areAllAvailable = true;
+
+    this.allSelectedPrimaryComponents = [];
+    if (this.primaryOptions.subOptions !== null) {
+      for (let i = 0; i < this.primaryOptions.subOptions.length; i++) {
+        let primaryComponent = this.primaryOptions.subOptions[i];
+
+        areAllAvailable = areAllAvailable && primaryComponent.enabled;
+        if (primaryComponent.enabled !== true) {
+          continue;
+        }
+
+        areAllAvailableSelected = areAllAvailableSelected && primaryComponent.selected;
+
+        if (primaryComponent.selected !== true) {
+          continue;
+        }
+
+        this.allSelectedPrimaryComponents.push(primaryComponent.name);
+      }
+    }
+
+    this.areAllPrimaryComponentsSelected = areAllAvailableSelected;
+
+    if (areAllAvailable !== true || areAllAvailableSelected !== true) {
       return;
     }
 
-    this.allSelectedPrimaryComponents = [];
-    for(let i in this.primaryOptions.subOptions) {
-      let primaryComponent = this.primaryOptions.subOptions[i];
-      if(primaryComponent.selected != true) {
-        continue;
-      }
-
-      this.allSelectedPrimaryComponents.push(primaryComponent.name);
-    }
+    this.allSelectedPrimaryComponents = ["all"];
   }
 
   updateSelectedSecondaryComponents() {
-    this.areAllSecondaryComponentsSelected = this.secondaryOptions.subOptions != null 
-    && this.secondaryOptions.subOptions.every(o => o.selected);
+    // console.log('updateSelectedSecondaryComponents()'); //debug
 
-    if(this.areAllSecondaryComponentsSelected == true) {
-      this.allSelectedSecondaryComponents = ["all"];
+    let areAllAvailableSelected = true;
+    let areAllAvailable = true;
+
+    this.allSelectedSecondaryComponents = [];
+    if (this.secondaryOptions.subOptions !== null) {
+      for (let i = 0; i < this.secondaryOptions.subOptions.length; i++) {
+        let secondaryComponent = this.secondaryOptions.subOptions[i];
+
+        areAllAvailable = areAllAvailable && secondaryComponent.enabled;
+        if (secondaryComponent.enabled !== true) {
+          continue;
+        }
+
+        areAllAvailableSelected = areAllAvailableSelected && secondaryComponent.selected;
+
+        if (secondaryComponent.selected !== true) {
+          continue;
+        }
+
+        this.allSelectedSecondaryComponents.push(secondaryComponent.name);
+      }
+    }
+
+    this.areAllSecondaryComponentsSelected = areAllAvailableSelected;
+
+    if (areAllAvailable !== true || areAllAvailableSelected !== true) {
       return;
     }
 
-    this.allSelectedSecondaryComponents = [];
-    for(let i in this.secondaryOptions.subOptions) {
-      let secondaryComponent = this.secondaryOptions.subOptions[i];
-      if(secondaryComponent.selected != true) {
-        continue;
-      }
-
-      this.allSelectedSecondaryComponents.push(secondaryComponent.name);
-    }
+    this.allSelectedSecondaryComponents = ["all"];
   }
 }

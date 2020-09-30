@@ -17,6 +17,7 @@ export class InventoryService extends AirtableService {
   typeField: string = 'fields[]=Type';
   subTypeField: string = 'fields[]=Subtype';
   ingredientTypeField: string = 'fields[]=Ingredient Type Name';
+  ingredientNamesField: string = 'fields[]=Ingredient Names';
 
   brandFilter: string = '{Brand}=';
   idescFilter: string = '{Description}=';
@@ -61,6 +62,7 @@ export class InventoryService extends AirtableService {
     url += '&' + this.typeField;
     url += '&' + this.subTypeField;
     url += '&' + this.ingredientTypeField;
+    url += '&' + this.ingredientNamesField;
 
     url += '&' + this.filterPrefix + this.addrFilter + "'" + address + "'";
     url += ',' + this.typeFilter + "='Spirit'";
@@ -78,6 +80,7 @@ export class InventoryService extends AirtableService {
     url += '&' + this.typeField;
     url += '&' + this.subTypeField;
     url += '&' + this.ingredientTypeField;
+    url += '&' + this.ingredientNamesField;
 
     url += '&' + this.filterPrefix + this.addrFilter + "'" + address + "'";
     url += ',' + this.typeFilter + "!='Spirit'";
