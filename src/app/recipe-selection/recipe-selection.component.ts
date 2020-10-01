@@ -306,18 +306,19 @@ export class RecipeSelectionComponent implements OnInit {
     return this.inventoryService.GetNonSpiritLiquorTypesFromAirtable(this.selectedInventory)
       .pipe(map(response => {
         let allSpiritTypes = response.records.map(
-          spiritObj => {
+          liquorObj => {
             let ingredientTypeModel: IngredientTypeModel = {
-              name: spiritObj.fields["Ingredient Type Name"][0],
+              name: liquorObj.fields["Ingredient Type Name"][0],
               superType: 'Liquor',
-              type: spiritObj.fields["Type"][0],
-              subType: spiritObj.fields["Subtype"][0]
+              type: liquorObj.fields["Type"][0],
+              subType: liquorObj.fields["Subtype"][0]
             };
 
             let liquorModel: LiquorModel = {
-              brand: spiritObj.fields["Brand"],
-              description: spiritObj.fields["Description"],
-              ingredientNames: spiritObj.fields["Ingredient Names"],
+              name: liquorObj.fields["Name"],
+              brand: liquorObj.fields["Brand"],
+              description: liquorObj.fields["Description"],
+              ingredientNames: liquorObj.fields["Ingredient Names"],
               ingredientType: ingredientTypeModel
             };
 
@@ -333,18 +334,19 @@ export class RecipeSelectionComponent implements OnInit {
     return this.inventoryService.GetSpiritLiquorTypesFromAirtable(this.selectedInventory)
       .pipe(map(response => {
         let allSpiritTypes = response.records.map(
-          spiritObj => {
+          liquorObj => {
             let ingredientTypeModel: IngredientTypeModel = {
-              name: spiritObj.fields["Ingredient Type Name"][0],
+              name: liquorObj.fields["Ingredient Type Name"][0],
               superType: 'Liquor',
-              type: spiritObj.fields["Type"][0],
-              subType: spiritObj.fields["Subtype"][0]
+              type: liquorObj.fields["Type"][0],
+              subType: liquorObj.fields["Subtype"][0]
             };
 
             let liquorModel: LiquorModel = {
-              brand: spiritObj.fields["Brand"],
-              description: spiritObj.fields["Description"],
-              ingredientNames: spiritObj.fields["Ingredient Names"],
+              name: liquorObj.fields["Name"],
+              brand: liquorObj.fields["Brand"],
+              description: liquorObj.fields["Description"],
+              ingredientNames: liquorObj.fields["Ingredient Names"],
               ingredientType: ingredientTypeModel
             };
 

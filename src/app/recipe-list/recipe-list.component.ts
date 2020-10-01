@@ -544,25 +544,32 @@ export class RecipeListComponent implements OnInit, OnChanges {
 
       let available: boolean = true;
       for (let ingredient of allIngredients) {
-        let name: string = ingredient.name;
-        // console.log("Ingredient(" + name + ")"); //debug
+        let ingredientName: string = ingredient.name;
+        // console.log("Ingredient(" + ingredientName + ")"); //debug
 
-        if (ingredient.type === null || ingredient.type === undefined) {
+        let ingredientType = ingredient.type;
+        if (ingredientType === null || ingredientType === undefined) {
+          console.log('Failed to load ingredient type info for ' + ingredientName); //debug
           available = false;
           break;
         }
 
-        let typeName: string = ingredient.type.name;
+        let typeName: string = ingredientType.name;
         // console.log("Ingredient Type Name(" + typeName + ")");  //debug
 
-        let superType: string = ingredient.type.superType;
+        let superType: string = ingredientType.superType;
         // console.log("Ingredient Super Type(" + superType + ")"); //debug
 
-        if (superType != "Liquor") {
+        if (superType != 'Liquor') {
           continue;
         }
 
-        let type: string = ingredient.type.type;
+        console.log("Recipe " + recipe.id + "(" + recipe.name + ")"); //debug
+        console.log("Ingredient(" + ingredientName + ")"); //debug
+
+        // continue; //testing
+
+        let type: string = ingredientType.type;
         // console.log("Ingredient Type(" + type + ")"); //debug
 
         let allAvailableLiquors: { [type: string]: LiquorModel[] };
@@ -578,35 +585,59 @@ export class RecipeListComponent implements OnInit, OnChanges {
           break;
         }
 
-        let subType = ingredient.type.subType;
+        let subType = ingredientType.subType;
         // console.log("Ingredient Subtype(" + subType + ")"); //debug
 
-        let typeMatch = false;
+        // console.log('Ingredient Name(' + ingredientName + ')'); //debug
+        // console.log("Ingredient Type Name(" + typeName + ")");  //debug
 
-        let allLiquors = allAvailableLiquors[typeName];
+        let fullType: string = superType + '/' + type + '/' + subType;
+        // console.log('Ingredient Type(' + fullType + ')');  //debug
+
+        let exactIngredientMatch = false;
+        let allPossibleLiquorMatches: {[liquorName: string]: string} = {};
+        let allLiquors: LiquorModel[] = allAvailableLiquors[typeName];
         for (let liquor of allLiquors) {
-          if (typeMatch === true) {
-            break;
-          }
-
           // console.log('Avail Liquor Ingredient Names(' + liquor.ingredientNames + ')');  //debug
-          if(liquor.ingredientNames === null || liquor.ingredientNames === undefined) {
+          if (liquor.ingredientNames === null || liquor.ingredientNames === undefined) {
             continue;
           }
 
-          for (let liquorName of liquor.ingredientNames) {
-            // console.log("Liquor Name(" + liquorName + ")"); //debug
+          let liquorName: string = liquor.name;
+          // console.log("Liquor Name(" + liquorName + ")"); //debug
 
-            if (liquorName != name) {
+          let liquorIngredientType = liquor.ingredientType;
+          let liquorFullType: string = liquorIngredientType.superType + '/' + liquorIngredientType.type 
+          + '/' + liquorIngredientType.subType;
+          // console.log('Liquor Type(' + liquorFullType + ')');  //debug
+
+          if(fullType != liquorFullType) {
+            console.log('Failed to match full type "' + fullType + '" to "' + liquorFullType + '"');  //debug
+          }
+
+          for (let liquorIngredientName of liquor.ingredientNames) {
+            // console.log('Liquor Ingredient Name(' + liquorIngredientName + ')');  //debug
+
+            if (liquorIngredientName != ingredientName) {
               continue;
             }
 
-            typeMatch = true;
+            exactIngredientMatch = true;
             break;
           }
+
+          if(exactIngredientMatch === true) {
+            break;
+          }
+
+          if(liquorName in allPossibleLiquorMatches) {
+            continue;
+          }
+
+          allPossibleLiquorMatches[liquorName] = liquorName;
         }
 
-        if (typeMatch === true) {
+        if (exactIngredientMatch === true) {
           continue;
         }
 
@@ -620,8 +651,11 @@ export class RecipeListComponent implements OnInit, OnChanges {
           ingredient.notes += '; ';
         }
 
-        ingredient.notes += 'No exact match found. Substitute for ' + typeName;
-        console.log("Matched ingredient type(" + typeName + ") but not ingredient name(" + name + ")");  //debug
+        let possibleMatchList: string = Object.keys(allPossibleLiquorMatches).join(', ');
+        console.log('Possible Substitutes(' + possibleMatchList + ')');  //debug
+
+        ingredient.notes += 'No exact match found. Possible substitutes: ' + possibleMatchList;
+        console.log("Matched ingredient type(" + typeName + ") but not ingredient name(" + ingredientName + ")");  //debug
       }
 
       if (available !== true) {

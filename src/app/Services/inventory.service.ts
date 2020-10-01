@@ -11,6 +11,7 @@ export class InventoryService extends AirtableService {
   simpleInventoryUrl: string = 'Simple%20Inventory?';
 
   addrField: string = 'fields[]=Address';
+  nameField: string = 'fields[]=Name';
   brandField: string = 'fields[]=Brand';
   descField: string = 'fields[]=Description';
   volumeField: string = 'fields[]=Current Volume (mL)';
@@ -57,7 +58,8 @@ export class InventoryService extends AirtableService {
     let url = this.url as string;
     url += this.simpleInventoryUrl;
 
-    url += this.brandField;
+    url += this.nameField;
+    url += '&' + this.brandField;
     url += '&' + this.descField;
     url += '&' + this.typeField;
     url += '&' + this.subTypeField;
@@ -75,7 +77,8 @@ export class InventoryService extends AirtableService {
     let url = this.url as string;
     url += this.simpleInventoryUrl;
 
-    url += this.brandField;
+    url += this.nameField;
+    url += '&' + this.brandField;
     url += '&' + this.descField;
     url += '&' + this.typeField;
     url += '&' + this.subTypeField;
