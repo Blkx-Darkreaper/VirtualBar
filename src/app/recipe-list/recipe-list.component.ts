@@ -401,6 +401,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
           let allIngredientObjs: IngredientModel[] = response.records.map(
             ingredientObj => {
               let model: IngredientModel = {
+                id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
                 qualifier: ingredientObj.fields["Qualifier"],
@@ -450,6 +451,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
             let allIngredientObjs: IngredientModel[] = response.records.map(
               ingredientObj => {
                 let model: IngredientModel = {
+                  id: ingredientObj.fields["Recipe Ingredient ID"],
                   order: ingredientObj.fields["Order"],
                   name: ingredientObj.fields["Ingredient Name"][0],
                   qualifier: ingredientObj.fields["Qualifier"],
@@ -608,18 +610,18 @@ export class RecipeListComponent implements OnInit, OnChanges {
           continue;
         }
 
-        available = false;  // Need exact match
+        // available = false;  // Need exact match
 
-        // if (ingredient.notes === null || ingredient.notes === undefined) {
-        //   ingredient.notes = '';
-        // }
+        if (ingredient.notes === null || ingredient.notes === undefined) {
+          ingredient.notes = '';
+        }
 
-        // if (ingredient.notes.length > 0) {
-        //   ingredient.notes += '; ';
-        // }
+        if (ingredient.notes.length > 0) {
+          ingredient.notes += '; ';
+        }
 
-        // ingredient.notes += 'No exact match found. Substitute for ' + typename;
-        // console.log("Matched ingredient type(" + typeName + ") but not ingredient name(" + name + ")");  //debug
+        ingredient.notes += 'No exact match found. Substitute for ' + typeName;
+        console.log("Matched ingredient type(" + typeName + ") but not ingredient name(" + name + ")");  //debug
       }
 
       if (available !== true) {
@@ -703,6 +705,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
           let allIngredientObjs: IngredientModel[] = response.records.map(
             ingredientObj => {
               let model: IngredientModel = {
+                id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
                 /*qualifier: ingredientObj.fields[""],*/

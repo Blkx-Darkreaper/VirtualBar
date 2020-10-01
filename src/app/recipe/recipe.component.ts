@@ -1,11 +1,10 @@
+import { RecipeModel } from './../Models/recipe-model';
 import { DirectionModel } from './../Models/direction-model';
 import { IngredientModel, IngredientAmountModel } from './../Models/ingredient-model';
-//import { Recipe } from './../recipe';
 import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { map } from 'rxjs/operators';
-//import { RecipeModel } from '../Models/recipe-model';
 
 @Component({
   selector: 'app-recipe',
@@ -16,6 +15,7 @@ export class RecipeComponent implements OnInit, OnChanges {
   @Input() id: number;
   @Input() name: string;
   @Input() variant: string;
+  @Input() recipe: RecipeModel;
   allIngredientIndexesByOrder: { [order: number]: number[] }
   allIngredientOrders: number[];
   allIngredients: IngredientModel[];
@@ -28,129 +28,185 @@ export class RecipeComponent implements OnInit, OnChanges {
     this.allIngredientOrders = [];
     this.allIngredients = [];
     this.allDirections = [];
-    
+
     // this.updateIngredients(this.id);
     // this.updateDirections(this.id);
   }
 
   ngOnChanges(): void {
-    this.updateIngredients(this.id);
-    this.updateDirections(this.id);
+    if (this.recipe === null || this.recipe === undefined) {
+      return;
+    }
+
+    this.id = this.recipe.id;
+    this.name = this.recipe.name;
+    this.variant = this.recipe.variant;
+
+    // this.updateIngredients(this.id);
+    // this.updateDirections(this.id);
+    this.updateIngredients(this.recipe);
+    this.updateDirections(this.recipe.id);
   }
 
-  private updateIngredients(recipeId: number) {
+  private updateIngredients(recipe: RecipeModel) {
     this.allIngredientIndexesByOrder = {};
     this.allIngredientOrders = [];
     this.allIngredients = [];
 
+    // // Start with existing
+    // if (recipe.allIngredients !== null
+    //   && recipe.allIngredients !== undefined
+    //   && recipe.allIngredients.length > 0) {
+    //   // Organize ingredients by index and order #
+    //   for (let i = 0; i < recipe.allIngredients.length; i++) {
+    //     let model = recipe.allIngredients[i];
+    //     let allIndexes = this.allIngredientIndexesByOrder[model.order];
+
+    //     if (allIndexes === null || allIndexes === undefined) {
+    //       allIndexes = [];
+    //       this.allIngredientOrders.push(model.order);
+    //       // console.log("Added array for order " + model.order);  //debug
+    //     }
+
+    //     allIndexes.unshift(i);  // Reverse order
+    //     this.allIngredientIndexesByOrder[model.order] = allIndexes;
+    //   }
+
+    //   this.allIngredients = recipe.allIngredients;
+    // }
+
     // this.ingredientService.GetIngredients(id)
-    this.ingredientService.GetIngredientsFromAirtable(recipeId)
-    .pipe(
-      map(response => {
-      let allIngredients = response.records.map(
-        ingredientObj => {
-          // for(let i in ingredientObj.fields) {
-          //   console.log(i + "(" + ingredientObj.fields[i] + ")");
-          // }
-          // console.log("Name(" + ingredientObj.fields["Ingredient Name"] + ")"); //debug
-          // console.log("Order(" + ingredientObj.fields["Order"] + ")"); //debug
-          // console.log("Quantity(" + ingredientObj.fields["Quantity"] + ")"); //debug
+    this.ingredientService.GetIngredientsForRecipeFromAirtable(recipe.id)
+      .pipe(
+        map(response => {
+          let allIngredients = response.records.map(
+            ingredientObj => {
+              // for(let i in ingredientObj.fields) {
+              //   console.log(i + "(" + ingredientObj.fields[i] + ")");
+              // }
+              // console.log("Name(" + ingredientObj.fields["Ingredient Name"] + ")"); //debug
+              // console.log("Order(" + ingredientObj.fields["Order"] + ")"); //debug
+              // console.log("Quantity(" + ingredientObj.fields["Quantity"] + ")"); //debug
 
-          let model: IngredientModel = {
-            order: ingredientObj.fields["Order"],
-            name: ingredientObj.fields["Ingredient Name"][0],
-            qualifier: ingredientObj.fields["Qualifier"],
-            optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
-            amountReq: { },
-            notes: ingredientObj.fields["Notes"]
-          }
+              let model: IngredientModel = {
+                id: ingredientObj.fields["Recipe Ingredient ID"],
+                order: ingredientObj.fields["Order"],
+                name: ingredientObj.fields["Ingredient Name"][0],
+                qualifier: ingredientObj.fields["Qualifier"],
+                optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
+                amountReq: {},
+                notes: ingredientObj.fields["Notes"]
+              }
 
-          let allFields: [string, string][] = [["Ounces", "oz"], ["Millilitres", "mL"], 
-            ["Quantity", ""], ["Grams", "g"], ["Dashes", "dashes of"], ["Barspoons", "barspoons"], 
-            ["Teaspoons", "tsp"], ["Cups", "cup"]];
-          for(let i = 0; i < allFields.length; i++) {   
-            let fieldName: string = allFields[i][0];
-            let value: string = ingredientObj.fields[fieldName];
-            // console.log(fieldName + "(" + value + ")"); //debug
+              let allFields: [string, string][] = [["Ounces", "oz"], ["Millilitres", "mL"],
+              ["Quantity", ""], ["Grams", "g"], ["Dashes", "dashes of"], ["Barspoons", "barspoons"],
+              ["Teaspoons", "tsp"], ["Cups", "cup"]];
+              for (let i = 0; i < allFields.length; i++) {
+                let fieldName: string = allFields[i][0];
+                let value: string = ingredientObj.fields[fieldName];
+                // console.log(fieldName + "(" + value + ")"); //debug
 
-            if(value === null || value === undefined || value.length == 0) {
-              //console.log(fieldName + " is invalid");
-              continue;
+                if (value === null || value === undefined || value.length == 0) {
+                  //console.log(fieldName + " is invalid");
+                  continue;
+                }
+
+                model.amountReq[fieldName.toLowerCase()] = { units: allFields[i][1], amount: value };
+              }
+
+              // // start debug
+              // for(let amount in model.amounts) {
+              //   console.log(amount + "(" + model.amounts[amount] + ")"); //debug
+              // }
+              // // end debug
+
+              return model;
+            }
+          )
+
+          return allIngredients;
+        }))
+      .subscribe((data: IngredientModel[]) => {
+        let allModels: IngredientModel[] = data;
+        // console.log('Unsorted:'); //debug
+        // for(let i in allModels) {
+        //   let model = allModels[i];
+        //   console.log(model); //debug
+        // }
+
+        let filteredList = data.filter(n =>
+          n !== null && n !== undefined
+          && n.id !== null && n.id !== undefined); // Remove blanks
+
+        let sortedList = filteredList.sort((a, b) => a.order - b.order);  // Sort
+
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+        // Replace details with existing
+        if (recipe.allIngredients !== null && recipe.allIngredients !== undefined && recipe.allIngredients.length > 0) {
+          // console.log('Total ingredients Before(' + filteredList.length + ')');  //debug
+
+          filteredList = filteredList.map((ingredient: IngredientModel) => {
+            let match = recipe.allIngredients.find(existing => existing.id === ingredient.id);
+            if(match === null || match === undefined) {
+              return ingredient;
             }
 
-            model.amountReq[fieldName.toLowerCase()] = {units: allFields[i][1], amount: value};
+            // console.log(match.name + ' Notes 4(' + match.notes + ')');  //debug
+
+            // //debug
+            // if (match) {
+            //   for (let key in match) {
+            //     console.log(key + '(' + match[key] + ')');  //debug
+            //   }
+            // }
+            // //end debug
+            // console.log('ID(' + (match || ingredient).id + '), Notes(' + (match || ingredient).notes + ')');  //debug
+
+            return match;
+          });
+
+          // console.log('Total ingredients After(' + filteredList.length + ')');  //debug
+        }
+
+        // Organize ingredients by index and order #
+        for (let i = 0; i < filteredList.length; i++) {
+          let ingredient: IngredientModel = filteredList[i];
+          let allIndexes = this.allIngredientIndexesByOrder[ingredient.order];
+
+          if (allIndexes === null || allIndexes === undefined) {
+            allIndexes = [];
+            this.allIngredientOrders.push(ingredient.order);
+            // console.log("Added array for order " + model.order);  //debug
           }
 
-          // // start debug
-          // for(let amount in model.amounts) {
-          //   console.log(amount + "(" + model.amounts[amount] + ")"); //debug
-          // }
-          // // end debug
-
-          return model;
-        }
-      )
-
-      return allIngredients;
-    }))
-    .subscribe((data: IngredientModel[]) => {
-      let allModels: IngredientModel[] = data;
-      // console.log('Unsorted:'); //debug
-      // for(let i in allModels) {
-      //   let model = allModels[i];
-      //   console.log(model); //debug
-      // }
-
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.order - b.order);  // Sort
-      
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
-
-      // Organize ingredients by index and order #
-      for(let i = 0; i < filteredList.length; i++) {
-        let model = filteredList[i];
-        let allIndexes = this.allIngredientIndexesByOrder[model.order];
-        
-        if(allIndexes === null || allIndexes === undefined) {
-          allIndexes = [];
-          this.allIngredientOrders.push(model.order);
-          // console.log("Added array for order " + model.order);  //debug
+          allIndexes.unshift(i);  // Reverse order
+          this.allIngredientIndexesByOrder[ingredient.order] = allIndexes;
         }
 
-        allIndexes.unshift(i);  // Reverse order
-        this.allIngredientIndexesByOrder[model.order] = allIndexes;
-      }
+        // // start debug
+        // for(let order in this.allIngredientIndexesByOrder) {
+        //   let allIndexes = this.allIngredientIndexesByOrder[order];
+  
+        //   let debug = order + "[" + allIndexes.join(", ") + "]";  //debug
+        //   for(let i in allIndexes) {
+        //     let index = allIndexes[i];
+        //     //console.log("Index(" + index + ")");  //debug
+  
+        //     let ingredient = filteredList[index];
+        //     if(ingredient === null || ingredient === undefined) {
+        //       continue;
+        //     }
+  
+        //     debug += ', ' + ingredient.name;
+        //   }
+  
+        //   console.log(debug); //debug
+        // }
+        // // end debug
 
-      /* // start debug
-      for(let order in this.allIngredientIndexesByOrder) {
-        let allIndexes = this.allIngredientIndexesByOrder[order];
-
-        let debug = order + "[" + allIndexes.join(", ") + "]";  //debug
-        for(let i in allIndexes) {
-          let index = allIndexes[i];
-          //console.log("Index(" + index + ")");  //debug
-
-          let ingredient = filteredList[index];
-          if(ingredient === null || ingredient === undefined) {
-            continue;
-          }
-
-          debug += ', ' + ingredient.name;
-        }
-
-        console.log(debug); //debug
-      }
-      // end debug */
-
-      // console.log('Sorted:' + filteredList); //debug
-      // for(let i in filteredList) {
-      //   let model = filteredList[i];
-      //   console.log(model); //debug
-      // }
-
-      this.allIngredients = filteredList;
-    });
+        this.allIngredients = filteredList;
+      });
   }
 
   private updateDirections(recipeId) {
@@ -158,38 +214,38 @@ export class RecipeComponent implements OnInit, OnChanges {
 
     // this.directionService.GetDirections(id)
     this.directionService.GetDirectionsFromAirtable(recipeId)
-    .pipe(map(response => {
-      let allDirections = response.records.map(
-        directionObj => {
-          let model = {
-            step: directionObj.fields["Step"],
-            direction: directionObj.fields["Direction"],
-            optional: directionObj.fields["Optional"] ? directionObj.fields["Optional"] : false
+      .pipe(map(response => {
+        let allDirections = response.records.map(
+          directionObj => {
+            let model = {
+              step: directionObj.fields["Step"],
+              direction: directionObj.fields["Direction"],
+              optional: directionObj.fields["Optional"] ? directionObj.fields["Optional"] : false
+            }
+
+            return model;
           }
+        )
 
-          return model;
-        }
-      )
+        return allDirections;
+      }))
+      .subscribe((data: DirectionModel[]) => {
+        let allModels: DirectionModel[] = data;
 
-      return allDirections;
-    }))
-    .subscribe((data: DirectionModel[]) => {
-      let allModels: DirectionModel[] = data;
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-      let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      
-      let sortedList = filteredList.sort((a, b) => a.step - b.step);  // Sort
-      
-      filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+        let sortedList = filteredList.sort((a, b) => a.step - b.step);  // Sort
 
-      this.allDirections = filteredList;
-    });
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+        this.allDirections = filteredList;
+      });
   }
 
   getVariantSuffix(variant: string) {
     let suffix = '';
 
-    if(variant === null || variant === undefined && variant.length > 0) {
+    if (variant === null || variant === undefined && variant.length > 0) {
       suffix += ': ' + variant + ' variant';
     }
 
@@ -205,7 +261,7 @@ export class RecipeComponent implements OnInit, OnChanges {
     let desc: string = "";
 
     let prevAmountDesc = "";
-    for(let i in allIndexes) {
+    for (let i in allIndexes) {
       let index = allIndexes[i];
       // console.log("Index(" + index + ")");  //debug
 
@@ -217,29 +273,29 @@ export class RecipeComponent implements OnInit, OnChanges {
 
       let amountDesc = "";
 
-      for(let field in allIngredientAmounts) {
+      for (let field in allIngredientAmounts) {
         let ingredientAmount: IngredientAmountModel = allIngredientAmounts[field];
         let amount: string = ingredientAmount.amount;
         // console.log(field + "(" + amount + ")");  //debug
 
-        if(amount === null || amount === undefined || amount.length === 0) {
+        if (amount === null || amount === undefined || amount.length === 0) {
           console.log(amount + " is invalid");
           continue;
         }
 
-        if(amountDesc.length > 0) {
+        if (amountDesc.length > 0) {
           amountDesc += " / ";
         }
 
         amountDesc += amount;
 
         let unit: string = ingredientAmount.units;
-        if(unit.length > 0) {
+        if (unit.length > 0) {
           amountDesc += " " + unit;
         }
       }
 
-      if(desc.length > 0) {
+      if (desc.length > 0) {
         desc += " or ";
       }
 
@@ -248,7 +304,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       // console.log("Match(" + (amountDesc === prevAmountDesc) + ")"); //debug
 
       // Add amounts
-      if((prevAmountDesc.length == 0 && amountDesc.length > 0) || amountDesc !== prevAmountDesc) {
+      if ((prevAmountDesc.length == 0 && amountDesc.length > 0) || amountDesc !== prevAmountDesc) {
         // console.log("Amounts don't match"); //debug
         desc += amountDesc + " ";
       }
@@ -259,7 +315,7 @@ export class RecipeComponent implements OnInit, OnChanges {
 
       // Add qualifier
       // console.log("Ingredient(" + ingredient.qualifier + ")"); //debug
-      if(ingredient.qualifier !== null && ingredient.qualifier !== undefined && ingredient.qualifier.length > 0) {
+      if (ingredient.qualifier !== null && ingredient.qualifier !== undefined && ingredient.qualifier.length > 0) {
         desc += ' - ' + ingredient.qualifier;
       }
 
@@ -267,17 +323,21 @@ export class RecipeComponent implements OnInit, OnChanges {
       let notes: string = '';
 
       // Add ingredient quantity deficiences
-      notes += this.getDeficiency(ingredient);
+      // notes += this.getDeficiency(ingredient);
 
-      if(ingredient.notes !== null && ingredient.notes !== undefined && ingredient.notes.length > 0) {
-        if(notes.length > 0) {
+      console.log(ingredient.name + ' Notes(' + ingredient.notes + ')');  //debug
+
+      if (ingredient.notes !== null && ingredient.notes !== undefined && ingredient.notes.length > 0) {
+        console.log(ingredient.name + ' Notes(' + ingredient.notes + ')');  //debug
+
+        if (notes.length > 0) {
           notes += '; ';
         }
 
         notes += ingredient.notes;
       }
 
-      if(notes.length > 0) {
+      if (notes.length > 0) {
         desc += " (" + notes + ")";
       }
     }
@@ -288,8 +348,8 @@ export class RecipeComponent implements OnInit, OnChanges {
   getDeficiency(ingredient: IngredientModel) {
     let deficiency = '';
 
-    if(ingredient.amountAvailable === null || ingredient.amountAvailable === undefined
-    || isNaN(ingredient.amountAvailable.millilitres) == true) {
+    if (ingredient.amountAvailable === null || ingredient.amountAvailable === undefined
+      || isNaN(ingredient.amountAvailable.millilitres) == true) {
       return deficiency;
     }
 
@@ -299,16 +359,16 @@ export class RecipeComponent implements OnInit, OnChanges {
 
     // TODO: convert other req units for comparison if mL not available
 
-    if(amount.indexOf('-') !== -1) {
+    if (amount.indexOf('-') !== -1) {
       amount = amount.split('-')[1];
     }
 
     let req = parseFloat(amount);
-    if(isNaN(req) === true) {
+    if (isNaN(req) === true) {
       return deficiency;
     }
 
-    if(available >= req) {
+    if (available >= req) {
       return deficiency;
     }
 
@@ -323,12 +383,12 @@ export class RecipeComponent implements OnInit, OnChanges {
     //console.log("All Indexes(" + allIndexes + ")"); //debug
 
     let optional: boolean = false;
-    for(let i in allIndexes) {
+    for (let i in allIndexes) {
       let index = allIndexes[i];
       // console.log("Index(" + index + ")");  //debug
 
       let ingredient: IngredientModel = this.allIngredients[index];
-      if(ingredient.optional !== true) {
+      if (ingredient.optional !== true) {
         continue;
       }
 

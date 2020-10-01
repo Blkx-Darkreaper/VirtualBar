@@ -10,6 +10,9 @@
         {{ recipe.name }}{{ getVariantSuffix(recipe) }}
 	</div>
 </div>
+
+<!-- <pre>Address: {{ inventoryAddr }}</pre> -->
+
 <!-- <jw-pagination [items]="allRecipes" (changePage)="onChangePage($event)"></jw-pagination> -->
 <!-- <ngb-pagination
     [collectionSize]="15" 
@@ -27,5 +30,7 @@
 <app-recipe *ngIf="selectedRecipe" 
     [id]="selectedRecipe.id" 
     [name]="selectedRecipe.name" 
-    [variant]="selectedRecipe.variant">
+    [variant]="selectedRecipe.variant"
+    [recipe]="selectedRecipe">
 </app-recipe>
+<!-- <app-recipe *ngIf="selectedRecipe" [recipe]="selectedRecipe"></app-recipe> -->

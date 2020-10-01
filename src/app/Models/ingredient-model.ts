@@ -1,9 +1,10 @@
 import { IngredientTypeModel } from './Ingredient-type-model';
 export interface IngredientModel {
-  order: number;
+  id: number;
   name: string;
   qualifier?: string;
   recipeId?: number;
+  order: number;
   optional: boolean;
   type?: IngredientTypeModel;
   amountReq: {
