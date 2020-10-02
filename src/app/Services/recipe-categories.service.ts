@@ -7,50 +7,54 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root'
 })
 export class RecipeCategoriesService extends AirtableService {
-  typesRequestUrl: string = 'Types';
-  occassionsRequestUrl: string = 'Occassions';
-  stylesRequestUrl: string = 'Prep%20Styles';
-  familiesRequestUrl: string = 'Cocktail%20Family';
-  superFamilyFilter: string = '?filterByFormula={Superfamily}=BLANK()';
+  typesRequestUrl: string = 'Types?';
+  occassionsRequestUrl: string = 'Occassions?';
+  stylesRequestUrl: string = 'Prep%20Styles?';
+
+  nameField: string = 'fields[]=Name';
+
+  familiesRequestUrl: string = 'Cocktail%20Family?';
+  notesField: string = '&fields[]=Notes';
+  superFamilyFilter: string = '&filterByFormula={Superfamily}=BLANK()';
 
   constructor(http: HttpClient) { super(http) }
 
-  GetTypes(): Observable<any> {
-    const allTypes = {"types": ["Shot", "Cocktail"]};
-      return of(allTypes);
-  }
-
   GetTypesFromAirtable(): Observable<any> {
     let url = this.url as string;
-    url += this.typesRequestUrl;
+    url += this.typesRequestUrl + this.nameField;
     return this.getRequest(url);
   }
 
   GetOccassionsFromAirtable(): Observable<any> {
     let url = this.url as string;
-    url += this.occassionsRequestUrl;
+    url += this.occassionsRequestUrl + this.nameField;
     return this.getRequest(url);
-  }
-
-  GetStyles(): Observable<any> {
-    const allStyles = {"styles": ["Blended", "Built in Glass", "Layered", "Shaken", "Stirred"]};
-      return of(allStyles);
   }
 
   GetStylesFromAirtable(): Observable<any> {
     let url = this.url as string;
-    url += this.stylesRequestUrl;
+    url += this.stylesRequestUrl + this.nameField;
     return this.getRequest(url);
-  }
-
-  GetFamilies(): Observable<any> {
-    const allFamilies = {"families": ["Cocktail", "Duo", "Flip", "Highball", "Hot Toddy"]};
-      return of(allFamilies);
   }
 
   GetFamiliesFromAirtable(): Observable<any> {
     let url = this.url as string;
-    url += this.familiesRequestUrl + this.superFamilyFilter;
+    url += this.familiesRequestUrl + this.nameField + this.superFamilyFilter;
     return this.getRequest(url);
   }
+
+  // GetTypes(): Observable<any> {
+  //   const allTypes = {"types": ["Shot", "Cocktail"]};
+  //     return of(allTypes);
+  // }
+
+  // GetStyles(): Observable<any> {
+  //   const allStyles = {"styles": ["Blended", "Built in Glass", "Layered", "Shaken", "Stirred"]};
+  //     return of(allStyles);
+  // }
+
+  // GetFamilies(): Observable<any> {
+  //   const allFamilies = {"families": ["Cocktail", "Duo", "Flip", "Highball", "Hot Toddy"]};
+  //     return of(allFamilies);
+  // }
 }
