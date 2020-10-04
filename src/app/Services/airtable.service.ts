@@ -31,32 +31,33 @@ export class AirtableService {
     return this.apiUrl + this.appId + '/';
   }
 
-  getRequest(url: string): Observable<any> {
-    return this.getPaginatedRequest(url, this.unpaginatedOffset)
-      .pipe(
-        concatMap(results => {
-          if (results.offset) {
-            // console.log('Offset(' + results.offset + ')'); //debug
+  // getRequest(url: string): Observable<any> {
+  //   return this.getPaginatedObservable(url, this.unpaginatedOffset)
+  //     .pipe(
+  //       concatMap(results => {
+  //         // TODO need to make this a while or recursive so it will merge all results while results have an offset
+  //         if (results.offset) {
+  //           // console.log('Offset(' + results.offset + ')'); //debug
 
-            let resultsToMerge: Observable<any> = this.getPaginatedRequest(url, results.offset).pipe(map(data => data.records));
-            let mergedResults = forkJoin([of(results.records), resultsToMerge]).pipe(map(([head, tail]) => {
-              let results = { "records": [...head, ...tail] };
-              return results;
-            }));
+  //           let resultsToMerge: Observable<any> = this.getPaginatedObservable(url, results.offset).pipe(map(data => data.records));
+  //           let mergedResults = forkJoin([of(results.records), resultsToMerge]).pipe(map(([head, tail]) => {
+  //             let results = { "records": [...head, ...tail] };
+  //             return results;
+  //           }));
 
-            return mergedResults;
+  //           return mergedResults;
 
-            // let joinedResults = forkJoin([of(results), resultsToJoin]);
-            // let joinedResults = combineLatest([of(results), resultsToJoin]);
-            // return joinedResults;
-          }
+  //           // let joinedResults = forkJoin([of(results), resultsToJoin]);
+  //           // let joinedResults = combineLatest([of(results), resultsToJoin]);
+  //           // return joinedResults;
+  //         }
 
-          return of(results);
-        })
-        // , tap(data => console.log(JSON.stringify(data)))
-        , filter(data => /*data.length > 0 &&*/ data.records !== null && data.records !== undefined && data.records.length > 0)
-      );
-  }
+  //         return of(results);
+  //       })
+  //       // , tap(data => console.log(JSON.stringify(data)))
+  //       , filter(data => /*data.length > 0 &&*/ data.records !== null && data.records !== undefined && data.records.length > 0)
+  //     );
+  // }
   // getRequest(url: string): Observable<any> {
   //   return this.getPaginatedRequest(url, this.unpaginatedOffset)
   //   .pipe(expand(data => {
@@ -67,7 +68,33 @@ export class AirtableService {
   //   );
   // }
 
-  getPaginatedRequest(url: string, offset: string): Observable<any> {
+  getRequest(url: string, offset: string = this.unpaginatedOffset): Observable<any> {
+    // console.log('getRequest("' + url + '", "' + offset + '")'); //debug
+
+    // return of();  //testing
+
+    return this.getPaginatedObservable(url, offset)
+      .pipe(
+        concatMap(results => {
+          if (results.offset) {
+            // console.log('Offset(' + results.offset + ')'); //debug
+
+            return this.getRequest(url, results.offset)
+              .pipe(
+                // tap(response => console.log('Results to Merge: ' + JSON.stringify(response))),
+                map(resultsToMerge => [...results.records, ...resultsToMerge.records])
+              );
+          }
+
+          return of(results.records);
+        })
+        , map(results => { return { "records": results}; })
+        // , tap(response => console.log('Results to Filter: ' +JSON.stringify(response)))
+        , filter(results => results.records !== null && results.records !== undefined && results.records.length > 0)
+      );
+  }
+
+  getPaginatedObservable(url: string, offset: string): Observable<any> {
     const options = {
       method: 'GET',
       headers: this.headers,
