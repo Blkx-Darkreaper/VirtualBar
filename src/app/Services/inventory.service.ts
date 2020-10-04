@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { AirtableService } from './airtable.service';
 import { HttpClient } from '@angular/common/http';
@@ -34,9 +34,12 @@ export class InventoryService extends AirtableService {
   constructor(http: HttpClient) { super(http); }
 
   GetInventoriesFromAirtable(): Observable<any> {
-    let url = this.url as string;
-    url += this.inventoryUrl + this.addrField;
-    return this.getRequest(url);
+    // let url = this.url as string;
+    // url += this.inventoryUrl + this.addrField;
+    // return this.getRequest(url);
+    
+    return of(JSON.parse('{"records": [{"id": "rec3yTiBoVOawVAK8","fields": {"Address": "4021 Century Rd"},\
+"createdTime": "2020-04-17T01:03:56.000Z"}]}'));  //testing
   }
 
   GetLiquorTypesFromAirtable(address: string): Observable<any> {
