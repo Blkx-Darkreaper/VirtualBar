@@ -91,7 +91,11 @@ export class RecipeListComponent implements OnInit, OnChanges {
     this.recipeListService.GetRecipesFromAirtable(
       this.allDrinkTypes, this.allDrinkOccassions, this.allPreparationStyles, this.allFamilies, this.muddlingRequired,
       this.allPrimaryComponents, this.allSecondaryComponents, this.recipeNameToFind
-    ).pipe(map(response => {
+    ).pipe(
+      // tap(response => {
+      //   console.log('Recipes(' + JSON.stringify(response) + ')'); //debug
+      // }),
+      map(response => {
       let allRecipes = response.records.map(
         recipeObj => {
           //console.log(recipeObj.fields);
@@ -101,7 +105,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
             name: recipeObj.fields["Name"],
             variant: '',
             version: 0,
-            type: recipeObj.fields["Type"]
+            type: recipeObj.fields["Type Name"][0]
           }
 
           let variant: string = recipeObj.fields["Variant"];
@@ -311,9 +315,11 @@ export class RecipeListComponent implements OnInit, OnChanges {
       // }
       this.getAllIngredientsForRecipeListObservable(allRecipeIds)
         .subscribe((data: IngredientModel[]) => {
+          // console.log('Total Ingredients(' + data.length + ')');  //debug
+
           let filteredIngredientList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
-          let sortedList = filteredIngredientList.sort((a, b) => a.order - b.order);  // Sort
+          let sortedList = filteredIngredientList.sort((a, b) => a.recipeId - b.recipeId);  // Sort
 
           filteredIngredientList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
@@ -325,7 +331,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
             // Get recipe by ID
             let recipe: RecipeModel = allRecipeObjs[recipeId];
             if (recipe === null || recipe === undefined) {
-              console.log("Failed to find recipe " + recipeId + " for ingredient " + ingredient.name);  //debug
+              console.log("Failed to find recipe " + recipeId 
+              + " for ingredient " + ingredient.id + ' ' + ingredient.name);  //debug
               continue;
             }
 
@@ -528,12 +535,13 @@ export class RecipeListComponent implements OnInit, OnChanges {
   filterListToAvailableTypes(allSpirits: { [type: string]: LiquorModel[]; },
     allNonSpirits: { [type: string]: LiquorModel[]; }, allRecipes: RecipeModel[]): RecipeModel[] {
     // console.log('filterListToAvailableTypes(Spirits: ' + Object.keys(allSpirits) + ', Non-Spirits:'
-    //   + Object.keys(allNonSpirits) + ', Recipes: ' + allRecipes.length + ')');  //debug
+      // + Object.keys(allNonSpirits) + ', Recipes: ' + allRecipes.length + ')');  //debug
 
     let allFilteredRecipes = new Array();
 
     for (let recipe of allRecipes) {
       // console.log("Recipe " + recipe.id + "(" + recipe.name + ")"); //debug
+      // console.log('Recipe(' + JSON.stringify(recipe) + ')');  //debug
 
       let allIngredients = recipe.allIngredients;
       if (allIngredients === null || allIngredients === undefined) {
@@ -564,8 +572,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
           continue;
         }
 
-        console.log("Recipe " + recipe.id + "(" + recipe.name + ")"); //debug
-        console.log("Ingredient(" + ingredientName + ")"); //debug
+        // console.log("Recipe " + recipe.id + "(" + recipe.name + ")"); //debug
+        // console.log("Ingredient(" + ingredientName + ")"); //debug
 
         // continue; //testing
 
@@ -652,7 +660,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
         }
 
         let possibleMatchList: string = Object.keys(allPossibleLiquorMatches).join(', ');
-        console.log('Possible Substitutes(' + possibleMatchList + ')');  //debug
+        // console.log('Possible Substitutes(' + possibleMatchList + ')');  //debug
 
         ingredient.notes += 'No exact match found. Possible substitutes: ' + possibleMatchList;
         console.log("Matched ingredient type(" + typeName + ") but not ingredient name(" + ingredientName + ")");  //debug
