@@ -6,7 +6,7 @@ export interface IngredientModel {
   recipeId?: number;
   order: number;
   optional: boolean;
-  type?: IngredientTypeModel;
+  type: IngredientTypeModel;
   amountReq: {
     ounces?: IngredientAmountModel;
     millilitres?: IngredientAmountModel;

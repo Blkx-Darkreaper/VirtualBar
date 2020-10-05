@@ -1,3 +1,4 @@
+import { IngredientTypeModel } from './../Models/Ingredient-type-model';
 import { RecipeModel } from './../Models/recipe-model';
 import { DirectionModel } from './../Models/direction-model';
 import { IngredientModel, IngredientAmountModel } from './../Models/ingredient-model';
@@ -88,15 +89,23 @@ export class RecipeComponent implements OnInit, OnChanges {
               // console.log("Order(" + ingredientObj.fields["Order"] + ")"); //debug
               // console.log("Quantity(" + ingredientObj.fields["Quantity"] + ")"); //debug
 
+              let typeModel: IngredientTypeModel = {
+                name: ingredientObj.fields["Ingredient Type Name"],
+                superType: ingredientObj.fields["Supertype"][0],
+                type: ingredientObj.fields["Type"][0],
+                subType: ingredientObj.fields["Subtype"][0]
+              };
+
               let model: IngredientModel = {
                 id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
                 qualifier: ingredientObj.fields["Qualifier"],
                 optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
+                type: typeModel,
                 amountReq: {},
                 notes: ingredientObj.fields["Notes"]
-              }
+              };
 
               let allFields: [string, string][] = [["Ounces", "oz"], ["Millilitres", "mL"],
               ["Quantity", ""], ["Grams", "g"], ["Dashes", "dashes of"], ["Barspoons", "barspoons"],
@@ -148,7 +157,7 @@ export class RecipeComponent implements OnInit, OnChanges {
 
           filteredList = filteredList.map((ingredient: IngredientModel) => {
             let match = recipe.allIngredients.find(existing => existing.id === ingredient.id);
-            if(match === null || match === undefined) {
+            if (match === null || match === undefined) {
               return ingredient;
             }
 
@@ -187,20 +196,20 @@ export class RecipeComponent implements OnInit, OnChanges {
         // // start debug
         // for(let order in this.allIngredientIndexesByOrder) {
         //   let allIndexes = this.allIngredientIndexesByOrder[order];
-  
+
         //   let debug = order + "[" + allIndexes.join(", ") + "]";  //debug
         //   for(let i in allIndexes) {
         //     let index = allIndexes[i];
         //     //console.log("Index(" + index + ")");  //debug
-  
+
         //     let ingredient = filteredList[index];
         //     if(ingredient === null || ingredient === undefined) {
         //       continue;
         //     }
-  
+
         //     debug += ', ' + ingredient.name;
         //   }
-  
+
         //   console.log(debug); //debug
         // }
         // // end debug
@@ -325,10 +334,8 @@ export class RecipeComponent implements OnInit, OnChanges {
       // Add ingredient quantity deficiences
       // notes += this.getDeficiency(ingredient);
 
-      console.log(ingredient.name + ' Notes(' + ingredient.notes + ')');  //debug
-
       if (ingredient.notes !== null && ingredient.notes !== undefined && ingredient.notes.length > 0) {
-        console.log(ingredient.name + ' Notes(' + ingredient.notes + ')');  //debug
+        // console.log(ingredient.name + ' Notes(' + ingredient.notes + ')');  //debug
 
         if (notes.length > 0) {
           notes += '; ';

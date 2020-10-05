@@ -407,12 +407,20 @@ export class RecipeListComponent implements OnInit, OnChanges {
         map(response => {
           let allIngredientObjs: IngredientModel[] = response.records.map(
             ingredientObj => {
+              let typeModel: IngredientTypeModel = {
+                name: ingredientObj.fields["Ingredient Type Name"],
+                superType: ingredientObj.fields["Supertype"][0],
+                type: ingredientObj.fields["Type"][0],
+                subType: ingredientObj.fields["Subtype"][0]
+              };
+
               let model: IngredientModel = {
                 id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
                 qualifier: ingredientObj.fields["Qualifier"],
                 optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
+                type: typeModel,
                 amountReq: {},
                 notes: ingredientObj.fields["Notes"]
               }
@@ -457,6 +465,13 @@ export class RecipeListComponent implements OnInit, OnChanges {
           map(response => {
             let allIngredientObjs: IngredientModel[] = response.records.map(
               ingredientObj => {
+                let typeModel: IngredientTypeModel = {
+                  name: ingredientObj.fields["Ingredient Type Name"],
+                  superType: ingredientObj.fields["Supertype"][0],
+                  type: ingredientObj.fields["Type"][0],
+                  subType: ingredientObj.fields["Subtype"][0]
+                };
+
                 let model: IngredientModel = {
                   id: ingredientObj.fields["Recipe Ingredient ID"],
                   order: ingredientObj.fields["Order"],
@@ -464,6 +479,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
                   qualifier: ingredientObj.fields["Qualifier"],
                   recipeId: ingredientObj.fields["Recipe ID"],
                   optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
+                  type: typeModel,
                   amountReq: {},
                   notes: ingredientObj.fields["Notes"]
                 }
@@ -746,12 +762,20 @@ export class RecipeListComponent implements OnInit, OnChanges {
         map(response => {
           let allIngredientObjs: IngredientModel[] = response.records.map(
             ingredientObj => {
+              let typeModel: IngredientTypeModel = {
+                name: ingredientObj.fields["Ingredient Type Name"],
+                superType: ingredientObj.fields["Supertype"][0],
+                type: ingredientObj.fields["Type"][0],
+                subType: ingredientObj.fields["Subtype"][0]
+              };
+
               let model: IngredientModel = {
                 id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
                 /*qualifier: ingredientObj.fields[""],*/
                 optional: ingredientObj.fields["Optional"] ? ingredientObj.fields["Optional"] : false,
+                type: typeModel,
                 amountReq: {},
                 notes: ingredientObj.fields["Notes"]
               }
