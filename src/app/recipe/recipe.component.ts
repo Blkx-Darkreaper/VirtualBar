@@ -92,9 +92,19 @@ export class RecipeComponent implements OnInit, OnChanges {
               let typeModel: IngredientTypeModel = {
                 name: ingredientObj.fields["Ingredient Type Name"],
                 superType: ingredientObj.fields["Supertype"][0],
-                type: ingredientObj.fields["Type"][0],
-                subType: ingredientObj.fields["Subtype"][0]
               };
+
+              if (ingredientObj.fields["Type"] !== null
+                && ingredientObj.fields["Type"] !== undefined
+                && ingredientObj.fields["Type"].length > 0) {
+                typeModel.type = ingredientObj.fields["Type"][0];
+              }
+
+              if (ingredientObj.fields["Subtype"] !== null
+                && ingredientObj.fields["Subtype"] !== undefined
+                && ingredientObj.fields["Subtype"].length > 0) {
+                typeModel.subType = ingredientObj.fields["Subtype"][0];
+              }
 
               let model: IngredientModel = {
                 id: ingredientObj.fields["Recipe Ingredient ID"],
