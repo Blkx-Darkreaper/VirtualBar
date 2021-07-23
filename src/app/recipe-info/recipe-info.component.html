@@ -1,5 +1,16 @@
 <div>
-    <p>recipe-info works!</p>
+    <div id="servingInfo">
+        <h4>Serving Details</h4>
+        Prep Style: {{ allPrepStyles.join(', ') }}<br>
+        Glass: {{ allGlasses.join(', ') }}<br>
+        Served: {{ allIce.join('; ') }}<br>
+    </div>
+    <div id="cocktailInfo">
+        <h4>Cocktail Details</h4>
+        Cocktail Family: {{ allCocktailFamilies.join(', ') }}<br>
+        Occassions: {{ allOccassions.join(', ') }}
+        <!-- <pre>Occassions: {{ allOccassions | json }}</pre> -->
+    </div>
 </div>
 <div class = "recipeInfo">
     <!-- <pre>Images: {{ allImageLinks | json }}</pre> -->
@@ -21,8 +32,11 @@
                 crossorigin="anonymous" 
             />
     </div>
-    
-    <div class="recipeExtras">
-        <p>These are extras</p>
-    </div>
 </div>
+    
+    <div id="recipeExtras">
+        <h4>Misc Details:</h4>
+        Volume: {{ ounces}} oz / {{ millilitres }} mL<br>
+        Related to: {{ relatedTo }}<br>
+        <p>{{ notes }}</p>
+    </div>
