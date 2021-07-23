@@ -28,6 +28,7 @@ export class RecipeSelectionComponent implements OnInit {
   allFamilies: string[];
   allPrimaryComponents: string[];
   allSecondaryComponents: string[];
+  allTertiaryComponents: string[];
 
   allInventories: string[];
 
@@ -86,6 +87,15 @@ export class RecipeSelectionComponent implements OnInit {
   };
   allSelectedSecondaryComponents: string[] = ['all'];
   areAllSecondaryComponentsSelected: boolean = true;
+
+  tertiaryOptions: Option = {
+    name: 'Non-Alcoholic',
+    selected: true,
+    enabled: true,
+    subOptions: []
+  };
+  allSelectedTertiaryComponents: string[] = ['all'];
+  areAllTertiaryComponentsSelected: boolean = true;
 
   muddlingRequired: boolean = false;
 
@@ -189,6 +199,7 @@ export class RecipeSelectionComponent implements OnInit {
     this.allFamilies = [];
     this.allPrimaryComponents = [];
     this.allSecondaryComponents = [];
+    this.allTertiaryComponents = [];
 
     this.getRecipeTypesObservable()
       .subscribe((data: string[]) => {
@@ -269,6 +280,22 @@ export class RecipeSelectionComponent implements OnInit {
         this.allSecondaryComponents = filteredList;
         this.addSubOptions(filteredList, this.secondaryOptions);
         this.updateSelectedSecondaryComponents();
+      });
+
+      this.getRecipeTertComponentsObservable()
+      .subscribe((data: string[]) => {
+        let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
+
+        let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
+
+        filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+        // for(let i in filteredList) {
+        //   console.log(filteredList[i]);  //debug
+        // }
+        this.allTertiaryComponents = filteredList;
+        this.addSubOptions(filteredList, this.tertiaryOptions);
+        this.updateSelectedTertiaryComponents();
       });
 
     this.getInventoryListObservable()
@@ -366,22 +393,6 @@ export class RecipeSelectionComponent implements OnInit {
       }));
   }
 
-  private getRecipeAuxComponentsObservable() {
-    // this.recipeComponentService.GetSecondaries()
-    return this.recipeComponentService.GetSecondariesFromAirtable()
-      .pipe(
-        map(response => {
-          let allValues = response.records.map(
-            obj => {
-              // return obj.fields.Name;
-              return obj.fields.Name;
-            }
-          );
-
-          return allValues;
-        }));
-  }
-
   private getRecipeMainComponentsObservable() {
     // this.recipeComponentService.GetPrimaries()
     return this.recipeComponentService.GetPrimariesFromAirtable()
@@ -389,14 +400,45 @@ export class RecipeSelectionComponent implements OnInit {
         map(response => {
           let allValues = response.records.map(
             obj => {
-              // return obj.fields.Name;
               return obj.fields.Name;
             }
           );
 
           return allValues;
-        }));
+        })
+        );
   }
+
+  private getRecipeAuxComponentsObservable() {
+    // this.recipeComponentService.GetSecondaries()
+    return this.recipeComponentService.GetSecondariesFromAirtable()
+      .pipe(
+        map(response => {
+          let allValues = response.records.map(
+            obj => {
+              return obj.fields.Name;
+            }
+          );
+
+          return allValues;
+        })
+        );
+  }
+
+private getRecipeTertComponentsObservable() {
+  return this.recipeComponentService.GetTertiariesFromAirtable()
+  .pipe(
+    map(response => {
+      let allValues = response.records.map(
+        obj => {
+          return obj.fields.name;
+        }
+      );
+
+      return allValues;
+    })
+  );
+}
 
   private getRecipeFamiliesObservable() {
     // this.recipeCategoryService.GetFamilies()
@@ -600,6 +642,16 @@ export class RecipeSelectionComponent implements OnInit {
     });
 
     this.updateSelectedSecondaryComponents();
+
+    this.tertiaryOptions.subOptions.forEach(o => {
+      if (this.areAllTertiaryComponentsSelected === true) {
+        o.selected = true;
+      }
+
+      o.enabled = true;
+    });
+
+    this.updateSelectedTertiaryComponents();
   }
 
   protected addSubOptions(group: string[], option: Option) {
@@ -653,6 +705,10 @@ export class RecipeSelectionComponent implements OnInit {
       case "Auxiliary":
         this.setAllEnabledSecondaryComponentsSelected(selected);
         break;
+
+        case "Non-Alcoholic":
+          this.setAllEnabledTertiaryComponentsSelected(selected);
+          break;
     }
   }
 
@@ -737,6 +793,20 @@ export class RecipeSelectionComponent implements OnInit {
     this.updateSelectedSecondaryComponents();
   }
 
+  setAllEnabledTertiaryComponentsSelected(selected: boolean) {
+    // console.log('setAllEnabledTertiaryComponentsSelected(' + selected + ')');  //debug
+
+    this.areAllTertiaryComponentsSelected = selected;
+
+    if (this.tertiaryOptions.subOptions == null) {
+      return;
+    }
+
+    this.tertiaryOptions.subOptions.forEach(o => { if (o.enabled) { o.selected = selected; } });
+
+    this.updateSelectedTertiaryComponents();
+  }
+
   toggleSelected(group: string, name: string, selected: boolean) {
     // console.log('toggleSelected(' + group + ', ' + name + ', ' + selected + ')');  //debug
 
@@ -766,6 +836,10 @@ export class RecipeSelectionComponent implements OnInit {
       case "Auxiliary":
         this.updateSelectedSecondaryComponents();
         break;
+
+        case "Non-Alcoholic":
+          this.updateSelectedTertiaryComponents();
+          break;
     }
   }
 
@@ -918,5 +992,40 @@ export class RecipeSelectionComponent implements OnInit {
     }
 
     this.allSelectedSecondaryComponents = ["all"];
+  }
+
+  updateSelectedTertiaryComponents() {
+    // console.log('updateSelectedTertiaryComponents()'); //debug
+
+    let areAllAvailableSelected = true;
+    let areAllAvailable = true;
+
+    this.allSelectedTertiaryComponents = [];
+    if (this.tertiaryOptions.subOptions !== null) {
+      for (let i = 0; i < this.tertiaryOptions.subOptions.length; i++) {
+        let tertiaryComponent = this.tertiaryOptions.subOptions[i];
+
+        areAllAvailable = areAllAvailable && tertiaryComponent.enabled;
+        if (tertiaryComponent.enabled !== true) {
+          continue;
+        }
+
+        areAllAvailableSelected = areAllAvailableSelected && tertiaryComponent.selected;
+
+        if (tertiaryComponent.selected !== true) {
+          continue;
+        }
+
+        this.allSelectedTertiaryComponents.push(tertiaryComponent.name);
+      }
+    }
+
+    this.areAllTertiaryComponentsSelected = areAllAvailableSelected;
+
+    if (areAllAvailable !== true || areAllAvailableSelected !== true) {
+      return;
+    }
+
+    this.allSelectedTertiaryComponents = ["all"];
   }
 }

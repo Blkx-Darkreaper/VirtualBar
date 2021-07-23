@@ -1,20 +1,45 @@
-.top-bar
+.container
     display: flex
+
+    .item
+        flex: none
+    
+.top-bar
+    width: 85%
     //justify-content: space-around
     justify-content: space-between
     //align-content: flex-start
     align-content: space-between
-    height: 8.5em
-    width: 85%
+    height: 7em
     // flex-wrap: wrap
 
-    .two-column
-        width: 16.5%
+    .one-column
+        width: 12em
         //flex-grow: 2
         flex-basis: auto
 
-    .multi-column
-        width: 35%
+    .two-column
+        width: 22em
+        //flex-grow: 2
+        flex-basis: auto
+
+    .three-column
+        width: 30em
+        //flex-grow: 2
+        flex-basis: auto
+
+    .four-column
+        width: 40em
+        //flex-grow: 2
+        flex-basis: auto
+
+    .three-deep
+        height: 4em
+        //flex-grow: 2
+        flex-basis: auto
+
+    .four-deep
+        height: 5em
         //flex-grow: 2
         flex-basis: auto
 
@@ -32,9 +57,30 @@
         flex-direction: column*/
 
 .mid-bar
-    display: flex
-    height: 7em
     width: 85%
+    // height: 7em
+    //flex-direction: column
+    //flex-wrap: wrap
+
+    .one-deep
+        height: 2em
+        flex-basis: auto
+
+    .two-deep
+        height: 3em
+        flex-basis: auto
+
+    .three-deep
+        height: 4em
+        flex-basis: auto
+
+    .four-deep
+        height: 6em
+        flex-basis: auto
+
+    .five-deep
+        height: 7em
+        flex-basis: auto
 
     .wrap
         display: flex
@@ -44,5 +90,5 @@
         height: 100%
 
 .bottom-bar
-    display: flex
+    width: 85%
     justify-content: space-between
