@@ -23,6 +23,9 @@ export class RecipeListComponent implements OnInit, OnChanges {
   currentRecipePage: Array<RecipeModel>;
   // page = 1;
 
+  allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], 
+  ["Grams", "g"], ["Dashes", ""], ["Barspoons (tsp)", "barspoons/tsp"], ["Misc", ""]];
+
   @Input('types') allDrinkTypes: string[] = ['all'];
   @Input('occassions') allDrinkOccassions: string[] = ['all'];
   @Input('styles') allPreparationStyles: string[] = ['all'];
@@ -425,17 +428,15 @@ export class RecipeListComponent implements OnInit, OnChanges {
                 notes: ingredientObj.fields["Notes"]
               }
 
-              let allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], ["Grams", "g"],
-              ["Dashes", ""], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"], ["Misc", ""]];
-              for (let i = 0; i < allFields.length; i++) {
-                let fieldName: string = allFields[i][0];
+              for (let i = 0; i < this.allFields.length; i++) {
+                let fieldName: string = this.allFields[i][0];
                 let value: string = ingredientObj.fields[fieldName];
 
                 if (value === null || value === undefined || value.length == 0) {
                   continue;
                 }
 
-                model.amountReq[fieldName.toLowerCase()] = { units: allFields[i][1], amount: value };
+                model.amountReq[fieldName.toLowerCase()] = { units: this.allFields[i][1], amount: value };
               }
 
               // Add type info
@@ -484,17 +485,15 @@ export class RecipeListComponent implements OnInit, OnChanges {
                   notes: ingredientObj.fields["Notes"]
                 }
 
-                let allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], ["Grams", "g"],
-                ["Dashes", ""], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"], ["Misc", ""]];
-                for (let i = 0; i < allFields.length; i++) {
-                  let fieldName: string = allFields[i][0];
+                for (let i = 0; i < this.allFields.length; i++) {
+                  let fieldName: string = this.allFields[i][0];
                   let value: string = ingredientObj.fields[fieldName];
 
                   if (value === null || value === undefined || value.length == 0) {
                     continue;
                   }
 
-                  model.amountReq[fieldName.toLowerCase()] = { units: allFields[i][1], amount: value };
+                  model.amountReq[fieldName.toLowerCase()] = { units: this.allFields[i][1], amount: value };
                 }
 
                 // Add type info
@@ -780,17 +779,15 @@ export class RecipeListComponent implements OnInit, OnChanges {
                 notes: ingredientObj.fields["Notes"]
               }
 
-              let allFields: [string, string][] = [["Cups", "cup"], ["Ounces", "oz"], ["Millilitres", "mL"], ["Quantity", ""], ["Grams", "g"],
-              ["Dashes", ""], ["Barspoons", "barspoons"], ["Teaspoons", "tsp"], ["Misc", ""]];
-              for (let i = 0; i < allFields.length; i++) {
-                let fieldName: string = allFields[i][0];
+              for (let i = 0; i < this.allFields.length; i++) {
+                let fieldName: string = this.allFields[i][0];
                 let value: string = ingredientObj.fields[fieldName];
 
                 if (value === null || value === undefined || value.length == 0) {
                   continue;
                 }
 
-                model.amountReq[fieldName.toLowerCase()] = { units: allFields[i][1], amount: value };
+                model.amountReq[fieldName.toLowerCase()] = { units: this.allFields[i][1], amount: value };
               }
 
               return model;

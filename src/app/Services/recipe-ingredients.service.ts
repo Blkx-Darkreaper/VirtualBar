@@ -16,7 +16,7 @@ export class RecipeIngredientsService extends AirtableService {
   recipeIdField: string = '{Recipe%20ID}=';
 
   fieldFilter: string = '&fields[]=Ingredient Name&fields[]=Order&fields[]=Ounces&fields[]=Millilitres&fields[]=Quantity'
-    + '&fields[]=Grams&fields[]=Dashes&fields[]=Barspoons&fields[]=Teaspoons&fields[]=Cups';
+    + '&fields[]=Grams&fields[]=Dashes&fields[]=Barspoons%20(tsp)&fields[]=Cups';
 
   ingredientUrl: string = 'Ingredients?filterByFormula={Name}=';
 

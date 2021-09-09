@@ -4,6 +4,7 @@ export interface IngredientModel {
   name: string;
   qualifier?: string;
   recipeId?: number;
+  version?: number;
   order: number;
   optional: boolean;
   type: IngredientTypeModel;
@@ -14,7 +15,6 @@ export interface IngredientModel {
     grams?: IngredientAmountModel;
     dashes?: IngredientAmountModel;
     barspoons?: IngredientAmountModel;
-    teaspoons?: IngredientAmountModel;
     cups?: IngredientAmountModel;
   }
   amountAvailable?: {

@@ -118,8 +118,8 @@ export class RecipeComponent implements OnInit, OnChanges {
               };
 
               let allFields: [string, string][] = [["Ounces", "oz"], ["Millilitres", "mL"],
-              ["Quantity", ""], ["Grams", "g"], ["Dashes", "dashes of"], ["Barspoons", "barspoons"],
-              ["Teaspoons", "tsp"], ["Cups", "cup"]];
+              ["Quantity", ""], ["Grams", "g"], ["Dashes", "dashes of"], ["Barspoons (tsp)", "barspoons/tsp"],
+              ["Cups", "cup"]];
               for (let i = 0; i < allFields.length; i++) {
                 let fieldName: string = allFields[i][0];
                 let value: string = ingredientObj.fields[fieldName];
