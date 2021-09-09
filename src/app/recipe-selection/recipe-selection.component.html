@@ -107,7 +107,7 @@
     <br>
 
     <div class="top-bar container">
-        <form class="three-deep" #occassionForm="ngForm">
+        <form class="four-deep" #occassionForm="ngForm">
             <label for="Type">Appropriate for Occassion:</label>
             <br>
 
@@ -143,7 +143,7 @@
     <br>
 
     <div class="mid-bar container">
-        <form class="one-deep" #mainComponentsForm="ngForm">
+        <form class="three-deep" #mainComponentsForm="ngForm">
             <label for="Main">Spirits:</label>
             <br>
 
@@ -179,12 +179,12 @@
         <br>
 
         <div class="mid-bar container">
-        <form class="five-deep" #secondaryComponentsForm="ngForm">
+        <form class="fifteen-deep" #secondaryComponentsForm="ngForm">
             <label for="Auxiliary">Auxiliary Components:</label>
             <br>
 
             <div class="wrap" name="secondary-components">
-                <div>
+                <div class="item">
                     <input type="checkbox" 
                             id="secondary-all" 
                             name="{{ secondaryOptions.name }}" 
@@ -194,7 +194,7 @@
                     <label for="secondary-all">(Select All)</label>
                 </div>
 
-                <div *ngFor="let subOption of secondaryOptions.subOptions; let i = index">
+                <div *ngFor="let subOption of secondaryOptions.subOptions; let i = index" class="item">
                     <input type="checkbox"
                         id="secondary-{{ secondaryOptions.subOptions[i].name | lowercase }}" 
                         name="{{ secondaryOptions.name }}"
