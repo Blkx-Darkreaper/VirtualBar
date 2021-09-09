@@ -274,9 +274,11 @@ export class RecipeSelectionComponent implements OnInit {
 
         filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
+        // console.log("Secondary Components:"); //debug
         // for(let i in filteredList) {
         //   console.log(filteredList[i]);  //debug
         // }
+
         this.allSecondaryComponents = filteredList;
         this.addSubOptions(filteredList, this.secondaryOptions);
         this.updateSelectedSecondaryComponents();
@@ -284,15 +286,23 @@ export class RecipeSelectionComponent implements OnInit {
 
       this.getRecipeTertComponentsObservable()
       .subscribe((data: string[]) => {
+        // console.log("Total Tertiary components(" + data.length + ")");  //debug
+        // for(let i in data) {
+        //   console.log(data[i]);  //debug
+        // }
+
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
         let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
 
         filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+        // console.log("Total Filtered Tertiary components(" + filteredList.length + ")");  //debug
 
+        // console.log("Tertiary Components:"); //debug
         // for(let i in filteredList) {
         //   console.log(filteredList[i]);  //debug
         // }
+
         this.allTertiaryComponents = filteredList;
         this.addSubOptions(filteredList, this.tertiaryOptions);
         this.updateSelectedTertiaryComponents();
@@ -431,10 +441,12 @@ private getRecipeTertComponentsObservable() {
     map(response => {
       let allValues = response.records.map(
         obj => {
-          return obj.fields.name;
+          // console.log(obj.fields);  //debug
+          return obj.fields.Name;
         }
       );
 
+      // console.log("All Tertiary Components(" + allValues.join(", ") + ")");  //debug
       return allValues;
     })
   );
@@ -772,7 +784,8 @@ private getRecipeTertComponentsObservable() {
     this.primaryOptions.subOptions.forEach(option => {
       // console.log(o.name + ' enabled(' + o.enabled + ')');  //debug
       if (option.enabled === true) {
-        // option.selected = selected; console.log('Set ' + option.name + ' selection to ' + selected);  //debug 
+        option.selected = selected;
+        // console.log('Set ' + option.name + ' selection to ' + selected);  //debug 
       }
     });
 
