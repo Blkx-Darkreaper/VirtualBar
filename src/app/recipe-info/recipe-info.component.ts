@@ -15,7 +15,7 @@ export class RecipeInfoComponent implements OnInit {
   allGlasses: string[];
   allIce: string[];
   allCocktailFamilies: string[];
-  allOccassions: string[];
+  allOccasions: string[];
   allImageLinks: URL[];
   relatedTo: string;
   notes: string;
@@ -29,7 +29,7 @@ export class RecipeInfoComponent implements OnInit {
     this.allGlasses = [];
     this.allIce = [];
     this.allCocktailFamilies = [];
-    this.allOccassions = [];
+    this.allOccasions = [];
     this.allImageLinks = [];
     this.relatedTo = "";
     this.notes = "";
@@ -54,8 +54,8 @@ export class RecipeInfoComponent implements OnInit {
     this.allCocktailFamilies = [];
     this.getAllCocktailFamilies(recipeId);
 
-    this.allOccassions = [];
-    this.getAllOccassions(recipeId);
+    this.allOccasions = [];
+    this.getAllOccasions(recipeId);
 
     this.allImageLinks = [];
     this.getAllImages(recipeId);
@@ -199,29 +199,29 @@ export class RecipeInfoComponent implements OnInit {
       });
   }
 
-  private getAllOccassions(recipeId: number) {
-    this.infoService.GetOccassionsFromAirtable(recipeId)
+  private getAllOccasions(recipeId: number) {
+    this.infoService.GetOccasionsFromAirtable(recipeId)
       .pipe(
         map(response => {
-          let allOccassions = [];
+          let allOccasions = [];
 
           for(let i in response.records[0].fields) {
             let field = response.records[0].fields[i];
             // console.log("Response(" + field + ")");  //debug
           }
 
-          if (!("Occassion Names" in response.records[0].fields)) {
-            return allOccassions;
+          if (!("Occasion Names" in response.records[0].fields)) {
+            return allOccasions;
           }
           
-          allOccassions = response.records[0].fields["Occassion Names"];
-          // console.log("Occassions(" + allOccassions.join(', ') + ")"); //debug
+          allOccasions = response.records[0].fields["Occasion Names"];
+          // console.log("Occasions(" + allOccasions.join(', ') + ")"); //debug
 
-          return allOccassions;
+          return allOccasions;
         }))
       .subscribe((data: string[]) => {
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-          console.log("Occassions(" + filteredList.join(', ') + ")"); //debug
+          console.log("Occasions(" + filteredList.join(', ') + ")"); //debug
   
           let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
   
@@ -231,15 +231,15 @@ export class RecipeInfoComponent implements OnInit {
             filteredList.push("None");
           }
   
-          this.allOccassions = filteredList;
+          this.allOccasions = filteredList;
       });
 
-      // this.infoService.GetOccassionsFromAirtable(recipeId)
+      // this.infoService.GetOccasionsFromAirtable(recipeId)
       // .pipe(
       //   map(response => {
       //     let allValues = response.records.map(
       //       obj => {
-      //         return obj.fields["Occassion Names"];
+      //         return obj.fields["Occasion Names"];
       //       }
       //     );
 
@@ -247,13 +247,13 @@ export class RecipeInfoComponent implements OnInit {
       //   }))
       //   .subscribe((data: string[]) => {
       //     let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-      //     console.log("Occassions(" + filteredList.join(', ') + ")"); //debug
+      //     console.log("Occasions(" + filteredList.join(', ') + ")"); //debug
   
       //     let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
   
       //     filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
   
-      //     this.allOccassions = filteredList;
+      //     this.allOccasions = filteredList;
       //   });
   }
 

@@ -10,7 +10,7 @@ export class RecipeInfoService extends AirtableService {
   requestUrl: string = 'Recipe%20Names?';
   nameField: string = 'fields[]=Name';
   variantField: string = 'fields[]=Variant';
-  occassionsField: string = 'fields[]=Occassion%20Names';
+  occasionsField: string = 'fields[]=Occasion%20Names';
   prepStylesField: string = 'fields[]=Prep%20Style%20Names';
   servedField: string = 'fields[]=Served%20Names';
   glassField: string = 'fields[]=Glass%20Names';
@@ -65,11 +65,11 @@ export class RecipeInfoService extends AirtableService {
     return this.getRequest(url);
   }
 
-  GetOccassionsFromAirtable(recipeId: number): Observable<any> {
+  GetOccasionsFromAirtable(recipeId: number): Observable<any> {
     let url = this.url as string;
     url += this.requestUrl;
 
-    url += this.occassionsField;
+    url += this.occasionsField;
 
     url += '&' + this.recipeFilter + recipeId;
     return this.getRequest(url);

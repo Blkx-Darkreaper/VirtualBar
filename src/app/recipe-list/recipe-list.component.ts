@@ -27,7 +27,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
   ["Grams", "g"], ["Dashes", ""], ["Barspoons (tsp)", "barspoons/tsp"], ["Misc", ""]];
 
   @Input('types') allDrinkTypes: string[] = ['all'];
-  @Input('occassions') allDrinkOccassions: string[] = ['all'];
+  @Input('occasions') allDrinkOccasions: string[] = ['all'];
   @Input('styles') allPreparationStyles: string[] = ['all'];
   @Input('families') allFamilies: string[] = ['all'];
   @Input('muddling') muddlingRequired: boolean = false;
@@ -70,14 +70,14 @@ export class RecipeListComponent implements OnInit, OnChanges {
     this.allRecipes = [];
 
     // console.log("Types(" + this.allDrinkTypes + ")"); //debug
-    // console.log("Occassions(" + this.allDrinkOccassions + ")"); //debug
+    // console.log("Occasions(" + this.allDrinkOccasions + ")"); //debug
     // console.log("Styles(" + this.allPreparationStyles + ")"); //debug
     // console.log("Families(" + this.allFamilies + ")"); //debug
     // console.log("Primary(" + this.allPrimaryComponents + ")"); //debug
     // console.log("Secondary(" + this.allSecondaryComponents + ")"); //debug
 
     if (this.allDrinkTypes.length == 0
-      || this.allDrinkOccassions.length == 0
+      || this.allDrinkOccasions.length == 0
       || this.allPreparationStyles.length == 0
       || this.allFamilies.length == 0
       || this.allPrimaryComponents.length == 0
@@ -92,7 +92,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
 
     // this.recipeListService.GetRecipes(
     this.recipeListService.GetRecipesFromAirtable(
-      this.allDrinkTypes, this.allDrinkOccassions, this.allPreparationStyles, this.allFamilies, this.muddlingRequired,
+      this.allDrinkTypes, this.allDrinkOccasions, this.allPreparationStyles, this.allFamilies, this.muddlingRequired,
       this.allPrimaryComponents, this.allSecondaryComponents, this.recipeNameToFind
     ).pipe(
       // tap(response => {
@@ -179,14 +179,14 @@ export class RecipeListComponent implements OnInit, OnChanges {
     this.allRecipes = [];
 
     // console.log("Types(" + this.allDrinkTypes + ")"); //debug
-    // console.log("Occassions(" + this.allDrinkOccassions + ")"); //debug
+    // console.log("Occasions(" + this.allDrinkOccasions + ")"); //debug
     // console.log("Styles(" + this.allPreparationStyles + ")"); //debug
     // console.log("Families(" + this.allFamilies + ")"); //debug
     // console.log("Primary(" + this.allPrimaryComponents + ")"); //debug
     // console.log("Secondary(" + this.allSecondaryComponents + ")"); //debug
 
     if (this.allDrinkTypes.length == 0
-      || this.allDrinkOccassions.length == 0
+      || this.allDrinkOccasions.length == 0
       || this.allPreparationStyles.length == 0
       || this.allFamilies.length == 0
       || this.allPrimaryComponents.length == 0
@@ -200,7 +200,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
     //console.log("Name(" + this.nameToFind + ")"); //debug
 
     let allRecipes: Observable<RecipeModel[]> = this.getAllRecipesObservable(this.allDrinkTypes,
-      this.allDrinkOccassions, this.allPreparationStyles, this.allFamilies, this.muddlingRequired,
+      this.allDrinkOccasions, this.allPreparationStyles, this.allFamilies, this.muddlingRequired,
       this.allPrimaryComponents, this.allSecondaryComponents, this.recipeNameToFind)
     //   .pipe(
     //     tap(allRecipes => { 
@@ -358,16 +358,16 @@ export class RecipeListComponent implements OnInit, OnChanges {
     });
   }
 
-  getAllRecipesObservable(allTypes: string[], allOccassions: string[], allPrepStyles: string[], allFamilies: string[],
+  getAllRecipesObservable(allTypes: string[], allOccasions: string[], allPrepStyles: string[], allFamilies: string[],
     muddlingReq: boolean, allPrimaryComponents: string[], allSecondaryComponents: string[], recipeName: string
   ): Observable<RecipeModel[]> {
-    // console.log('getAllRecipesObservable([' + allTypes + '], [' + allOccassions + '], [' + allPrepStyles 
+    // console.log('getAllRecipesObservable([' + allTypes + '], [' + allOccasions + '], [' + allPrepStyles 
     // + '], [' + allFamilies + '], ' + muddlingReq + ', [' + allPrimaryComponents + '], [' + allSecondaryComponents
     // + '], "' + recipeName + '")'); //debug
 
     // this.recipeListService.GetRecipes(
     let allRecipes: Observable<RecipeModel[]> = this.recipeListService.GetRecipesFromAirtable(
-      allTypes, allOccassions, allPrepStyles, allFamilies, muddlingReq,
+      allTypes, allOccasions, allPrepStyles, allFamilies, muddlingReq,
       allPrimaryComponents, allSecondaryComponents, recipeName
     ).pipe(map(response => {
       let allRecipes: RecipeModel[] = response.records.map(

@@ -2,6 +2,7 @@ import { AirtableService } from './airtable.service';
 import { Injectable } from '@angular/core';
 import { of, Observable, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
+//import { tap } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class RecipeListService extends AirtableService {
 
   constructor(http: HttpClient) { super(http) }
 
-  GetRecipesFromAirtable(allTypes: string[], allOccassions: string[], allStyles: string[], allFamilies: string[],
+  GetRecipesFromAirtable(allTypes: string[], allOccasions: string[], allStyles: string[], allFamilies: string[],
     muddlingRequired: boolean, allPrimaryComponents: string[], allSecondaryComponents: string[], recipeNameToFind: string
   ): Observable<any> {
     let url = this.url as string;
@@ -31,14 +32,14 @@ export class RecipeListService extends AirtableService {
     url += this.typeField;
 
     // console.log("Types(" + allTypes + ")"); //debug
-    // console.log("Occassions(" + allOccassions + ")"); //debug
+    // console.log("Occasions(" + allOccasions + ")"); //debug
     // console.log("Styles(" + allStyles + ")"); //debug
     // console.log("Families(" + allFamilies + ")"); //debug
     // console.log("Primary(" + allPrimaryComponents + ")"); //debug
     // console.log("Secondary(" + allSecondaryComponents + ")"); //debug
 
     let totalFilters = 0;
-    let typeFilter: string = "", occassionsFilter: string = "", styleFilter: string = "", familyFilter: string = "",
+    let typeFilter: string = "", occasionsFilter: string = "", styleFilter: string = "", familyFilter: string = "",
       muddlingFilter: string = "", primaryFilter: string = "", secondaryFilter: string = "", nameFilter: string = "";
 
     if (allTypes.length > 1 || allTypes[0].toLowerCase() != "all") {
@@ -46,9 +47,9 @@ export class RecipeListService extends AirtableService {
       typeFilter = this.AppendExactFieldFilters(typeFilter, "Type", allTypes);
     }
 
-    if (allOccassions.length > 1 || allOccassions[0].toLowerCase() != "all") {
+    if (allOccasions.length > 1 || allOccasions[0].toLowerCase() != "all") {
       totalFilters++;
-      occassionsFilter = this.AppendExactFieldFilters(occassionsFilter, "Occassions", allOccassions);
+      occasionsFilter = this.AppendExactFieldFilters(occasionsFilter, "Occasions", allOccasions);
     }
 
     if (allStyles.length > 1 || allStyles[0].toLowerCase() != "all") {
@@ -86,7 +87,7 @@ export class RecipeListService extends AirtableService {
 
       // Add filters
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, typeFilter);
-      filterByFormula = this.AppendToFilterByFormula(filterByFormula, occassionsFilter)
+      filterByFormula = this.AppendToFilterByFormula(filterByFormula, occasionsFilter)
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, styleFilter);
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, familyFilter);
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, muddlingFilter);
@@ -104,6 +105,7 @@ export class RecipeListService extends AirtableService {
     // console.log('GetRecipes Url(' + url + ')');  //debug
 
     return this.getRequest(url);
+    // .pipe(tap(response => console.log('Recipe List Response(' + JSON.stringify(response) + ')')));
   }
 
   private AppendToFilterByFormula(superFilter: string, subFilter: string): string {

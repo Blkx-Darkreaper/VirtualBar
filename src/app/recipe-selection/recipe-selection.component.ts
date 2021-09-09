@@ -23,7 +23,7 @@ export interface Option {
 })
 export class RecipeSelectionComponent implements OnInit {
   allTypes: string[];
-  allOccassions: string[];
+  allOccasions: string[];
   allStyles: string[];
   allFamilies: string[];
   allPrimaryComponents: string[];
@@ -43,14 +43,14 @@ export class RecipeSelectionComponent implements OnInit {
   allSelectedTypes: string[] = ['all'];
   areAllTypesSelected: boolean = true;
 
-  occassionOptions: Option = {
-    name: 'Occassion',
+  occasionOptions: Option = {
+    name: 'Occasion',
     selected: true,
     enabled: true,
     subOptions: []
   };
-  allSelectedOccassions: string[] = ['all'];
-  areAllOccassionsSelected: boolean = true;
+  allSelectedOccasions: string[] = ['all'];
+  areAllOccasionsSelected: boolean = true;
 
   styleOptions: Option = {
     name: 'Style',
@@ -132,16 +132,16 @@ export class RecipeSelectionComponent implements OnInit {
     // this.updateAvailableBasedOnInventory();
 
     //   this.allTypes.sort((a, b) => a.localeCompare(b));
-    //   this.allOccassions.sort((a, b) => a.localeCompare(b));
+    //   this.allOccasions.sort((a, b) => a.localeCompare(b));
     //   this.allStyles.sort((a, b) => a.localeCompare(b));
     //   this.allFamilies.sort((a, b) => a.localeCompare(b));
     //   this.allPrimaryComponents.sort((a, b) => a.localeCompare(b));
     //   this.allSecondaryComponents.sort((a, b) => a.localeCompare(b));
 
-    //   let allGroups: string[][] = [this.allTypes, this.allOccassions, this.allStyles, this.allFamilies, 
+    //   let allGroups: string[][] = [this.allTypes, this.allOccasions, this.allStyles, this.allFamilies, 
     //     this.allPrimaryComponents, this.allSecondaryComponents];
 
-    //   let allOptions: Option[] = [this.typeOptions, this.occassionOptions, this.styleOptions, this.familyOptions,
+    //   let allOptions: Option[] = [this.typeOptions, this.occasionOptions, this.styleOptions, this.familyOptions,
     //     this.primaryOptions, this.secondaryOptions];
 
     //   for(let i in allGroups) {
@@ -159,7 +159,7 @@ export class RecipeSelectionComponent implements OnInit {
     //   }
 
     //   this.updateSelectedTypes();
-    //   this.updateSelectedOccassions();
+    //   this.updateSelectedOccasions();
     //   this.updateSelectedStyles();
     //   this.updateSelectedFamilies();
     //   this.updateSelectedPrimaryComponents();
@@ -194,7 +194,7 @@ export class RecipeSelectionComponent implements OnInit {
     // console.log('updateSelectionChecklists()');  //debug
 
     this.allTypes = [];
-    this.allOccassions = [];
+    this.allOccasions = [];
     this.allStyles = [];
     this.allFamilies = [];
     this.allPrimaryComponents = [];
@@ -214,7 +214,7 @@ export class RecipeSelectionComponent implements OnInit {
         this.updateSelectedTypes();
       });
 
-    this.getRecipeOccassionsObservable()
+    this.getRecipeOccasionsObservable()
       .subscribe((data: string[]) => {
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
 
@@ -222,9 +222,9 @@ export class RecipeSelectionComponent implements OnInit {
 
         filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
 
-        this.allOccassions = filteredList;
-        this.addSubOptions(filteredList, this.occassionOptions);
-        this.updateSelectedOccassions();
+        this.allOccasions = filteredList;
+        this.addSubOptions(filteredList, this.occasionOptions);
+        this.updateSelectedOccasions();
       });
 
     this.getRecipeStylesObservable()
@@ -482,9 +482,9 @@ private getRecipeTertComponentsObservable() {
         }));
   }
 
-  private getRecipeOccassionsObservable() {
-    // this.recipeCategoryService.GetOccassions()
-    return this.recipeCategoryService.GetOccassionsFromAirtable()
+  private getRecipeOccasionsObservable() {
+    // this.recipeCategoryService.GetOccasions()
+    return this.recipeCategoryService.GetOccasionsFromAirtable()
       .pipe(
         map(response => {
           let allValues = response.records.map(
@@ -698,8 +698,8 @@ private getRecipeTertComponentsObservable() {
         this.setAllTypesSelected(selected);
         break;
 
-      case "Occassion":
-        this.setAllOccassionsSelected(selected);
+      case "Occasion":
+        this.setAllOccasionsSelected(selected);
         break;
 
       case "Style":
@@ -736,16 +736,16 @@ private getRecipeTertComponentsObservable() {
     this.updateSelectedTypes();
   }
 
-  setAllOccassionsSelected(selected: boolean) {
-    this.areAllOccassionsSelected = selected;
+  setAllOccasionsSelected(selected: boolean) {
+    this.areAllOccasionsSelected = selected;
 
-    if (this.occassionOptions.subOptions == null) {
+    if (this.occasionOptions.subOptions == null) {
       return;
     }
 
-    this.occassionOptions.subOptions.forEach(o => o.selected = selected);
+    this.occasionOptions.subOptions.forEach(o => o.selected = selected);
 
-    this.updateSelectedOccassions();
+    this.updateSelectedOccasions();
   }
 
   setAllStylesSelected(selected: boolean) {
@@ -830,8 +830,8 @@ private getRecipeTertComponentsObservable() {
         this.updateSelectedTypes();
         break;
 
-      case "Occassion":
-        this.updateSelectedOccassions();
+      case "Occasion":
+        this.updateSelectedOccasions();
         break;
 
       case "Style":
@@ -877,23 +877,23 @@ private getRecipeTertComponentsObservable() {
     }
   }
 
-  updateSelectedOccassions() {
-    this.areAllOccassionsSelected = this.occassionOptions.subOptions != null
-      && this.occassionOptions.subOptions.every(o => o.selected);
+  updateSelectedOccasions() {
+    this.areAllOccasionsSelected = this.occasionOptions.subOptions != null
+      && this.occasionOptions.subOptions.every(o => o.selected);
 
-    if (this.areAllOccassionsSelected == true) {
-      this.allSelectedOccassions = ["all"];
+    if (this.areAllOccasionsSelected == true) {
+      this.allSelectedOccasions = ["all"];
       return;
     }
 
-    this.allSelectedOccassions = [];
-    for (let i in this.occassionOptions.subOptions) {
-      let occassion = this.occassionOptions.subOptions[i];
-      if (occassion.selected != true) {
+    this.allSelectedOccasions = [];
+    for (let i in this.occasionOptions.subOptions) {
+      let occasion = this.occasionOptions.subOptions[i];
+      if (occasion.selected != true) {
         continue;
       }
 
-      this.allSelectedOccassions.push(occassion.name);
+      this.allSelectedOccasions.push(occasion.name);
     }
   }
 

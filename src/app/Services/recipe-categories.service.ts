@@ -8,7 +8,7 @@ import { HttpClient } from '@angular/common/http';
 })
 export class RecipeCategoriesService extends AirtableService {
   typesRequestUrl: string = 'Types?';
-  occassionsRequestUrl: string = 'Occassions?';
+  occasionsRequestUrl: string = 'Occasions?';
   stylesRequestUrl: string = 'Prep%20Styles?';
 
   nameField: string = 'fields[]=Name';
@@ -25,9 +25,9 @@ export class RecipeCategoriesService extends AirtableService {
     return this.getRequest(url);
   }
 
-  GetOccassionsFromAirtable(): Observable<any> {
+  GetOccasionsFromAirtable(): Observable<any> {
     let url = this.url as string;
-    url += this.occassionsRequestUrl + this.nameField;
+    url += this.occasionsRequestUrl + this.nameField;
     return this.getRequest(url);
   }
 

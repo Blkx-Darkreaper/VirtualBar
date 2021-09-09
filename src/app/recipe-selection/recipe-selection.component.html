@@ -107,37 +107,37 @@
     <br>
 
     <div class="top-bar container">
-        <form class="four-deep" #occassionForm="ngForm">
-            <label for="Type">Appropriate for Occassion:</label>
+        <form class="four-deep" #occasionForm="ngForm">
+            <label for="Type">Appropriate for Occasion:</label>
             <br>
 
-            <div class="wrap" name ="select-occassion">
+            <div class="wrap" name ="select-occasion">
                 <div>
                     <input type="checkbox" 
-                        id="occassion-all" 
-                        name="{{ occassionOptions.name }}" 
+                        id="occasion-all" 
+                        name="{{ occasionOptions.name }}" 
                         value="all" 
-                        [checked]="areAllOccassionsSelected"
+                        [checked]="areAllOccasionsSelected"
                         (change)="setGroupSelected($event.target.name, $event.target.checked)" />
-                    <label for="occassion-all">(Select All)</label>
+                    <label for="occasion-all">(Select All)</label>
                 </div>
 
-                <div *ngFor="let subOption of occassionOptions.subOptions; let i = index">
+                <div *ngFor="let subOption of occasionOptions.subOptions; let i = index">
                     <input type="checkbox"
-                        id="occassion-{{ occassionOptions.subOptions[i].name | lowercase }}" 
-                        name="{{ occassionOptions.name }}"
-                        value="{{ occassionOptions.subOptions[i].name }}"
-                        [(ngModel)]="occassionOptions.subOptions[i].selected" 
-                        (ngModelChange)="toggleSelected(occassionOptions.name, occassionOptions.subOptions[i].name, $event)">
-                    <label for="type-{{ occassionOptions.subOptions[i].name | lowercase }}">
-                        {{ occassionOptions.subOptions[i].name }}
+                        id="occasion-{{ occasionOptions.subOptions[i].name | lowercase }}" 
+                        name="{{ occasionOptions.name }}"
+                        value="{{ occasionOptions.subOptions[i].name }}"
+                        [(ngModel)]="occasionOptions.subOptions[i].selected" 
+                        (ngModelChange)="toggleSelected(occasionOptions.name, occasionOptions.subOptions[i].name, $event)">
+                    <label for="type-{{ occasionOptions.subOptions[i].name | lowercase }}">
+                        {{ occasionOptions.subOptions[i].name }}
                     </label>
                 </div>
             </div>
         </form>
         
-        <!-- <pre>Occassions: {{ allOccassions | json }}</pre>
-        <pre>Selected: {{ allSelectedOccassions | json }}</pre> -->
+        <!-- <pre>Occasions: {{ allOccasions | json }}</pre>
+        <pre>Selected: {{ allSelectedOccasions | json }}</pre> -->
     </div>
 
     <br>
@@ -284,7 +284,7 @@
 
 <app-recipe-list 
     [types]="allSelectedTypes"
-    [occassions]="allSelectedOccassions"
+    [occasions]="allSelectedOccasions"
     [styles]="allSelectedStyles"
     [families]="allSelectedFamilies"
     [muddling]="muddlingRequired"
