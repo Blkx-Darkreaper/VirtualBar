@@ -3,7 +3,7 @@ export interface RecipeModel {
     id: number;
     name: string;
     variant: string;
-    version: number;
+    version?: number;
     type: string;
     allIngredients?: IngredientModel[];
     allDirections?: string[];
