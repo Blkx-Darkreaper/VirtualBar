@@ -130,7 +130,7 @@ export class RecipeListService extends AirtableService {
         filter += ",";
       }
 
-      filter += "{" + fieldName + "}='" + fieldValue + "'";
+      filter += 'Find("' + fieldValue + '",{' + fieldName + '})';
     }
 
     if (allFieldValues.length > 1) {
