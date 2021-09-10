@@ -44,17 +44,17 @@ export class RecipeListService extends AirtableService {
 
     if (allTypes.length > 1 || allTypes[0].toLowerCase() != "all") {
       totalFilters++;
-      typeFilter = this.AppendExactFieldFilters(typeFilter, "Type", allTypes);
+      typeFilter = this.AppendContainsFieldFilters(typeFilter, "Type", allTypes);
     }
 
     if (allOccasions.length > 1 || allOccasions[0].toLowerCase() != "all") {
       totalFilters++;
-      occasionsFilter = this.AppendExactFieldFilters(occasionsFilter, "Occasions", allOccasions);
+      occasionsFilter = this.AppendContainsFieldFilters(occasionsFilter, "Occasions", allOccasions);
     }
 
     if (allStyles.length > 1 || allStyles[0].toLowerCase() != "all") {
       totalFilters++;
-      styleFilter = this.AppendExactFieldFilters(styleFilter, "Prep Style", allStyles);
+      styleFilter = this.AppendContainsFieldFilters(styleFilter, "Prep Style", allStyles);
     }
 
     if (allFamilies.length > 1 || allFamilies[0].toLowerCase() != "all") {
@@ -69,7 +69,7 @@ export class RecipeListService extends AirtableService {
 
     if (allPrimaryComponents.length > 1 || allPrimaryComponents[0].toLowerCase() != "all") {
       totalFilters++;
-      primaryFilter = this.AppendExactFieldFilters(primaryFilter, "Primary Components", allPrimaryComponents);
+      primaryFilter = this.AppendContainsFieldFilters(primaryFilter, "Primary Components", allPrimaryComponents);
     }
 
     if (allSecondaryComponents.length > 1 || allSecondaryComponents[0].toLowerCase() != "all") {
@@ -130,7 +130,7 @@ export class RecipeListService extends AirtableService {
         filter += ",";
       }
 
-      filter += 'Find("' + fieldValue + '",{' + fieldName + '})';
+      filter += "{" + fieldName + "}='" + fieldValue + "'";
     }
 
     if (allFieldValues.length > 1) {
@@ -150,7 +150,7 @@ export class RecipeListService extends AirtableService {
       }
 
       // Can't find first element in list unless array is converted to string
-      filter += "Find('" + fieldValue + "',ArrayJoin({" + fieldName + "}, ','))";
+      filter += 'Find("' + fieldValue + '",ArrayJoin({' + fieldName + '}, ","))';
     }
 
     if (allFieldValues.length > 1) {
