@@ -116,6 +116,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
             model.variant = variant;
           }
 
+          // console.log("Name(" + model.name + "), Variant(" + model.variant + ")");  //debug
+
           let version: number = recipeObj.fields["Version"];
           if (version !== null && version !== undefined && isNaN(version) !== true) {
             model.version = version;
@@ -145,7 +147,21 @@ export class RecipeListComponent implements OnInit, OnChanges {
           (a, b) => a.name.localeCompare(b.name) !== 0 ? a.name.localeCompare(b.name) : a.variant.localeCompare(b.variant)
         );  // Sort
 
+        // // start debug
+        // for(let i in filteredList) {
+        //   let item = filteredList[i];
+        //   console.log(item);  //debug
+        // }
+        // // end debug
+
         filteredList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
+
+        // // start debug
+        // for(let i in filteredList) {
+        //   let item = filteredList[i];
+        //   console.log(item);  //debug
+        // }
+        // // end debug
 
         // // start debug
         // for(let i in filteredList) {
@@ -166,7 +182,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
         // // end debug
 
         filteredList = filteredList.filter((n) => n.version ===
-          filteredList.filter(o => o.name === n.name && o.type === n.type)
+          filteredList.filter(o => o.name === n.name && o.type === n.type && o.variant === n.variant)
             .reduce((previous, current) => (previous.version > current.version) ? previous : current)
             .version
         ); // Return only most recent version
