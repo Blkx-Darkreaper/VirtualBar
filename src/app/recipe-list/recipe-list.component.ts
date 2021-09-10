@@ -31,8 +31,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
   @Input('styles') allPreparationStyles: string[] = ['all'];
   @Input('families') allFamilies: string[] = ['all'];
   @Input('muddling') muddlingRequired: boolean = false;
-  @Input('primaries') allPrimaryComponents: string[] = ['all'];
-  @Input('secondaries') allSecondaryComponents: string[] = ['all'];
+  @Input('primaries') allPrimaryComponents: string[] = [];
+  @Input('secondaries') allSecondaryComponents: string[] = [];
   @Input('name') recipeNameToFind: string = '';
   @Input('inventory') inventoryAddr: string = '';
   @Input('limit') limitToAvailable: boolean = false;
@@ -52,6 +52,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
+    // console.log("Changes to recipe list");  //debug
+
     //console.log("Limit(" + this.limitToAvailable + "), Inventory(" + this.inventoryAddr + ")"); //debug
 
     // console.log("List Spirits(" + Object.keys(this.allAvailableSpirits) + ")");  //debug
@@ -80,8 +82,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
       || this.allDrinkOccasions.length == 0
       || this.allPreparationStyles.length == 0
       || this.allFamilies.length == 0
-      || this.allPrimaryComponents.length == 0
-      || this.allSecondaryComponents.length == 0) {
+      || (this.allPrimaryComponents.length == 0 && this.allSecondaryComponents.length == 0)
+      ) {
       this.allRecipes = [];
       return;
     }
@@ -267,8 +269,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
       ); // Remove blanks
 
       // // start debug
-      // for(let i in filteredList) {
-      //   let item = filteredList[i];
+      // for(let i in filteredRecipeList) {
+      //   let item = filteredRecipeList[i];
       //   console.log(item);  //debug
       // }
       // // end debug
@@ -380,6 +382,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
     // console.log('getAllRecipesObservable([' + allTypes + '], [' + allOccasions + '], [' + allPrepStyles 
     // + '], [' + allFamilies + '], ' + muddlingReq + ', [' + allPrimaryComponents + '], [' + allSecondaryComponents
     // + '], "' + recipeName + '")'); //debug
+
+    // console.log("Getting recipes"); //debug
 
     // this.recipeListService.GetRecipes(
     let allRecipes: Observable<RecipeModel[]> = this.recipeListService.GetRecipesFromAirtable(

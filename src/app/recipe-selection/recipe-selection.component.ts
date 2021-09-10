@@ -76,7 +76,7 @@ export class RecipeSelectionComponent implements OnInit {
     enabled: true,
     subOptions: []
   };
-  allSelectedPrimaryComponents: string[] = ['all'];
+  allSelectedPrimaryComponents: string[] = [];
   areAllPrimaryComponentsSelected: boolean = true;
 
   secondaryOptions: Option = {
@@ -85,7 +85,7 @@ export class RecipeSelectionComponent implements OnInit {
     enabled: true,
     subOptions: []
   };
-  allSelectedSecondaryComponents: string[] = ['all'];
+  allSelectedSecondaryComponents: string[] = [];
   areAllSecondaryComponentsSelected: boolean = true;
 
   tertiaryOptions: Option = {
@@ -124,7 +124,7 @@ export class RecipeSelectionComponent implements OnInit {
   }
 
   ngOnChanges() {
-    //   console.log("Changes made");  //debug
+    // console.log("Recipe selection changes made");  //debug
     // console.log("Inventory(" + this.selectedInventory + ")"); //debug
 
     // this.updateSelectionChecklists();
@@ -689,9 +689,9 @@ private getRecipeTertComponentsObservable() {
   }
 
   setGroupSelected(group: string, selected: boolean) {
-    console.log('setGroupSelected(' + group + ', ' + selected + ')');  //debug
+    // console.log('setGroupSelected(' + group + ', ' + selected + ')');  //debug
 
-    console.log(group + ' group checkboxes have been set to ' + selected);  //debug
+    // console.log(group + ' group checkboxes have been set to ' + selected);  //debug
 
     switch (group) {
       case "Type":
@@ -965,11 +965,11 @@ private getRecipeTertComponentsObservable() {
 
     this.areAllPrimaryComponentsSelected = areAllAvailableSelected;
 
-    if (areAllAvailable !== true || areAllAvailableSelected !== true) {
-      return;
-    }
+    // if (areAllAvailable !== true || areAllAvailableSelected !== true) {
+    //   return;
+    // }
 
-    this.allSelectedPrimaryComponents = ["all"];
+    // this.allSelectedPrimaryComponents = ["all"];
   }
 
   updateSelectedSecondaryComponents() {
@@ -1000,11 +1000,11 @@ private getRecipeTertComponentsObservable() {
 
     this.areAllSecondaryComponentsSelected = areAllAvailableSelected;
 
-    if (areAllAvailable !== true || areAllAvailableSelected !== true) {
-      return;
-    }
+    // if (areAllAvailable !== true || areAllAvailableSelected !== true) {
+    //   return;
+    // }
 
-    this.allSelectedSecondaryComponents = ["all"];
+    // this.allSelectedSecondaryComponents = ["all"];
   }
 
   updateSelectedTertiaryComponents() {

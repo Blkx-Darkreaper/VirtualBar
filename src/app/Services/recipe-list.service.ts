@@ -67,13 +67,18 @@ export class RecipeListService extends AirtableService {
       muddlingFilter = "{Muddled}";
     }
 
-    if (allPrimaryComponents.length > 1 || allPrimaryComponents[0].toLowerCase() != "all") {
+    if (allPrimaryComponents.length > 0) {
       totalFilters++;
       primaryFilter = this.AppendContainsFieldFilters(primaryFilter, "Primary Components", allPrimaryComponents);
+
+      secondaryFilter = this.AppendContainsFieldFilters(secondaryFilter, "Secondary Components", allPrimaryComponents);
     }
 
-    if (allSecondaryComponents.length > 1 || allSecondaryComponents[0].toLowerCase() != "all") {
+    if (allSecondaryComponents.length > 0) {
       totalFilters++;
+
+      primaryFilter = this.AppendContainsFieldFilters(primaryFilter, "Primary Components", allSecondaryComponents);
+
       secondaryFilter = this.AppendContainsFieldFilters(secondaryFilter, "Secondary Components", allSecondaryComponents);
     }
 
@@ -91,13 +96,28 @@ export class RecipeListService extends AirtableService {
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, styleFilter);
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, familyFilter);
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, muddlingFilter);
-      filterByFormula = this.AppendToFilterByFormula(filterByFormula, primaryFilter);
-      filterByFormula = this.AppendToFilterByFormula(filterByFormula, secondaryFilter);
+
+      // console.log("Primary(" + primaryFilter + "), Secondary(" + secondaryFilter + ")");  //debug
+
+      let componentFilter = "";
+      if(primaryFilter.length > 0 && secondaryFilter.length > 0) {
+        componentFilter += "Or(" + primaryFilter + "," + secondaryFilter + ")";
+      } else {
+        filterByFormula = this.AppendToFilterByFormula(filterByFormula, primaryFilter);
+        filterByFormula = this.AppendToFilterByFormula(filterByFormula, secondaryFilter);
+      }
+
+      // console.log("Component(" + componentFilter + ")");  //debug
+
+      filterByFormula = this.AppendToFilterByFormula(filterByFormula, componentFilter);
+
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, nameFilter);
 
       if (totalFilters > 1) {
         filterByFormula = "And(" + filterByFormula + ")";
       }
+
+      // console.log("Filter Formula(" + filterByFormula + ")"); //debug
 
       url += "&filterByFormula=" + filterByFormula;
     }
