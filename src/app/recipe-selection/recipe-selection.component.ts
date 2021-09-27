@@ -76,7 +76,7 @@ export class RecipeSelectionComponent implements OnInit {
     enabled: true,
     subOptions: []
   };
-  allSelectedPrimaryComponents: string[] = [];
+  allSelectedPrimaryComponents: string[] = ['all'];
   areAllPrimaryComponentsSelected: boolean = true;
 
   secondaryOptions: Option = {
@@ -85,7 +85,7 @@ export class RecipeSelectionComponent implements OnInit {
     enabled: true,
     subOptions: []
   };
-  allSelectedSecondaryComponents: string[] = [];
+  allSelectedSecondaryComponents: string[] = ['all'];
   areAllSecondaryComponentsSelected: boolean = true;
 
   tertiaryOptions: Option = {
@@ -943,6 +943,12 @@ private getRecipeTertComponentsObservable() {
     let areAllAvailableSelected = true;
     let areAllAvailable = true;
 
+    if (this.areAllPrimaryComponentsSelected == true) {
+      //console.log("All Spirits selected");  //debug
+      this.allSelectedPrimaryComponents = ["all"];
+      return;
+    }
+
     this.allSelectedPrimaryComponents = [];
     if (this.primaryOptions.subOptions !== null) {
       for (let i = 0; i < this.primaryOptions.subOptions.length; i++) {
@@ -965,11 +971,11 @@ private getRecipeTertComponentsObservable() {
 
     this.areAllPrimaryComponentsSelected = areAllAvailableSelected;
 
-    // if (areAllAvailable !== true || areAllAvailableSelected !== true) {
-    //   return;
-    // }
+    if (areAllAvailable !== true || areAllAvailableSelected !== true) {
+      return;
+    }
 
-    // this.allSelectedPrimaryComponents = ["all"];
+    this.allSelectedPrimaryComponents = ["all"];
   }
 
   updateSelectedSecondaryComponents() {
@@ -977,6 +983,12 @@ private getRecipeTertComponentsObservable() {
 
     let areAllAvailableSelected = true;
     let areAllAvailable = true;
+
+    if (this.areAllSecondaryComponentsSelected == true) {
+      //console.log("All Secondary components selected");  //debug
+      this.allSelectedSecondaryComponents = ["all"];
+      return;
+    }
 
     this.allSelectedSecondaryComponents = [];
     if (this.secondaryOptions.subOptions !== null) {
@@ -1000,11 +1012,11 @@ private getRecipeTertComponentsObservable() {
 
     this.areAllSecondaryComponentsSelected = areAllAvailableSelected;
 
-    // if (areAllAvailable !== true || areAllAvailableSelected !== true) {
-    //   return;
-    // }
+    if (areAllAvailable !== true || areAllAvailableSelected !== true) {
+      return;
+    }
 
-    // this.allSelectedSecondaryComponents = ["all"];
+    this.allSelectedSecondaryComponents = ["all"];
   }
 
   updateSelectedTertiaryComponents() {

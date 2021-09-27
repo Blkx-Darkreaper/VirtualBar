@@ -45,6 +45,7 @@ export class RecipeListService extends AirtableService {
     if (allTypes.length > 1 || allTypes[0].toLowerCase() != "all") {
       totalFilters++;
       typeFilter = this.AppendContainsFieldFilters(typeFilter, "Type", allTypes);
+      // console.log("Type Filter Formula(" + typeFilter + ")"); //debug
     }
 
     if (allOccasions.length > 1 || allOccasions[0].toLowerCase() != "all") {
@@ -67,18 +68,15 @@ export class RecipeListService extends AirtableService {
       muddlingFilter = "{Muddled}";
     }
 
-    if (allPrimaryComponents.length > 0) {
+    if (allPrimaryComponents.length > 0 && allPrimaryComponents[0].toLowerCase() != "all") {
       totalFilters++;
       primaryFilter = this.AppendContainsFieldFilters(primaryFilter, "Primary Components", allPrimaryComponents);
-
       secondaryFilter = this.AppendContainsFieldFilters(secondaryFilter, "Secondary Components", allPrimaryComponents);
     }
 
-    if (allSecondaryComponents.length > 0) {
+    if (allSecondaryComponents.length > 0 && allSecondaryComponents[0].toLowerCase() != "all") {
       totalFilters++;
-
       primaryFilter = this.AppendContainsFieldFilters(primaryFilter, "Primary Components", allSecondaryComponents);
-
       secondaryFilter = this.AppendContainsFieldFilters(secondaryFilter, "Secondary Components", allSecondaryComponents);
     }
 
@@ -96,6 +94,8 @@ export class RecipeListService extends AirtableService {
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, styleFilter);
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, familyFilter);
       filterByFormula = this.AppendToFilterByFormula(filterByFormula, muddlingFilter);
+      
+      // console.log("Filter with components Formula(" + filterByFormula + ")"); //debug
 
       // console.log("Primary(" + primaryFilter + "), Secondary(" + secondaryFilter + ")");  //debug
 
@@ -115,6 +115,7 @@ export class RecipeListService extends AirtableService {
 
       if (totalFilters > 1) {
         filterByFormula = "And(" + filterByFormula + ")";
+        // filterByFormula = "Or(" + filterByFormula + ")";
       }
 
       // console.log("Filter Formula(" + filterByFormula + ")"); //debug

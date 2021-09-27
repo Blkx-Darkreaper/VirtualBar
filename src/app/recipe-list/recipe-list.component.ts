@@ -31,8 +31,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
   @Input('styles') allPreparationStyles: string[] = ['all'];
   @Input('families') allFamilies: string[] = ['all'];
   @Input('muddling') muddlingRequired: boolean = false;
-  @Input('primaries') allPrimaryComponents: string[] = [];
-  @Input('secondaries') allSecondaryComponents: string[] = [];
+  @Input('primaries') allPrimaryComponents: string[] = ['all'];
+  @Input('secondaries') allSecondaryComponents: string[] = ['all'];
   @Input('name') recipeNameToFind: string = '';
   @Input('inventory') inventoryAddr: string = '';
   @Input('limit') limitToAvailable: boolean = false;
