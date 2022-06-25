@@ -1,4 +1,4 @@
-import { IngredientTypeModel } from './../Models/Ingredient-type-model';
+import { IngredientTypeModel } from '../Models/ingredient-type-model';
 import { RecipeModel } from './../Models/recipe-model';
 import { DirectionModel } from './../Models/direction-model';
 import { RecipeIngredientModel, IngredientAmountModel } from '../Models/recipe-ingredient-model';
