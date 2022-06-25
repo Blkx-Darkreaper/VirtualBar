@@ -1,7 +1,7 @@
 import { IngredientTypeModel } from './../Models/Ingredient-type-model';
 import { RecipeModel } from './../Models/recipe-model';
 import { DirectionModel } from './../Models/direction-model';
-import { IngredientModel, IngredientAmountModel } from './../Models/ingredient-model';
+import { RecipeIngredientModel, IngredientAmountModel } from '../Models/recipe-ingredient-model';
 import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
@@ -19,7 +19,7 @@ export class RecipeComponent implements OnInit, OnChanges {
   @Input() recipe: RecipeModel;
   allIngredientIndexesByOrder: { [order: number]: number[] }
   allIngredientOrders: number[];
-  allIngredients: IngredientModel[];
+  allIngredients: RecipeIngredientModel[];
   allDirections: DirectionModel[];
 
   constructor(private ingredientService: RecipeIngredientsService, private directionService: RecipeDirectionsService) { }
@@ -91,22 +91,26 @@ export class RecipeComponent implements OnInit, OnChanges {
 
               let typeModel: IngredientTypeModel = {
                 name: ingredientObj.fields["Ingredient Type Name"],
-                superType: ingredientObj.fields["Supertype"][0],
+                superType: "",
               };
 
+              if(ingredientObj.fields["Supertype"] !== null
+              && ingredientObj.fields["Supertype"] !== undefined
+              && ingredientObj.fields["Supertype"].length > 0) {
+                typeModel.superType = ingredientObj.fields["Supertype"][0];
+              }
               if (ingredientObj.fields["Type"] !== null
                 && ingredientObj.fields["Type"] !== undefined
                 && ingredientObj.fields["Type"].length > 0) {
                 typeModel.type = ingredientObj.fields["Type"][0];
               }
-
               if (ingredientObj.fields["Subtype"] !== null
                 && ingredientObj.fields["Subtype"] !== undefined
                 && ingredientObj.fields["Subtype"].length > 0) {
                 typeModel.subType = ingredientObj.fields["Subtype"][0];
               }
 
-              let model: IngredientModel = {
+              let model: RecipeIngredientModel = {
                 id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
@@ -145,8 +149,8 @@ export class RecipeComponent implements OnInit, OnChanges {
 
           return allIngredients;
         }))
-      .subscribe((data: IngredientModel[]) => {
-        let allModels: IngredientModel[] = data;
+      .subscribe((data: RecipeIngredientModel[]) => {
+        let allModels: RecipeIngredientModel[] = data;
         // console.log('Unsorted:'); //debug
         // for(let i in allModels) {
         //   let model = allModels[i];
@@ -165,7 +169,7 @@ export class RecipeComponent implements OnInit, OnChanges {
         if (recipe.allIngredients !== null && recipe.allIngredients !== undefined && recipe.allIngredients.length > 0) {
           // console.log('Total ingredients Before(' + filteredList.length + ')');  //debug
 
-          filteredList = filteredList.map((ingredient: IngredientModel) => {
+          filteredList = filteredList.map((ingredient: RecipeIngredientModel) => {
             let match = recipe.allIngredients.find(existing => existing.id === ingredient.id);
             if (match === null || match === undefined) {
               return ingredient;
@@ -190,7 +194,7 @@ export class RecipeComponent implements OnInit, OnChanges {
 
         // Organize ingredients by index and order #
         for (let i = 0; i < filteredList.length; i++) {
-          let ingredient: IngredientModel = filteredList[i];
+          let ingredient: RecipeIngredientModel = filteredList[i];
           let allIndexes = this.allIngredientIndexesByOrder[ingredient.order];
 
           if (allIndexes === null || allIndexes === undefined) {
@@ -284,7 +288,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       let index = allIndexes[i];
       // console.log("Index(" + index + ")");  //debug
 
-      let ingredient: IngredientModel = this.allIngredients[index];
+      let ingredient: RecipeIngredientModel = this.allIngredients[index];
       // console.log("Ingredient(" + ingredient.name + ")"); //debug
 
       let allIngredientAmounts = ingredient.amountReq;
@@ -362,7 +366,7 @@ export class RecipeComponent implements OnInit, OnChanges {
     return desc;
   }
 
-  getDeficiency(ingredient: IngredientModel) {
+  getDeficiency(ingredient: RecipeIngredientModel) {
     let deficiency = '';
 
     if (ingredient.amountAvailable === null || ingredient.amountAvailable === undefined
@@ -404,7 +408,7 @@ export class RecipeComponent implements OnInit, OnChanges {
       let index = allIndexes[i];
       // console.log("Index(" + index + ")");  //debug
 
-      let ingredient: IngredientModel = this.allIngredients[index];
+      let ingredient: RecipeIngredientModel = this.allIngredients[index];
       if (ingredient.optional !== true) {
         continue;
       }
