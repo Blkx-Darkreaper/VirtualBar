@@ -1,4 +1,4 @@
-import { IngredientTypeModel } from './Ingredient-type-model';
+import { IngredientTypeModel } from './ingredient-type-model';
 export interface LiquorModel {
     id?: number;
     name: string;
