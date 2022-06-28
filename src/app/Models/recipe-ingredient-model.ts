@@ -1,5 +1,4 @@
 import { IngredientModel } from './ingredient-model';
-import { IngredientTypeModel } from './ingredient-type-model';
 export interface RecipeIngredientModel extends IngredientModel {
   id: number;
   qualifier?: string;
