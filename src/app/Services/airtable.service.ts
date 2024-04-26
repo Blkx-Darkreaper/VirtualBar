@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { forkJoin, Observable, of, throwError } from 'rxjs';
 import { retry, catchError, map, concatMap, filter, tap } from 'rxjs/operators';
 //import { iDynamicsPostUsers } from '../models/dynamics-post';
@@ -9,7 +9,9 @@ import { retry, catchError, map, concatMap, filter, tap } from 'rxjs/operators';
 })
 export class AirtableService {
   private apiUrl = 'https://api.airtable.com/v0/';
-  protected apiKey: string = 'keydd8XpkyCPuRrAA';
+  // protected apiKey: string;
+  // protected appId: string;
+  // protected apiKey: string = 'keydd8XpkyCPuRrAA';
   protected appId: string = 'app4QIYQMEneJlvdK';
   protected unpaginatedOffset: string = '';
 
@@ -17,18 +19,61 @@ export class AirtableService {
     // this.http.get('assets/apiKey.txt', { responseType: 'text'}).subscribe(data => { this.apiKey = data });
     // this.http.get('assets/appId.txt', { responseType: 'text'}).subscribe(data => { this.appId = data });
 
-    // console.log("Key(" + this.apiKey + ")");  //debug
-    // console.log("App ID(" + this.appId + ")");  //debug
+    // this.getTextFromFile('assets/apiKey.txt').subscribe(data => { this.apiKey = data; 
+    //   console.log("Key(" + this.apiKey + ")");  //debug
+    // });
+    // this.getTextFromFile('assets/appId.txt').subscribe(data => {this.appId = data;
+    //   console.log("App ID(" + this.appId + ")");  //debug
+    // });
+
+    // this.getFileContents('assets/apiKey.txt')
+    //   .subscribe((blob: Blob) => {
+    //     const reader = new FileReader();
+    //     reader.readAsText(blob);
+
+    //     reader.onload = () => {
+    //       this.apiKey = reader.result as string;
+    //     };
+    //   });
+
+    //   this.getFileContents('assets/appId.txt')
+    //   .subscribe((blob: Blob) => {
+    //     const reader = new FileReader();
+    //     reader.readAsText(blob);
+
+    //     reader.onload = () => {
+    //       this.appId = reader.result as string;
+    //     };
+    //   });
 
     // console.log(this.http.get('assets/apiKey.txt', { responseType: 'text'})); //debug
   }
 
   get headers(): HttpHeaders {
-    return new HttpHeaders({ 'Authorization': 'Bearer ' + this.apiKey });
+    return new HttpHeaders({ 'Authorization': 'Bearer ' + this.pat });
   }
 
   get url(): string {
     return this.apiUrl + this.appId + '/';
+  }
+
+  get pat(): string {
+    return this.GetFileContents('../assets/perAccessTok.txt');
+  }
+
+  GetFileContents(filepath: string): string {
+    const fs = require('node:fs');
+
+    try {
+      const data = fs.readFileSync(filepath, 'utf8');
+      console.log(data);
+
+      return data;
+    } catch (err) {
+      console.error(err);
+    }
+
+    return null;
   }
 
   // getRequest(url: string): Observable<any> {
@@ -142,4 +187,34 @@ export class AirtableService {
 
     return throwError(errorMessage);
   }
+
+//   getTextFromFile(filename): Observable<string> {
+//     let text = '';
+
+//     this.http.get(filename, { responseType: 'blob', observe: 'response' })
+//   .subscribe((value: HttpResponse<Blob>) => {
+//     const data = new Blob([value.body as Blob], {type: value.body?.type});
+//     const reader = new FileReader();
+//     reader.readAsText(data);
+
+//     reader.onload = (content) => {
+//       const textInFile = reader.result as string;
+//       // console.log("File Text(" + textInFile + ")");  //debug
+
+//       text = textInFile;
+//     };
+//   });
+
+//   console.log("Text(" + text + ")");  //debug
+
+//   return of(text);
+//   }
+// }
+
+// public getFileContents(filename: string): Observable<Blob> {
+//   return this.http.get('assets/faq.txt', { responseType: 'blob', observe: 'response' })
+//       .pipe((value:  HttpResponse<Blob>) => {
+//         return new Blob([value.body as Blob], {type: value.body?.type});
+//       });
+//   }
 }

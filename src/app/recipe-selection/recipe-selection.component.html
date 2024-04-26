@@ -7,23 +7,28 @@
             <div class="wrap" name ="select-type">
                 <div>
                     <input type="checkbox" 
-                        id="type-all" 
+                        id="{{ typeOptions.name | lowercase }}-{{ ALL | lowercase }}" 
                         name="{{ typeOptions.name }}" 
-                        value="all" 
-                        [checked]="areAllTypesSelected"
-                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
-                    <label for="type-all">(Select All)</label>
+                        value="{{ ALL }}"
+                        [indeterminate]="typeOptions?.indeterminate"
+                        [ngModel]="typeOptions.selected"
+                        (ngModelChange)="typeOptions.selected = $event;
+                            allSelectedTypes = setGroupSelected(typeOptions, $event);
+                            updateSelectedQueryParams()" />
+                    <label for="{{ typeOptions.name | lowercase }}-{{ ALL | lowercase }}">(Select All)</label>
                 </div>
 
                 <div *ngFor="let subOption of typeOptions.subOptions; let i = index">
                     <input type="checkbox"
-                        id="type-{{ typeOptions.subOptions[i].name | lowercase }}" 
+                        id="{{ typeOptions.name | lowercase }}-{{ subOption.name | lowercase }}" 
                         name="{{ typeOptions.name }}"
-                        value="{{ typeOptions.subOptions[i].name }}"
-                        [(ngModel)]="typeOptions.subOptions[i].selected" 
-                        (ngModelChange)="toggleSelected(typeOptions.name, typeOptions.subOptions[i].name, $event)">
-                    <label for="type-{{ typeOptions.subOptions[i].name | lowercase }}">
-                        {{ typeOptions.subOptions[i].name }}
+                        value="{{ subOption.name }}"
+                        [ngModel]="subOption.selected"
+                        (ngModelChange)="subOption.selected = $event;
+                            allSelectedTypes = toggleSelected(typeOptions, subOption.name);
+                            updateSelectedQueryParams()" />
+                    <label for="{{ typeOptions.name | lowercase }}-{{ subOption.name | lowercase }}">
+                        {{ subOption.name }}
                     </label>
                 </div>
             </div>
@@ -38,23 +43,26 @@
             <div class="wrap" name = "select-style">
                 <div>
                     <input type="checkbox" 
-                        id="style-all" 
+                        id="{{ styleOptions.name | lowercase }}-{{ ALL | lowercase }}" 
                         name="{{ styleOptions.name }}" 
-                        value="all" 
-                        [checked]="areAllStylesSelected" 
-                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
-                    <label for="style-all">(Select All)</label>
+                        value="{{ ALL }}"
+                        [indeterminate]="styleOptions?.indeterminate"
+                        [ngModel]="styleOptions.selected"
+                        (ngModelChange)="styleOptions.selected = $event;
+                         setGroupSelected(styleOptions, $event)" />
+                    <label for="{{ styleOptions.name | lowercase }}-{{ ALL | lowercase }}">(Select All)</label>
                 </div>
 
                 <div *ngFor="let subOption of styleOptions.subOptions; let i = index">
                     <input type="checkbox"
-                        id="style-{{ styleOptions.subOptions[i].name | lowercase }}" 
+                        id="{{ styleOptions.name | lowercase }}-{{ subOption.name | lowercase }}" 
                         name="{{ styleOptions.name }}"
-                        value="{{ styleOptions.subOptions[i].name }}"
-                        [(ngModel)]="styleOptions.subOptions[i].selected" 
-                        (ngModelChange)="toggleSelected(styleOptions.name, styleOptions.subOptions[i].name, $event)">
-                    <label for="style-{{ styleOptions.subOptions[i].name | lowercase }}">
-                        {{ styleOptions.subOptions[i].name }}
+                        value="{{ subOption.name }}"
+                        [ngModel]="subOption.selected"
+                        (ngModelChange)="subOption.selected = $event;
+                            toggleSelected(styleOptions, subOption.name)" />
+                    <label for="{{ styleOptions.name | lowercase }}-{{ subOption.name | lowercase }}">
+                        {{ subOption.name }}
                     </label>
                 </div>
             </div>
@@ -70,23 +78,26 @@
             <div class="wrap" name="select-family">
                 <div>
                     <input type="checkbox" 
-                        id="family-all" 
+                        id="{{ familyOptions.name | lowercase }}-{{ ALL | lowercase }}" 
                         name="{{ familyOptions.name }}" 
-                        value="all" 
-                        [checked]="areAllFamiliesSelected" 
-                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
-                    <label for="family-all">(Select All)</label>
+                        value="{{ ALL }}"
+                        [indeterminate]="familyOptions?.indeterminate"
+                        [ngModel]="familyOptions.selected"
+                        (ngModelChange)="familyOptions.selected = $event;
+                         setGroupSelected(familyOptions, $event)" />
+                    <label for="{{ familyOptions.name | lowercase }}-{{ ALL | lowercase }}">(Select All)</label>
                 </div>
 
                 <div *ngFor="let subOption of familyOptions.subOptions; let i = index">
                     <input type="checkbox"
-                        id="family-{{ familyOptions.subOptions[i].name | lowercase }}" 
+                        id="{{ familyOptions.name | lowercase }}-{{ subOption.name | lowercase }}" 
                         name="{{ familyOptions.name }}"
-                        value="{{ familyOptions.subOptions[i].name }}"
-                        [(ngModel)]="familyOptions.subOptions[i].selected" 
-                        (ngModelChange)="toggleSelected(familyOptions.name, familyOptions.subOptions[i].name, $event)">
-                    <label for="family-{{ familyOptions.subOptions[i].name | lowercase }}">
-                        {{ familyOptions.subOptions[i].name }}
+                        value="{{ subOption.name }}"
+                        [ngModel]="subOption.selected"
+                        (ngModelChange)="subOption.selected = $event;
+                            toggleSelected(familyOptions, subOption.name)" />
+                    <label for="{{ familyOptions.name | lowercase }}-{{ subOption.name | lowercase }}">
+                        {{ subOption.name }}
                     </label>
                 </div>
             </div>
@@ -104,6 +115,8 @@
         </form>
     </div>
 
+    <pre>Types: {{ typeOptions.subOptions | json }}</pre>
+
     <br>
 
     <div class="top-bar container">
@@ -114,23 +127,26 @@
             <div class="wrap" name ="select-occasion">
                 <div>
                     <input type="checkbox" 
-                        id="occasion-all" 
+                        id="{{ occasionOptions.name | lowercase }}-{{ ALL | lowercase }}" 
                         name="{{ occasionOptions.name }}" 
-                        value="all" 
-                        [checked]="areAllOccasionsSelected"
-                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
-                    <label for="occasion-all">(Select All)</label>
+                        value="{{ ALL }}"
+                        [indeterminate]="occasionOptions?.indeterminate"
+                        [ngModel]="occasionOptions.selected"
+                        (ngModelChange)="occasionOptions.selected = $event;
+                         setGroupSelected(occasionOptions, $event)" />
+                    <label for="{{ occasionOptions.name | lowercase }}-{{ ALL | lowercase }}">(Select All)</label>
                 </div>
 
                 <div *ngFor="let subOption of occasionOptions.subOptions; let i = index">
                     <input type="checkbox"
-                        id="occasion-{{ occasionOptions.subOptions[i].name | lowercase }}" 
+                        id="{{ occasionOptions.name | lowercase }}-{{ subOption.name | lowercase }}" 
                         name="{{ occasionOptions.name }}"
-                        value="{{ occasionOptions.subOptions[i].name }}"
-                        [(ngModel)]="occasionOptions.subOptions[i].selected" 
-                        (ngModelChange)="toggleSelected(occasionOptions.name, occasionOptions.subOptions[i].name, $event)">
-                    <label for="type-{{ occasionOptions.subOptions[i].name | lowercase }}">
-                        {{ occasionOptions.subOptions[i].name }}
+                        value="{{ subOption.name }}"
+                        [ngModel]="subOption.selected"
+                        (ngModelChange)="subOption.selected = $event;
+                            toggleSelected(occasionOptions, subOption.name)" />
+                    <label for="{{ occasionOptions.name | lowercase }}-{{ subOption.name | lowercase }}">
+                        {{ subOption.name }}
                     </label>
                 </div>
             </div>
@@ -150,24 +166,26 @@
             <div class="wrap" name="main-components">
                 <div class="item">
                     <input type="checkbox" 
-                        id="primary-all" 
+                        id="{{ primaryOptions.name | lowercase }}-{{ ALL | lowercase }}" 
                         name="{{ primaryOptions.name }}" 
-                        value="all" 
-                        [checked]="areAllPrimaryComponentsSelected" 
-                        (change)="setGroupSelected($event.target.name, $event.target.checked)" />
-                    <label for="primary-all">(Select All)</label>
+                        value="{{ ALL }}"
+                        [indeterminate]="primaryOptions?.indeterminate"
+                        [ngModel]="primaryOptions.selected"
+                        (ngModelChange)="primaryOptions.selected = $event;
+                         setGroupSelected(primaryOptions, $event)" />
+                    <label for="{{ primaryOptions.name | lowercase }}-{{ ALL | lowercase }}">(Select All)</label>
                 </div>
 
                 <div *ngFor="let subOption of primaryOptions.subOptions; let i = index"  class="item">
                     <input type="checkbox"
-                        id="primary-{{ primaryOptions.subOptions[i].name | lowercase }}" 
+                        id="{{ primaryOptions.name | lowercase }}-{{ subOption.name | lowercase }}" 
                         name="{{ primaryOptions.name }}"
-                        value="{{ primaryOptions.subOptions[i].name }}"
-                        [disabled]="!primaryOptions.subOptions[i].enabled"
-                        [(ngModel)]="primaryOptions.subOptions[i].selected" 
-                        (ngModelChange)="toggleSelected(primaryOptions.name, primaryOptions.subOptions[i].name, $event)">
-                    <label for="primary-{{ primaryOptions.subOptions[i].name | lowercase }}">
-                        {{ primaryOptions.subOptions[i].name }}
+                        value="{{ subOption.name }}"
+                        [ngModel]="subOption.selected"
+                        (ngModelChange)="subOption.selected = $event;
+                            toggleSelected(primaryOptions, subOption.name)" />
+                    <label for="{{ primaryOptions.name | lowercase }}-{{ subOption.name | lowercase }}">
+                        {{ subOption.name }}
                     </label>
                 </div>
             </div>
@@ -186,24 +204,26 @@
             <div class="wrap" name="secondary-components">
                 <div class="item">
                     <input type="checkbox" 
-                            id="secondary-all" 
-                            name="{{ secondaryOptions.name }}" 
-                            value="all" 
-                            [checked]="areAllSecondaryComponentsSelected" 
-                            (change)="setGroupSelected($event.target.name, $event.target.checked)" />
-                    <label for="secondary-all">(Select All)</label>
+                        id="{{ secondaryOptions.name | lowercase }}-{{ ALL | lowercase }}" 
+                        name="{{ secondaryOptions.name }}" 
+                        value="{{ ALL }}"
+                        [indeterminate]="secondaryOptions?.indeterminate"
+                        [ngModel]="secondaryOptions.selected"
+                        (ngModelChange)="secondaryOptions.selected = $event;
+                         setGroupSelected(secondaryOptions, $event)" />
+                    <label for="{{ secondaryOptions.name | lowercase }}-{{ ALL | lowercase }}">(Select All)</label>
                 </div>
 
                 <div *ngFor="let subOption of secondaryOptions.subOptions; let i = index" class="item">
                     <input type="checkbox"
-                        id="secondary-{{ secondaryOptions.subOptions[i].name | lowercase }}" 
+                        id="{{ secondaryOptions.name | lowercase }}-{{ subOption.name | lowercase }}" 
                         name="{{ secondaryOptions.name }}"
-                        value="{{ secondaryOptions.subOptions[i].name }}"
-                        [disabled]="!secondaryOptions.subOptions[i].enabled"
-                        [(ngModel)]="secondaryOptions.subOptions[i].selected" 
-                        (ngModelChange)="toggleSelected(secondaryOptions.name, secondaryOptions.subOptions[i].name, $event)">
-                    <label for="secondary-{{ secondaryOptions.subOptions[i].name | lowercase }}">
-                        {{ secondaryOptions.subOptions[i].name }}
+                        value="{{ subOption.name }}"
+                        [ngModel]="subOption.selected"
+                        (ngModelChange)="subOption.selected = $event;
+                            toggleSelected(secondaryOptions, subOption.name)" />
+                    <label for="{{ secondaryOptions.name | lowercase }}-{{ subOption.name | lowercase }}">
+                        {{ subOption.name }}
                     </label>
                 </div>
             </div>
@@ -214,13 +234,30 @@
 
     <br>
 
-    <!-- <div class="mid-bar container">
-        <form class="thirty-deep" #tertiaryComponentsForm="ngForm">
-            <label for="Misc">Non-Alcoholic Components:</label>
+     <div class="mid-bar container">
+        <form class="thirty-deep" #specificComponentsForm="ngForm">
+            <label for="Misc">Filter by Specific Ingredients:</label>
             <br>
 
-            <div class="wrap" name="tertiary-components">
-                <div>
+            <div class="wrap" name="specific-components">
+                <div *ngFor="let option of allSpecificIngredients; let i = index" class="item">
+                    <button [hidden]="!allSpecificIngredients[i].enabled" value=i
+                     (click)="removeSpecificComponentFilter(i)">-</button>
+
+                    <div *ngFor="let drilldown of getAllSpecificComponentLevels(allSpecificIngredients[i])" >
+                        <select id="{{ drilldown.level.toString() | lowercase }}-{{ drilldown.id }}"
+                        [hidden]="!drilldown.enabled"
+                        [(ngModel)]="drilldown.selected"
+                        name="{{ drilldown.level.toString() | lowercase }}-{{ drilldown.id }}}">
+                            <option *ngFor="let value of drilldown.allValues" 
+                                [ngValue]="value">
+                                {{ value }}
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <button (click)="addSpecificComponentFilter()">+</button>
+                <!--<div>
                     <input type="checkbox" 
                             id="tertiary-all" 
                             name="{{ tertiaryOptions.name }}" 
@@ -241,12 +278,12 @@
                     <label for="tertiary-{{ tertiaryOptions.subOptions[i].name | lowercase }}">
                         {{ tertiaryOptions.subOptions[i].name }}
                     </label>
-                </div>
+                </div> -->
             </div>
-            <pre>Non-Alcoholic Components: {{ allTertiaryComponents | json }}</pre>
-            <pre>Selected: {{ allSelectedTertiaryComponents | json }}</pre>
+            <!-- <pre>Non-Alcoholic Components: {{ allTertiaryComponents | json }}</pre>
+            <pre>Selected: {{ allSelectedTertiaryComponents | json }}</pre> -->
         </form>
-    </div> -->
+    </div>
 
     <br>
     <br>
@@ -255,25 +292,20 @@
         <div name = "search">
             <label for="search">Filter by name:</label>
             <br>
-            <input type="text" id="search" name="search" placeholder="..." [(ngModel)] = "nameToFind">
+            <input type="text" id="search" name="search" placeholder="..." [(ngModel)] = "nameToFind"
+             (ngModelChange)="updateSelectedQueryParams()">
         </div>
 
         <div name = "inventory">
-            <label for="location">Inventory Location:</label><br>
-
-            <select id="location" [(ngModel)]="selectedInventory">
-                <option *ngFor="let inventory of allInventories" 
-                    ng-selected="selectedInventory" 
-                    [ngValue]="inventory">
-                    {{ inventory }}
-                </option>
-            </select>
-
             <input type="checkbox" id="available" name="available" value="isAvailable" 
             [(ngModel)]="limitToAvailable"
             (ngModelChange)="updateAvailableComponentsBasedOnInventory()">
             <label for="available">Limit to currently available</label>
             <!-- <pre>Limit: {{ limitToAvailable }}</pre> -->
+            <br>
+            <label>User: {{ selectedUserId }}</label>
+            <a>Goto Inventory >></a>
+            <!-- <pre>{{ allAvailableLiquors | json }}</pre> -->
         </div>
     </div>
 
@@ -292,7 +324,9 @@
     [secondaries]="allSelectedSecondaryComponents"
     [name]="nameToFind"
     [inventory]="selectedInventory"
+    [user]="selectedUserId"
     [limit]="limitToAvailable"
+    [liquors]="allAvailableLiquors"
     [spirits]="allAvailableSpirits"
     [nonspirits]="allAvailableNonSpirits"
 ></app-recipe-list>

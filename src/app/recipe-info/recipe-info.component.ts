@@ -93,7 +93,7 @@ export class RecipeInfoComponent implements OnInit {
         }))
       .subscribe((data: string[]) => {
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-          console.log("Prep Styles(" + filteredList.join(', ') + ")"); //debug
+          // console.log("Prep Styles(" + filteredList.join(', ') + ")"); //debug
   
           let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
   
@@ -125,7 +125,7 @@ export class RecipeInfoComponent implements OnInit {
         }))
       .subscribe((data: string[]) => {
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-          console.log("Glasses(" + filteredList.join(', ') + ")"); //debug
+          // console.log("Glasses(" + filteredList.join(', ') + ")"); //debug
   
           let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
   
@@ -157,7 +157,7 @@ export class RecipeInfoComponent implements OnInit {
         }))
       .subscribe((data: string[]) => {
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-          console.log("Ice(" + filteredList.join(', ') + ")"); //debug
+          // console.log("Ice(" + filteredList.join(', ') + ")"); //debug
   
           let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
   
@@ -189,7 +189,7 @@ export class RecipeInfoComponent implements OnInit {
         }))
       .subscribe((data: string[]) => {
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-          console.log("Families(" + filteredList.join(', ') + ")"); //debug
+          // console.log("Families(" + filteredList.join(', ') + ")"); //debug
   
           let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
   
@@ -221,7 +221,7 @@ export class RecipeInfoComponent implements OnInit {
         }))
       .subscribe((data: string[]) => {
         let filteredList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-          console.log("Occasions(" + filteredList.join(', ') + ")"); //debug
+          // console.log("Occasions(" + filteredList.join(', ') + ")"); //debug
   
           let sortedList = filteredList.sort((a, b) => a.localeCompare(b));
   

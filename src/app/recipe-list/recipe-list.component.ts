@@ -1,8 +1,8 @@
 import { InventoryService } from './../Services/inventory.service';
 import { LiquorModel } from './../Models/liquor-model';
-import { IngredientTypeModel } from './../Models/Ingredient-type-model';
+import { IngredientTypeModel } from '../Models/ingredient-type-model';
 import { RecipeModel } from './../Models/recipe-model';
-import { IngredientModel } from '../Models/ingredient-model';
+import { RecipeIngredientModel } from '../Models/recipe-ingredient-model';
 import { RecipeListService } from '../Services/recipe-list.service';
 import { RecipeDirectionsService } from '../Services/recipe-directions.service';
 import { RecipeIngredientsService } from '../Services/recipe-ingredients.service';
@@ -35,7 +35,9 @@ export class RecipeListComponent implements OnInit, OnChanges {
   @Input('secondaries') allSecondaryComponents: string[] = ['all'];
   @Input('name') recipeNameToFind: string = '';
   @Input('inventory') inventoryAddr: string = '';
+  @Input('user') userId: number = -1;
   @Input('limit') limitToAvailable: boolean = false;
+  @Input('liquors') allAvailableLiquorIngredients = {};
   @Input('spirits') allAvailableSpirits: { [type: string]: LiquorModel[]; } = {};
   @Input('nonspirits') allAvailableNonSpirits: { [type: string]: LiquorModel[]; } = {};
 
@@ -48,27 +50,34 @@ export class RecipeListComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     this.allRecipes = [];
 
+    // console.log("Drink Types(" + this.allDrinkTypes + ")"); //debug
+
     // this.updateRecipeList();
   }
 
   ngOnChanges(): void {
     // console.log("Changes to recipe list");  //debug
 
-    //console.log("Limit(" + this.limitToAvailable + "), Inventory(" + this.inventoryAddr + ")"); //debug
+    // console.log("Drink Types(" + this.allDrinkTypes + ")"); //debug
+
+    // console.log("Limit(" + this.limitToAvailable + "), User ID(" + this.userId + "), Liquors("
+    //  + this.allAvailableLiquors + ")"); //debug
 
     // console.log("List Spirits(" + Object.keys(this.allAvailableSpirits) + ")");  //debug
     // console.log("List Non-Spirits(" + Object.keys(this.allAvailableNonSpirits) + ")");  //debug
 
-    if (this.limitToAvailable === true && this.inventoryAddr.length > 0
+    /* if (this.limitToAvailable === true && this.inventoryAddr.length > 0
       && Object.keys(this.allAvailableSpirits).length > 0 && Object.keys(this.allAvailableNonSpirits).length > 0) {
       this.updateLimitedRecipeList();
       return;
-    }
+    } */
 
     this.updateRecipeList();
   }
 
   updateRecipeList(): void {
+    // console.log("updateRecipeList"); //debug
+
     this.allRecipes = [];
 
     // console.log("Types(" + this.allDrinkTypes + ")"); //debug
@@ -78,15 +87,19 @@ export class RecipeListComponent implements OnInit, OnChanges {
     // console.log("Primary(" + this.allPrimaryComponents + ")"); //debug
     // console.log("Secondary(" + this.allSecondaryComponents + ")"); //debug
 
-    if (this.allDrinkTypes.length == 0
-      || this.allDrinkOccasions.length == 0
-      || this.allPreparationStyles.length == 0
-      || this.allFamilies.length == 0
-      || (this.allPrimaryComponents.length == 0 && this.allSecondaryComponents.length == 0)
+    if (!this.allDrinkTypes ||this.allDrinkTypes.length == 0
+      || !this.allDrinkOccasions || this.allDrinkOccasions.length == 0
+      || !this.allPreparationStyles || this.allPreparationStyles.length == 0
+      || !this.allFamilies || this.allFamilies.length == 0
+      || ((!this.allPrimaryComponents || this.allPrimaryComponents.length == 0) 
+      && (!this.allSecondaryComponents || this.allSecondaryComponents.length == 0))
       ) {
       this.allRecipes = [];
       return;
     }
+
+    // Update query params
+
 
     //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
 
@@ -110,7 +123,14 @@ export class RecipeListComponent implements OnInit, OnChanges {
             name: recipeObj.fields["Name"],
             variant: '',
             version: 0,
-            type: recipeObj.fields["Type Name"][0]
+            type: recipeObj.fields["Type Name"][0],
+            allLiquorIngredientNames: []
+          }
+
+          if(recipeObj.fields["Recipe Liquor Ingredient Names"] !== null
+          && recipeObj.fields["Recipe Liquor Ingredient Names"] !== undefined
+          && recipeObj.fields["Recipe Liquor Ingredient Names"].length > 0) {
+            model.allLiquorIngredientNames = recipeObj.fields["Recipe Liquor Ingredient Names"];
           }
 
           let variant: string = recipeObj.fields["Variant"];
@@ -183,201 +203,46 @@ export class RecipeListComponent implements OnInit, OnChanges {
         // }
         // // end debug
 
-        filteredList = filteredList.filter((n) => n.version ===
+        filteredList = filteredList.filter(n => n.version ===
           filteredList.filter(o => o.name === n.name && o.type === n.type && o.variant === n.variant)
             .reduce((previous, current) => (previous.version > current.version) ? previous : current)
             .version
         ); // Return only most recent version
 
+        // Filter to available
+        if (this.limitToAvailable === true && this.userId > 0 && Object.keys(this.allAvailableLiquorIngredients).length > 0) {
+          console.log("Liquors(" + Object.keys(this.allAvailableLiquorIngredients).join("; ") + ")"); //debug
+
+          filteredList = filteredList.filter(recipe => {
+            console.log("Recipe(" + recipe.name + ")"); //debug
+
+            let allAvailable = true;
+
+            for(let ingredient of recipe.allLiquorIngredientNames) {
+              let isAvailable = ingredient in this.allAvailableLiquorIngredients;
+              console.log("Ingredient(" + ingredient + "), Available(" + isAvailable + ")"); //debug
+
+              if(isAvailable === true) {
+                continue;
+              }
+
+              allAvailable = false;
+              break;
+            }
+
+            console.log("Available(" + allAvailable + ")"); //debug
+
+            return allAvailable;
+          });
+        }
+
         this.allRecipes = filteredList;
       });
   }
 
-  updateLimitedRecipeList(): void {
-    this.allRecipes = [];
-
-    // console.log("Types(" + this.allDrinkTypes + ")"); //debug
-    // console.log("Occasions(" + this.allDrinkOccasions + ")"); //debug
-    // console.log("Styles(" + this.allPreparationStyles + ")"); //debug
-    // console.log("Families(" + this.allFamilies + ")"); //debug
-    // console.log("Primary(" + this.allPrimaryComponents + ")"); //debug
-    // console.log("Secondary(" + this.allSecondaryComponents + ")"); //debug
-
-    if (this.allDrinkTypes.length == 0
-      || this.allDrinkOccasions.length == 0
-      || this.allPreparationStyles.length == 0
-      || this.allFamilies.length == 0
-      || this.allPrimaryComponents.length == 0
-      || this.allSecondaryComponents.length == 0) {
-      this.allRecipes = [];
-      return;
-    }
-
-    //this.allRecipeIdentities = this.recipeListService.GetRecipeIdentities();
-
-    //console.log("Name(" + this.nameToFind + ")"); //debug
-
-    let allRecipes: Observable<RecipeModel[]> = this.getAllRecipesObservable(this.allDrinkTypes,
-      this.allDrinkOccasions, this.allPreparationStyles, this.allFamilies, this.muddlingRequired,
-      this.allPrimaryComponents, this.allSecondaryComponents, this.recipeNameToFind)
-    //   .pipe(
-    //     tap(allRecipes => { 
-    //       console.debug('Recipes(' + allRecipes + ')'); 
-    //     }),
-    //     concatMap(data => {
-    //       let allRecipes = data;
-    //       allRecipes.map(
-    //         recipe => {
-    //           let allIngredients: Observable<IngredientModel[]> = this.getAllIngredientsObservable(recipe);
-
-    //           allIngredients.pipe(
-    //             tap(allIngredients => {
-    //               console.debug('Ingredients(' + allIngredients + ')');
-    //             }),
-    //             concatMap(data => {
-    //               let allIngredients = data;
-    //               allIngredients.map(
-    //                 ingredient => {
-    //                   let quantity: Observable<number> = 
-    //                   this.getIngredientQuantityObservable(this.inventoryAddr, ingredient.type.name);
-
-    //                   quantity.pipe(
-    //                     tap(quantity => {
-    //                       console.debug('Quantity(' + quantity + ')');
-    //                     })
-    //                   )
-
-    //                   return quantity;
-    //                 }
-    //               )
-    //             })
-    //           )
-
-    //           return allIngredients;
-    //         }
-    //       )
-
-    //       return allRecipes;
-    //     })
-    //   )
-
-    allRecipes.subscribe((data: RecipeModel[]) => {
-      let filteredRecipeList = data.filter(
-        n => n !== null && n !== undefined
-          && n.name !== null && n.name !== undefined
-          && n.id !== null && n.id !== undefined && isNaN(n.id) !== true
-      ); // Remove blanks
-
-      // // start debug
-      // for(let i in filteredRecipeList) {
-      //   let item = filteredRecipeList[i];
-      //   console.log(item);  //debug
-      // }
-      // // end debug
-
-      // let sortedList = filteredRecipeList.sort(
-      //   (a, b) => a.name.localeCompare(b.name) !== 0 ? a.name.localeCompare(b.name) : a.variant.localeCompare(b.variant)
-      // );  // Sort
-      let sortedList = filteredRecipeList.sort((a, b) => a.id - b.id);  // Sort
-
-      filteredRecipeList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
-
-      // // start debug
-      // for(let i in filteredList) {
-      //   let n = filteredList[i];
-
-      //   let subArr = filteredList.filter(o => o.name === n.name && o.type === n.type);
-      //   console.log("Similar(" + subArr.length + ")");  //debug
-
-      //   if(subArr.length <= 1) {
-      //     continue;
-      //   }
-
-      //   for(let j in subArr) {
-      //     let subItem = subArr[j];
-      //     console.log(subItem);  //debug
-      //   }
-      // }
-      // // end debug
-
-      filteredRecipeList = filteredRecipeList.filter((n) => n.version ===
-        filteredRecipeList.filter(recipe => recipe.name === n.name && recipe.type === n.type)
-          .reduce((previous, current) => (previous.version > current.version) ? previous : current)
-          .version
-      ); // Return only most recent version
-
-      // Sort recipes by ID
-      let allRecipeIds: number[] = new Array<number>();
-      let allRecipeObjs = new Object();
-      filteredRecipeList.forEach((recipe: RecipeModel) => {
-        let recipeId = recipe.id;
-        // console.log("Recipe ID(" + recipeId + ")"); //debug
-
-        allRecipeIds.push(recipeId);
-        allRecipeObjs[recipeId] = recipe;
-      });
-
-      // Get Ingredients
-      // for(let i in filteredRecipeList) {
-      //   let recipe = filteredRecipeList[i];
-
-      //   this.getAllIngredientsForRecipeObservable(recipe)
-      //   .subscribe((data: IngredientModel[]) => {
-      //     let filteredIngredientList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-
-      //     let sortedList = filteredIngredientList.sort((a, b) => a.order - b.order);  // Sort
-
-      //     filteredIngredientList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
-
-      //     console.log(recipe.name + ' Ingredients(' + filteredIngredientList.length + ')'); //debug
-
-      //     recipe.allIngredients = filteredIngredientList;
-      //   });
-      // }
-      this.getAllIngredientsForRecipeListObservable(allRecipeIds)
-        .subscribe((data: IngredientModel[]) => {
-          // console.log('Total Ingredients(' + data.length + ')');  //debug
-
-          let filteredIngredientList = data.filter(n => n !== null && n !== undefined); // Remove blanks
-
-          let sortedList = filteredIngredientList.sort((a, b) => a.recipeId - b.recipeId);  // Sort
-
-          filteredIngredientList = sortedList.filter((n, i) => sortedList.indexOf(n) === i); // Remove duplicates
-
-          // Add ingredients to recipes
-          for (let i = 0; i < filteredIngredientList.length; i++) {
-            let ingredient: IngredientModel = filteredIngredientList[i];
-            let recipeId: number = ingredient.recipeId;
-
-            // Get recipe by ID
-            let recipe: RecipeModel = allRecipeObjs[recipeId];
-            if (recipe === null || recipe === undefined) {
-              console.log("Failed to find recipe " + recipeId 
-              + " for ingredient " + ingredient.id + ' ' + ingredient.name);  //debug
-              continue;
-            }
-
-            if (recipe.allIngredients === null || recipe.allIngredients === undefined) {
-              recipe.allIngredients = new Array<IngredientModel>();
-            }
-
-            recipe.allIngredients.push(ingredient);
-            // console.log('Added ' + ingredient.name + ' to recipe ' + recipe.id + ' ' + recipe.name);  //debug
-          }
-
-          // Filter based on available liquors
-          filteredRecipeList = this.filterListToAvailableTypes(this.allAvailableSpirits, this.allAvailableNonSpirits,
-            filteredRecipeList);
-
-          // console.log("Total filtered recipes(" + filteredRecipeList.length + ")"); //debug
-
-          this.allRecipes = filteredRecipeList;
-        });
-    });
-  }
-
   getAllRecipesObservable(allTypes: string[], allOccasions: string[], allPrepStyles: string[], allFamilies: string[],
-    muddlingReq: boolean, allPrimaryComponents: string[], allSecondaryComponents: string[], recipeName: string
+    muddlingReq: boolean, allPrimaryComponents: string[], allSecondaryComponents: string[], recipeName: string,
+    allAvailableLiquors: string[][]
   ): Observable<RecipeModel[]> {
     // console.log('getAllRecipesObservable([' + allTypes + '], [' + allOccasions + '], [' + allPrepStyles 
     // + '], [' + allFamilies + '], ' + muddlingReq + ', [' + allPrimaryComponents + '], [' + allSecondaryComponents
@@ -388,7 +253,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
     // this.recipeListService.GetRecipes(
     let allRecipes: Observable<RecipeModel[]> = this.recipeListService.GetRecipesFromAirtable(
       allTypes, allOccasions, allPrepStyles, allFamilies, muddlingReq,
-      allPrimaryComponents, allSecondaryComponents, recipeName
+      allPrimaryComponents, allSecondaryComponents, recipeName, allAvailableLiquors
     ).pipe(map(response => {
       let allRecipes: RecipeModel[] = response.records.map(
         recipeObj => {
@@ -399,7 +264,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
             name: recipeObj.fields["Name"],
             variant: '',
             version: 0,
-            type: recipeObj.fields["Type"]
+            type: recipeObj.fields["Type"],
+            allLiquorIngredientNames: []
           }
 
           let variant: string = recipeObj.fields["Variant"];
@@ -422,13 +288,13 @@ export class RecipeListComponent implements OnInit, OnChanges {
     return allRecipes
   }
 
-  getAllIngredientsForRecipeObservable(recipe: RecipeModel): Observable<IngredientModel[]> {
+  getAllIngredientsForRecipeObservable(recipe: RecipeModel): Observable<RecipeIngredientModel[]> {
     // console.log('getAllIngredientsForRecipeObservable(' + recipe.name + ')');  //debug
 
-    let allIngredients: Observable<IngredientModel[]> = this.ingredientService.GetIngredientsForRecipeFromAirtable(recipe.id)
+    let allIngredients: Observable<RecipeIngredientModel[]> = this.ingredientService.GetIngredientsForRecipeFromAirtable(recipe.id)
       .pipe(
         map(response => {
-          let allIngredientObjs: IngredientModel[] = response.records.map(
+          let allIngredientObjs: RecipeIngredientModel[] = response.records.map(
             ingredientObj => {
               let typeModel: IngredientTypeModel = {
                 name: ingredientObj.fields["Ingredient Type Name"],
@@ -437,7 +303,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
                 subType: ingredientObj.fields["Subtype"][0]
               };
 
-              let model: IngredientModel = {
+              let model: RecipeIngredientModel = {
                 id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
@@ -477,23 +343,37 @@ export class RecipeListComponent implements OnInit, OnChanges {
     return allIngredients;
   }
 
-  getAllIngredientsForRecipeListObservable(allRecipeIds: number[]): Observable<IngredientModel[]> {
+  getAllIngredientsForRecipeListObservable(allRecipeIds: number[]): Observable<RecipeIngredientModel[]> {
     // console.log('getAllIngredientsForRecipeListObservable(' + allRecipeIds + ')');  //debug
 
-    let allIngredients: Observable<IngredientModel[]> =
+    let allIngredients: Observable<RecipeIngredientModel[]> =
       this.ingredientService.GetIngredientsForRecipeListFromAirtable(allRecipeIds)
         .pipe(
           map(response => {
-            let allIngredientObjs: IngredientModel[] = response.records.map(
+            let allIngredientObjs: RecipeIngredientModel[] = response.records.map(
               ingredientObj => {
                 let typeModel: IngredientTypeModel = {
                   name: ingredientObj.fields["Ingredient Type Name"],
-                  superType: ingredientObj.fields["Supertype"][0],
-                  type: ingredientObj.fields["Type"][0],
-                  subType: ingredientObj.fields["Subtype"][0]
+                  superType: ""
                 };
 
-                let model: IngredientModel = {
+                if(ingredientObj.fields["Supertype"] !== null
+                && ingredientObj.fields["Supertype"] !== undefined
+                && ingredientObj.fields["Supertype"].length > 0) {
+                  typeModel.superType = ingredientObj.fields["Supertype"][0];
+                }
+                if(ingredientObj.fields["Type"] !== null
+                && ingredientObj.fields["Type"] !== undefined
+                && ingredientObj.fields["Type"].length > 0) {
+                  typeModel.superType = ingredientObj.fields["Type"][0];
+                }
+                if(ingredientObj.fields["Subtype"] !== null
+                && ingredientObj.fields["Subtype"] !== undefined
+                && ingredientObj.fields["Subtype"].length > 0) {
+                  typeModel.superType = ingredientObj.fields["Subtype"][0];
+                }
+
+                let model: RecipeIngredientModel = {
                   id: ingredientObj.fields["Recipe Ingredient ID"],
                   order: ingredientObj.fields["Order"],
                   name: ingredientObj.fields["Ingredient Name"][0],
@@ -772,14 +652,14 @@ export class RecipeListComponent implements OnInit, OnChanges {
     return filteredList;
   }
 
-  private getIngredientsWithType(recipeId: number): IngredientModel[] {
-    let allIngredients: IngredientModel[] = [];
+  private getIngredientsWithType(recipeId: number): RecipeIngredientModel[] {
+    let allIngredients: RecipeIngredientModel[] = [];
 
     // Get ingredients
     this.ingredientService.GetIngredientsForRecipeFromAirtable(recipeId)
       .pipe(
         map(response => {
-          let allIngredientObjs: IngredientModel[] = response.records.map(
+          let allIngredientObjs: RecipeIngredientModel[] = response.records.map(
             ingredientObj => {
               let typeModel: IngredientTypeModel = {
                 name: ingredientObj.fields["Ingredient Type Name"],
@@ -788,7 +668,7 @@ export class RecipeListComponent implements OnInit, OnChanges {
                 subType: ingredientObj.fields["Subtype"][0]
               };
 
-              let model: IngredientModel = {
+              let model: RecipeIngredientModel = {
                 id: ingredientObj.fields["Recipe Ingredient ID"],
                 order: ingredientObj.fields["Order"],
                 name: ingredientObj.fields["Ingredient Name"][0],
@@ -815,8 +695,8 @@ export class RecipeListComponent implements OnInit, OnChanges {
           )
 
           return allIngredientObjs;
-        })).subscribe((data: IngredientModel[]) => {
-          let allModels: IngredientModel[] = data;
+        })).subscribe((data: RecipeIngredientModel[]) => {
+          let allModels: RecipeIngredientModel[] = data;
 
           let filteredList = allModels.filter(n => n !== null && n !== undefined); // Remove blanks
           filteredList = filteredList.filter((n, i) => filteredList.indexOf(n) === i); // Remove duplicates
